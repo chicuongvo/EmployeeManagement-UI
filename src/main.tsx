@@ -7,6 +7,7 @@ import "./index.css";
 import App from "./App.tsx";
 import Login from "./pages/Admin/Login.tsx";
 import Layout from "./components/Admin/Layout.tsx";
+import Dashboard from "./pages/Admin/Dashboard.tsx";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="/admin/login">
               <Route index element={<Login />} />
             </Route>
+            <Route path="/admin/dashboard" element={<Dashboard />}></Route>
           </Routes>
         </BrowserRouter>
       </UserProvider>
