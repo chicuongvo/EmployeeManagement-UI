@@ -11,7 +11,7 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("dashboard");
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 font-primary  ">
       <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
       <Header />
 
