@@ -9,6 +9,7 @@ import { useDepartmentContext } from "./DepartmentContext";
 
 export const TABS = {
   DEPARTMENT: "1",
+  POSITION: "2",
 } as const;
 
 const Index = () => {
@@ -20,7 +21,10 @@ const Index = () => {
     setSearchParams({ tab: key });
   };
 
-  const tabs: TabsProps["items"] = [{ key: "1", label: "Danh sách phòng ban" }];
+  const tabs: TabsProps["items"] = [
+    { key: "1", label: "Phòng ban" },
+    { key: "2", label: "Chức vụ" },
+  ];
 
   const scrollToDataTable = () => {
     if (dataTableRef.current) {
@@ -40,12 +44,14 @@ const Index = () => {
               title: "Phòng ban",
             },
             {
-              title: "Người quản lý",
+              title: tab === TABS.DEPARTMENT ? "Phòng ban" : "Chức vụ",
             },
           ],
         },
       }}
-      title={<PageTitle title="Phòng ban" />}
+      title={
+        <PageTitle title={tab === TABS.DEPARTMENT ? "Phòng ban" : "Chức vụ"} />
+      }
     >
       <Tabs
         type="card"

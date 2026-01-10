@@ -48,7 +48,7 @@ const DataTable = () => {
         key: COLUMN_KEYS.EMPLOYEE_CODE,
         align: "center",
         fixed: "left",
-        width: 120,
+        width: 150,
         render: (value) => <CopyTextPopover text={value} />,
       },
       {

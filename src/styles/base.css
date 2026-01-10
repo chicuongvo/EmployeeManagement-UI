@@ -2,231 +2,303 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 :root {
-    --font-primary: "Lexend", sans-serif;
+  --font-primary: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-family-sans: "Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, sans-serif;
 
-    --color-green-1: #306e51;
-    --color-green-2: #497a62;
-    --color-green-3: #13864d;
-    --color-green-4: #bfe7d1;
-    /* cdeae1 d1e8de 9ecebb d0ebe3 */
-    --color-green-5: #9ecebb;
-    --color-green-6: #e0ffee;
-    --color-green-7: #4ca082;
-    --color-green-8: #f0fdf4;
-    --color-orange-1: #ffb347;
-    --color-orange-2: #ffac5d;
-    --color-blue-1: #1fa2ff;
-    --color-blue-2: #0089eb;
-    --color-red-1: #ff512f;
-    --color-red-2: #f02800;
+  --color-green-1: #306e51;
+  --color-green-2: #497a62;
+  --color-green-3: #13864d;
+  --color-green-4: #bfe7d1;
+  /* cdeae1 d1e8de 9ecebb d0ebe3 */
+  --color-green-5: #9ecebb;
+  --color-green-6: #e0ffee;
+  --color-green-7: #4ca082;
+  --color-green-8: #f0fdf4;
+  --color-orange-1: #ffb347;
+  --color-orange-2: #ffac5d;
+  --color-blue-1: #1fa2ff;
+  --color-blue-2: #0089eb;
+  --color-red-1: #ff512f;
+  --color-red-2: #f02800;
 
-    --link-color: #059669;
-    --link-hover-color: #047857;
+  --link-color: #059669;
+  --link-hover-color: #047857;
 }
 
 body {
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    font-family: var(--font-primary);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: var(--font-primary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Utility class for primary font */
+.font-primary {
+  font-family: var(--font-primary);
+}
+
+/* Smaller font sizes for better readability */
+html {
+  font-size: 13px;
+}
+
+body,
+p,
+span,
+div,
+a,
+button,
+input,
+select,
+textarea,
+label {
+  font-size: 13px;
+}
+
+h1 {
+  font-size: 24px;
+  line-height: 1.4;
+}
+
+h2 {
+  font-size: 20px;
+  line-height: 1.4;
+}
+
+h3 {
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+h4 {
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+h5 {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+h6 {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+p,
+span,
+div,
+a,
+button,
+input,
+select,
+textarea,
+label,
+::placeholder {
+  font-size: 13px;
 }
 
 .roboto-slab-regular {
-    font-family: "Roboto Slab", monospace;
-    font-weight: 400;
-    font-style: normal;
+  font-family: "Roboto Slab", monospace;
+  font-weight: 400;
+  font-style: normal;
 }
 
 .oleo-script {
-    font-family: "Oleo Script", monospace;
-    font-weight: 400;
-    font-style: normal;
+  font-family: "Oleo Script", monospace;
+  font-weight: 400;
+  font-style: normal;
 }
 
 .react-resizable-handle {
-    position: absolute;
-    right: -3px;
-    bottom: 0;
-    z-index: 1;
-    width: 0px;
-    height: 100%;
-    background: transparent;
-    cursor: default;
-    background-image: none !important;
-    box-shadow: none !important;
+  position: absolute;
+  right: -3px;
+  bottom: 0;
+  z-index: 1;
+  width: 0px;
+  height: 100%;
+  background: transparent;
+  cursor: default;
+  background-image: none !important;
+  box-shadow: none !important;
 }
 
 .react-resizable-handle::after {
-    content: "";
-    display: block;
-    position: absolute;
-    top: 0%;
-    bottom: 0%;
-    width: 2px;
-    background: #c9c9c927;
-    cursor: col-resize;
+  content: "";
+  display: block;
+  position: absolute;
+  top: 0%;
+  bottom: 0%;
+  width: 2px;
+  background: #c9c9c927;
+  cursor: col-resize;
 }
 
 .collapse-milestone .ant-collapse-header {
-    border-radius: 6px !important;
-    background-color: var(--color-green-4);
+  border-radius: 6px !important;
+  background-color: var(--color-green-4);
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 .scrollbar-hide:hover::-webkit-scrollbar {
-    display: block;
+  display: block;
 
-    height: 6px;
+  height: 6px;
 }
 
 .scrollbar-hide:hover::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 3px;
+  background: #f1f1f1;
+  border-radius: 3px;
 }
 
 .scrollbar-hide:hover::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 3px;
+  background: #888;
+  border-radius: 3px;
 }
 
 .scrollbar-hide:hover::-webkit-scrollbar-thumb:hover {
-    background: #555;
+  background: #555;
 }
 
 .login-form-container {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    transform-origin: center center !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center center !important;
 }
 
 @keyframes loginCompleteAnimation {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-        filter: brightness(1);
-    }
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    filter: brightness(1);
+  }
 
-    25% {
-        transform: scale(1.05);
-        opacity: 1;
-        filter: brightness(1.03);
-    }
+  25% {
+    transform: scale(1.05);
+    opacity: 1;
+    filter: brightness(1.03);
+  }
 
-    100% {
-        transform: scale(0);
-        opacity: 0;
-        filter: brightness(0.5);
-    }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+    filter: brightness(0.5);
+  }
 }
 
 .login-form-complete-animation {
-    animation: loginCompleteAnimation 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
-    transform-origin: center center !important;
+  animation: loginCompleteAnimation 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)
+    forwards !important;
+  transform-origin: center center !important;
 }
 
 @keyframes loginSmoothComplete {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
 
-    20% {
-        transform: scale(1.02);
-        opacity: 1;
-    }
+  20% {
+    transform: scale(1.02);
+    opacity: 1;
+  }
 
-    30% {
-        transform: scale(1.05);
-        opacity: 1;
-    }
+  30% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
 
-    35% {
-        transform: scale(1.05);
-        opacity: 1;
-    }
+  35% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
 
-    55% {
-        transform: scale(0.7);
-        opacity: 0.7;
-    }
+  55% {
+    transform: scale(0.7);
+    opacity: 0.7;
+  }
 
-    80% {
-        transform: scale(0.3);
-        opacity: 0.3;
-    }
+  80% {
+    transform: scale(0.3);
+    opacity: 0.3;
+  }
 
-    100% {
-        transform: scale(0);
-        opacity: 0;
-    }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
 }
 
 .login-form-smooth-animation {
-    animation: loginSmoothComplete 1s ease-in-out forwards !important;
-    transform-origin: center center !important;
+  animation: loginSmoothComplete 1s ease-in-out forwards !important;
+  transform-origin: center center !important;
 }
 
-.ant-upload-wrapper.custom-image-upload.survey-detail.ant-upload-picture-card-wrapper .ant-upload-list-item-container {
-    height: 240px !important;
-    width: 240px !important;
+.ant-upload-wrapper.custom-image-upload.survey-detail.ant-upload-picture-card-wrapper
+  .ant-upload-list-item-container {
+  height: 240px !important;
+  width: 240px !important;
 }
 
-.ant-upload-wrapper.custom-image-upload.survey-detail.ant-upload-picture-card-wrapper .ant-upload.ant-upload-select {
-    height: 240px !important;
-    width: 240px !important;
+.ant-upload-wrapper.custom-image-upload.survey-detail.ant-upload-picture-card-wrapper
+  .ant-upload.ant-upload-select {
+  height: 240px !important;
+  width: 240px !important;
 }
 
 .text-green {
-    color: var(--link-color);
-    transition: all 0.2s ease-in-out;
-    font-weight: 500;
-    text-decoration: none;
+  color: var(--link-color);
+  transition: all 0.2s ease-in-out;
+  font-weight: 500;
+  text-decoration: none;
 }
 
 .text-green:hover {
-    color: var(--link-hover-color);
-    border-bottom-color: var(--link-hover-color);
+  color: var(--link-hover-color);
+  border-bottom-color: var(--link-hover-color);
 }
 
 .text-blue {
-    color: var(--color-blue-1);
-    transition: all 0.2s ease-in-out;
-    font-weight: 500;
-    text-decoration: none;
+  color: var(--color-blue-1);
+  transition: all 0.2s ease-in-out;
+  font-weight: 500;
+  text-decoration: none;
 }
 
 .text-blue:hover {
-    color: var(--color-blue-2);
-    border-bottom-color: var(--color-blue-2);
+  color: var(--color-blue-2);
+  border-bottom-color: var(--color-blue-2);
 }
 
 .text-red {
-    color: var(--color-red-1);
-    transition: all 0.2s ease-in-out;
-    font-weight: 500;
-    text-decoration: none;
+  color: var(--color-red-1);
+  transition: all 0.2s ease-in-out;
+  font-weight: 500;
+  text-decoration: none;
 }
 
 .text-red:hover {
-    color: var(--color-red-2);
-    border-bottom-color: var(--color-red-2);
+  color: var(--color-red-2);
+  border-bottom-color: var(--color-red-2);
 }
 
 .text-orange {
-    color: var(--color-orange-1);
-    transition: all 0.2s ease-in-out;
-    font-weight: 500;
-    text-decoration: none;
+  color: var(--color-orange-1);
+  transition: all 0.2s ease-in-out;
+  font-weight: 500;
+  text-decoration: none;
 }
 
 .text-orange:hover {
-    color: var(--color-orange-2);
-    border-bottom-color: var(--color-orange-2);
+  color: var(--color-orange-2);
+  border-bottom-color: var(--color-orange-2);
 }
 
 /* .ant-popover.nt-popover-placement-bottomRight{

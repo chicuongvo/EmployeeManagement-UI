@@ -73,7 +73,7 @@ const WORK_STATUS_CONFIG: Record<
   },
 };
 
-const WorkStatus = ({ status, size = "default" }: WorkStatusProps) => {
+const WorkStatus = ({ status }: WorkStatusProps) => {
   const config = WORK_STATUS_CONFIG[status];
 
   if (!config) {

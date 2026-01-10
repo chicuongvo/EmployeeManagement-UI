@@ -7,6 +7,7 @@ import type { GetListDepartmentRequest } from "@/apis/department/model/Departmen
 import DateRangePicker from "@/components/common/form/DateRangePicker";
 import SelectListEmployee from "@/components/common/form/SelectListEmployee";
 import dayjs from "dayjs";
+import { TABS } from "..";
 
 interface FormFilterProps {
   onSearch?: () => void;
@@ -61,28 +62,8 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
     return [];
   }, [tab]);
 
-  const fields = useMemo(
+  const commonFields = useMemo(
     () => [
-      {
-        name: "general_code",
-        component: (
-          <Input
-            placeholder="Nhập tìm kiếm"
-            allowClear
-            addonBefore={
-              <Form.Item name="general_code_type" noStyle>
-                <Select options={optionsInput} style={{ width: 160 }} />
-              </Form.Item>
-            }
-          />
-        ),
-      },
-      {
-        name: "managerId",
-        component: (
-          <SelectListEmployee placeholder="- Chọn người quản lý -" allowClear />
-        ),
-      },
       {
         name: "created_range_picker",
         component: (
@@ -102,8 +83,52 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
         ),
       },
     ],
-    [optionsInput]
+    []
   );
+
+  const departmentFields = useMemo(
+    () => [
+      {
+        name: "general_code",
+        component: (
+          <Input
+            placeholder="Nhập..."
+            allowClear
+            addonBefore={
+              <Form.Item name="general_code_type" noStyle>
+                <Select options={optionsInput} style={{ width: 170 }} />
+              </Form.Item>
+            }
+          />
+        ),
+      },
+      {
+        name: "managerId",
+        component: (
+          <SelectListEmployee placeholder="- Chọn người quản lý -" allowClear />
+        ),
+      },
+      ...commonFields,
+    ],
+    [commonFields, optionsInput]
+  );
+
+  const positionFields = useMemo(() => {
+    return [
+      {
+        name: "name",
+        component: <Input placeholder="Nhập tên chức vụ" allowClear />,
+      },
+      ...commonFields,
+    ];
+  }, [commonFields]);
+
+  const fields = useMemo(() => {
+    if (tab == TABS.DEPARTMENT) {
+      return [...departmentFields];
+    }
+    return [...positionFields];
+  }, [tab, departmentFields, positionFields]);
 
   return (
     <Card className="mb-3 py-1" size="small">

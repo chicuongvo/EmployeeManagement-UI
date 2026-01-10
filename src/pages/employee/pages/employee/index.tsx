@@ -20,7 +20,7 @@ const Index = () => {
     setSearchParams({ tab: key });
   };
 
-  const tabs: TabsProps["items"] = [{ key: "1", label: "Danh sách nhân viên" }];
+  const tabs: TabsProps["items"] = [{ key: "1", label: "Nhân viên" }];
 
   const scrollToDataTable = () => {
     if (dataTableRef.current) {
