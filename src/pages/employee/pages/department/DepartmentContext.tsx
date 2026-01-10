@@ -78,7 +78,7 @@ export const DepartmentProvider: React.FC<{
   const name = useGetParam<string>("name", "string");
   const departmentCode = useGetParam<string>("departmentCode", "string");
   const description = useGetParam<string>("description", "string");
-  const managerId = useGetParam<string>("managerId", "string");
+  const managerId = useGetParam<number>("managerId", "number");
 
   const params = useMemo((): GetListDepartmentRequest => {
     return {
