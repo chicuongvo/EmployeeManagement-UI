@@ -1,0 +1,26 @@
+.custom-quill {
+    min-height: 120px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.custom-quill .ql-toolbar.ql-snow {
+    border-color: #cccccc66 !important;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+
+.custom-quill .ql-container.ql-snow {
+    min-height: 120px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border-color: #cccccc66 !important;
+}
+
+.custom-quill.readonly .ql-toolbar {
+    pointer-events: none;
+}
+
+.custom-quill.readonly .ql-toolbar button {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

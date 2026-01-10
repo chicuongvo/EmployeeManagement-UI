@@ -1,0 +1,88 @@
+.ant-table-thead th {
+    background-color: var(--color-green-4) !important;
+}
+
+.ant-pagination .ant-pagination-item-active {
+    border-color: var(--color-green-1) !important;
+}
+
+.ant-pagination .ant-pagination-item-active a {
+    color: var(--color-green-1) !important;
+}
+
+.ant-table-tbody>tr>td {
+    border: none !important;
+}
+
+.ant-table-tbody>tr.highlighted-green-row:hover>td {
+    background-color: var(--color-green-6) !important;
+}
+
+.ant-table-tbody>tr.highlighted-yellow-row:hover>td {
+    background-color: #fef9c3 !important;
+}
+
+.ant-pagination .ant-pagination-options-quick-jumper input:focus,
+.ant-pagination .ant-pagination-options-quick-jumper input:focus-within {
+    border-color: var(--color-green-1);
+    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.15);
+}
+
+.warning-tag .ant-table-cell:first-child {
+    border-left: 3px solid #ef4444c0;
+    border-radius: 5%;
+}
+
+.warning-tag .ant-table-cell.ant-table-cell-row-hover {
+    background-color: #f7e5e5;
+}
+
+.warning-tag .ant-table-cell.ant-table-cell-fix-right.ant-table-cell-fix-right-first.ant-table-cell.ant-table-cell-row-hover {
+    background-color: white;
+}
+
+.ant-pagination .ant-pagination-options-quick-jumper input:hover {
+    border-color: var(--color-green-1);
+}
+
+.ant-table-cell.ant-table-cell-ellipsis.react-resizable {
+    overflow: visible;
+}
+
+.ohana-bordered-table .ant-table-tbody .group-task-first-row>td {
+    border-top: 1px solid #d9d9d9 !important;
+}
+
+.ohana-bordered-table .ant-table-tbody .warning-cell {
+    border-left: 3px solid #ef4444c0 !important;
+    border-radius: 5%;
+}
+
+.warning-tag-2 .ant-table-cell.ant-table-cell-row-hover {
+    background-color: #fef2f2 !important;
+}
+
+.ant-table-cell.cell-with-note {
+    position: relative;
+    overflow: visible;
+}
+
+.cell-note-icon {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 50;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    pointer-events: auto;
+}
+
+.ant-table-cell.cell-with-note:hover .cell-note-icon,
+.cell-note-icon.always-show {
+    opacity: 1;
+}
+
+.region-country-table .ant-table-thead>tr>th {
+    background-color: #fff !important;
+    font-weight: 600 !important;
+}

@@ -1,0 +1,15 @@
+@import "./base.css";
+@import "./layout.css";
+@import "./table.css";
+@import "./input.css";
+@import "./select.css";
+@import "./animations.css";
+@import "./datepicker.css";
+@import "./tab.css";
+@import "./button.css";
+@import "./checkbox.css";
+@import "./quill.css";
+@import "./animation_table.css";
+@import url("https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Oleo+Script:wght@400;700&display=swap");
