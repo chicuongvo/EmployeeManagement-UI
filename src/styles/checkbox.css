@@ -1,0 +1,37 @@
+.ant-checkbox:not(.ant-checkbox-disabled):hover .ant-checkbox-inner {
+    border-color: var(--color-green-1) !important;
+}
+
+.ant-checkbox.ant-wave-target.ant-checkbox-checked .ant-checkbox-inner {
+    background-color: var(--color-green-1) !important;
+    border-color: var(--color-green-1) !important;
+}
+
+.ant-checkbox-indeterminate .ant-checkbox-inner:after {
+    background-color: var(--color-green-1) !important;
+}
+
+.ant-table-wrapper .ant-table-row-expand-icon:focus,
+.ant-table-wrapper .ant-table-row-expand-icon:hover,
+.ant-table-wrapper .ant-table-row-expand-icon:active {
+    border-color: var(--color-green-1) !important;
+}
+
+.ant-table-wrapper .ant-table-row-expand-icon::before,
+.ant-table-wrapper .ant-table-row-expand-icon::after {
+    background-color: var(--color-green-1) !important;
+}
+
+.ant-checkbox-wrapper:not(.ant-checkbox-wrapper-disabled):hover .ant-checkbox-inner,
+.ant-checkbox:not(.ant-checkbox-disabled):hover .ant-checkbox-inner {
+    border-color: var(--color-green-1) !important;
+}
+
+.ant-checkbox-disabled .ant-checkbox-inner:after {
+    border-color: white;
+}
+
+.ant-radio-wrapper .ant-radio-checked .ant-radio-inner {
+    background-color: var(--color-green-1) !important;
+    border-color: var(--color-green-1) !important;
+}

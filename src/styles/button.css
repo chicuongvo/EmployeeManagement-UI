@@ -1,0 +1,64 @@
+.btn-green {
+    background-image: linear-gradient(to right,
+            var(--color-green-1) 0%,
+            #0ec383 51%,
+            var(--color-green-1) 100%);
+    transition: 0.5s;
+    background-size: 200% auto;
+}
+
+.btn-green:hover {
+    background-position: right center;
+}
+
+.btn-orange {
+    background-image: linear-gradient(to right,
+            var(--color-orange-1) 0%,
+            #ffcc33 51%,
+            var(--color-orange-1) 100%);
+    transition: 0.5s;
+    background-size: 200% auto;
+}
+
+.btn-orange:hover {
+    background-position: right center;
+    color: #fff;
+}
+
+.btn-blue {
+    background-image: linear-gradient(to right,
+            var(--color-blue-1) 0%,
+            #12d8fa 51%,
+            var(--color-blue-1) 100%);
+    transition: 0.5s;
+    background-size: 200% auto;
+}
+
+.btn-blue:hover {
+    color: #fff;
+    background-position: right center;
+}
+
+.btn-red {
+    background-image: linear-gradient(to right,
+            var(--color-red-1) 0%,
+            #ef4444 51%,
+            var(--color-red-1) 100%);
+    transition: 0.5s;
+    background-size: 200% auto;
+}
+
+.btn-red:hover {
+    color: #fff;
+    background-position: right center;
+}
+
+.btn-white {
+    border: 1px solid #ccc;
+    background-color: #fff;
+    color: #000;
+}
+
+.btn-white:hover {
+    background-color: #f0f0f0;
+}
