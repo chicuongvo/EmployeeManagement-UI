@@ -5,22 +5,22 @@ import DataTable from "./components/DataTable";
 import { useSearchParams } from "react-router-dom";
 import { Tabs, type TabsProps } from "antd";
 import PageTitle from "@/components/common/shared/PageTitle";
-import { useEmployeeContext } from "./EmployeeContext";
+import { useDepartmentContext } from "./DepartmentContext";
 
 export const TABS = {
-  EMPLOYEE: "1",
+  DEPARTMENT: "1",
 } as const;
 
 const Index = () => {
   const dataTableRef = useRef<HTMLDivElement>(null);
-  const { tab } = useEmployeeContext();
+  const { tab } = useDepartmentContext();
   const [, setSearchParams] = useSearchParams();
 
   const handleChangeTab = (key: string) => {
     setSearchParams({ tab: key });
   };
 
-  const tabs: TabsProps["items"] = [{ key: "1", label: "Danh sách nhân viên" }];
+  const tabs: TabsProps["items"] = [{ key: "1", label: "Danh sách phòng ban" }];
 
   const scrollToDataTable = () => {
     if (dataTableRef.current) {
@@ -37,15 +37,15 @@ const Index = () => {
         breadcrumb: {
           items: [
             {
-              title: "Hồ sơ nhân sự",
+              title: "Phòng ban",
             },
             {
-              title: "Hồ sơ nhân viên",
+              title: "Người quản lý",
             },
           ],
         },
       }}
-      title={<PageTitle title="Hồ sơ nhân viên" />}
+      title={<PageTitle title="Phòng ban" />}
     >
       <Tabs
         type="card"

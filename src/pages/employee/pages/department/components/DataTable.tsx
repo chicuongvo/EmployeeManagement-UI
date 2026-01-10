@@ -7,12 +7,12 @@ import useTableStore from "@/stores/tableStore";
 import { useEffect, useMemo } from "react";
 import { COLUMN_KEYS } from "@/constant/columns";
 
-import { useEmployeeContext } from "../EmployeeContext";
+import { useDepartmentContext } from "../DepartmentContext";
 import TooltipTruncatedText from "@/components/common/shared/TooltipTruncatedText";
 import TableComponent from "@/components/common/table/TableComponent";
-import type { EMPLOYEE } from "@/apis/employee/model/Employee";
 import CopyTextPopover from "@/components/common/shared/CopyTextPopover";
-import { WorkStatus } from "@/components/common/status";
+import type { DEPARTMENT } from "@/apis/department";
+import ActiveStatus from "@/components/common/status/ActiveStatus";
 
 const DataTable = () => {
   const {
@@ -20,15 +20,14 @@ const DataTable = () => {
     isSuccess,
     handleFilterSubmit,
     params,
-    setSelectedEmployee,
-    setPopupUpdateEmployee,
-  } = useEmployeeContext();
+    setSelectedDepartment,
+  } = useDepartmentContext();
 
-  const { setListEmployeeActiveKey, listEmployeeActiveKey } = useTableStore(
+  const { setListDepartmentActiveKey, listDepartmentActiveKey } = useTableStore(
     (state) => state
   );
 
-  const baseColumns: ColumnsType<EMPLOYEE> = useMemo(
+  const baseColumns: ColumnsType<DEPARTMENT> = useMemo(
     () => [
       {
         title: "STT",
@@ -43,86 +42,80 @@ const DataTable = () => {
         align: "center",
       },
       {
-        title: "Mã nhân viên",
-        dataIndex: "employeeCode",
-        key: COLUMN_KEYS.EMPLOYEE_CODE,
+        title: "Mã phòng ban",
+        dataIndex: "departmentCode",
+        key: COLUMN_KEYS.DEPARTMENT_CODE,
         align: "center",
         fixed: "left",
-        width: 120,
+        width: 150,
         render: (value) => <CopyTextPopover text={value} />,
       },
       {
-        title: "Họ và tên",
-        dataIndex: "employeeCode",
-        key: COLUMN_KEYS.FULL_NAME,
-        width: 250,
+        title: "Tên phòng ban",
+        dataIndex: "name",
+        key: COLUMN_KEYS.NAME,
+        width: 140,
         align: "left",
+        render: (value) => <TooltipTruncatedText value={value} />,
+      },
+      {
+        title: "Người quản lý",
+        dataIndex: ["department", "name"],
+        key: COLUMN_KEYS.DEPARTMENT,
+        align: "left",
+        width: 250,
         render: (_, record) => (
           <div className="flex items-center gap-2">
             <Avatar
               src={
-                record.avatar ??
+                record.manager?.avatar ??
                 "https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg"
               }
-              size={40}
-              className="rounded-full"
               style={{ flexShrink: 0 }}
+              size={40}
             />
             <div className="flex flex-col">
-              <span className="text-sm font-medium">{record.fullName}</span>
-              <span className="text-xs text-gray-500">{record.email}</span>
+              <span className="text-sm font-medium">
+                {record.manager?.fullName}
+              </span>
+              <span className="text-xs text-gray-500">
+                {record.manager?.email}
+              </span>
             </div>
           </div>
         ),
       },
       {
-        title: "Phòng ban",
-        dataIndex: ["department", "name"],
-        key: COLUMN_KEYS.DEPARTMENT,
-        align: "left",
+        title: "Số lượng nhân viên",
+        dataIndex: "employees",
+        key: COLUMN_KEYS.EMPLOYEE_NUMBER,
         width: 200,
-        render: (value) => <TooltipTruncatedText value={value} />,
+        align: "center",
+        render: (value) => value?.length || 0,
       },
       {
-        title: "Vị trí",
-        dataIndex: ["position", "name"],
-        key: COLUMN_KEYS.POSITION,
+        title: "Mô tả",
+        dataIndex: "description",
+        key: COLUMN_KEYS.DESCRIPTION,
         align: "left",
-        width: 200,
+        width: 250,
         render: (value) => <TooltipTruncatedText value={value} />,
       },
       {
-        title: "SĐT",
-        dataIndex: "phone",
-        key: COLUMN_KEYS.PHONE,
-        align: "left",
-        width: 120,
-        render: (value) => <TooltipTruncatedText value={value} />,
-      },
-
-      {
-        title: "Trạng thái",
-        dataIndex: "workStatus",
-        key: COLUMN_KEYS.WORK_STATUS,
+        title: "Ngày thành lập",
+        dataIndex: "foundedAt",
+        key: COLUMN_KEYS.FOUNDED_AT,
         align: "center",
         width: 150,
-        render: (value) => <WorkStatus status={value} />,
-      },
-      {
-        title: "Ngày tạo",
-        dataIndex: "createdAt",
-        align: "left",
-        key: COLUMN_KEYS.CREATED_AT,
-        width: 150,
         render: (value) => dayjs(value).format("DD/MM/YYYY HH:mm"),
       },
       {
-        title: "Ngày cập nhật",
-        dataIndex: "updatedAt",
-        align: "left",
-        key: COLUMN_KEYS.UPDATED_AT,
+        title: "Trạng thái",
+        dataIndex: "status",
+        key: COLUMN_KEYS.STATUS,
+        align: "center",
         width: 150,
-        render: (value) => dayjs(value).format("DD/MM/YYYY HH:mm"),
+        render: (value) => <ActiveStatus status={value} />,
       },
       {
         title: "Hành động",
@@ -134,8 +127,7 @@ const DataTable = () => {
           <Button
             type="text"
             onClick={() => {
-              setSelectedEmployee(record);
-              setPopupUpdateEmployee(true);
+              setSelectedDepartment(record);
             }}
             icon={<EditOutlined style={{ color: "#10b981" }} />}
           />
@@ -145,8 +137,7 @@ const DataTable = () => {
     [
       dataResponse?.data.pagination.page,
       dataResponse?.data.pagination.limit,
-      setSelectedEmployee,
-      setPopupUpdateEmployee,
+      setSelectedDepartment,
     ]
   );
 
@@ -155,14 +146,14 @@ const DataTable = () => {
   }, [baseColumns]);
 
   useEffect(() => {
-    if (!listEmployeeActiveKey) {
-      setListEmployeeActiveKey(
+    if (!listDepartmentActiveKey) {
+      setListDepartmentActiveKey(
         columns
           .map((col) => col.key as string)
           .filter((key) => key !== COLUMN_KEYS.ACTION)
       );
     }
-  }, [columns, setListEmployeeActiveKey, listEmployeeActiveKey]);
+  }, [columns, setListDepartmentActiveKey, listDepartmentActiveKey]);
 
   const paginationConfig = useMemo(
     () => ({
@@ -185,7 +176,6 @@ const DataTable = () => {
     ]
   );
 
-  console.log("dataResponse", dataResponse?.data.data);
   return (
     <TableComponent
       isSuccess={isSuccess}
@@ -193,8 +183,8 @@ const DataTable = () => {
       dataSource={dataResponse?.data.data}
       columns={columns}
       scroll={{ x: true }}
-      activeKeys={listEmployeeActiveKey}
-      setActiveKeys={setListEmployeeActiveKey}
+      activeKeys={listDepartmentActiveKey}
+      setActiveKeys={setListDepartmentActiveKey}
       pagination={paginationConfig}
       onChange={(p) =>
         handleFilterSubmit?.({

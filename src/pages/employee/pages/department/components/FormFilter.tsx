@@ -2,11 +2,10 @@ import { useCallback, useEffect, useMemo } from "react";
 import { Card, Form, Input, Select } from "antd";
 
 import BoxFilter from "@/components/common/shared/BoxFiltered";
-import { useEmployeeContext } from "../EmployeeContext";
-import type { GetListEmployeeRequest } from "@/apis/employee/model/Employee";
+import { useDepartmentContext } from "../DepartmentContext";
+import type { GetListDepartmentRequest } from "@/apis/department/model/Department";
 import DateRangePicker from "@/components/common/form/DateRangePicker";
-import SelectListDepartment from "@/components/common/form/SelectListDepartment";
-import SelectListPosition from "@/components/common/form/SelectListPosition";
+import SelectListEmployee from "@/components/common/form/SelectListEmployee";
 import dayjs from "dayjs";
 
 interface FormFilterProps {
@@ -15,16 +14,15 @@ interface FormFilterProps {
 
 const FormFilter = ({ onSearch }: FormFilterProps) => {
   const [form] = Form.useForm();
-  const { params, paramsStr, handleFilterSubmit, tab } = useEmployeeContext();
+  const { params, paramsStr, handleFilterSubmit, tab } = useDepartmentContext();
 
   useEffect(() => {
     form.resetFields();
   }, [paramsStr, form]);
 
   const onFinish = useCallback(
-    (values: GetListEmployeeRequest) => {
-      const { created_range_picker, updated_range_picker, ...restValues } =
-        values;
+    (values: GetListDepartmentRequest) => {
+      const { created_range_picker, ...restValues } = values;
       handleFilterSubmit({
         ...restValues,
         created_date_from: created_range_picker?.[0]
@@ -32,12 +30,6 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
           : undefined,
         created_date_to: created_range_picker?.[1]
           ? dayjs(created_range_picker[1]).endOf("day").unix()
-          : undefined,
-        updated_date_from: updated_range_picker?.[0]
-          ? dayjs(updated_range_picker[0]).startOf("day").unix()
-          : undefined,
-        updated_date_to: updated_range_picker?.[1]
-          ? dayjs(updated_range_picker[1]).endOf("day").unix()
           : undefined,
       });
 
@@ -61,11 +53,9 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
   const optionsInput = useMemo(() => {
     if (tab == "1") {
       return [
-        { value: "fullName", label: "Tên" },
-        { value: "email", label: "Email" },
-        { value: "phone", label: "SĐT" },
-        { value: "employeeCode", label: "Mã nhân viên" },
-        { value: "citizenId", label: "CCCD" },
+        { value: "q", label: "Mã/Tên phòng ban" },
+        { value: "departmentCode", label: "Mã phòng ban" },
+        { value: "name", label: "Tên phòng ban" },
       ];
     }
     return [];
@@ -74,36 +64,23 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
   const fields = useMemo(
     () => [
       {
-        name: "q",
-        component: (
-          <Input placeholder="Tìm kiếm theo mã nhân viên hoặc tên" allowClear />
-        ),
-      },
-      {
         name: "general_code",
         component: (
           <Input
-            placeholder="Nhập"
+            placeholder="Nhập tìm kiếm"
             allowClear
             addonBefore={
               <Form.Item name="general_code_type" noStyle>
-                <Select options={optionsInput} style={{ width: 130 }} />
+                <Select options={optionsInput} style={{ width: 160 }} />
               </Form.Item>
             }
           />
         ),
       },
-
       {
-        name: "departmentId",
+        name: "managerId",
         component: (
-          <SelectListDepartment placeholder="- Chọn phòng ban -" allowClear />
-        ),
-      },
-      {
-        name: "positionId",
-        component: (
-          <SelectListPosition placeholder="- Chọn vị trí -" allowClear />
+          <SelectListEmployee placeholder="- Chọn người quản lý -" allowClear />
         ),
       },
       {
@@ -132,7 +109,7 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
     <Card className="mb-3 py-1" size="small">
       <Form
         form={form}
-        name="employee-filter"
+        name="department-filter"
         onFinish={onFinish}
         initialValues={initialValues}
         scrollToFirstError
