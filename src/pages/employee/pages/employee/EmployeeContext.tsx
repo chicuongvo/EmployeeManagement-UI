@@ -64,6 +64,10 @@ export const EmployeeProvider: React.FC<{
   const limit = useGetParam<number>("limit", "number");
   const sort = useGetParam<string>("sort", "string");
   const tab = useGetParam<string>("tab");
+  const createdDateFrom = useGetParam<number>("created_date_from", "number");
+  const createdDateTo = useGetParam<number>("created_date_to", "number");
+  const updatedDateFrom = useGetParam<number>("updated_date_from", "number");
+  const updatedDateTo = useGetParam<number>("updated_date_to", "number");
 
   const params = useMemo((): GetListEmployeeRequest => {
     return {
@@ -80,6 +84,10 @@ export const EmployeeProvider: React.FC<{
       page,
       limit,
       sort,
+      created_date_from: createdDateFrom,
+      created_date_to: createdDateTo,
+      updated_date_from: updatedDateFrom,
+      updated_date_to: updatedDateTo,
     };
   }, [
     generalCode,
@@ -90,6 +98,10 @@ export const EmployeeProvider: React.FC<{
     page,
     limit,
     sort,
+    createdDateFrom,
+    createdDateTo,
+    updatedDateFrom,
+    updatedDateTo,
   ]);
 
   const paramsStr = useMemo(() => JSON.stringify(params), [params]);

@@ -7,14 +7,12 @@ export interface Department {
   departmentCode: string;
   managerId?: number;
   createdAt: Date;
-  updatedAt: Date;
 }
 
 export interface Position {
   id: number;
   name: string;
   createdAt: Date;
-  updatedAt: Date;
 }
 
 export interface WorkHistory {
@@ -25,7 +23,6 @@ export interface WorkHistory {
   startDate: Date;
   endDate?: Date;
   createdAt: Date;
-  updatedAt: Date;
 }
 
 export type WorkStatus = "ACTIVE" | "RESIGNED" | "TERMINATED" | "RETIRED";
@@ -61,7 +58,7 @@ export interface EMPLOYEE {
   workStatus: WorkStatus;
   isActive: boolean;
   createdAt: Date;
-  updatedAt: Date;
+  // Note: Employee model doesn't have updatedAt in Prisma schema
 
   // Relations (optional, included based on API include parameter)
   department?: Department;

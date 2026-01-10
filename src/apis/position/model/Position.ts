@@ -5,10 +5,17 @@ export interface POSITION {
   id: number;
   name: string;
   createdAt: Date | string;
+  // Relations (optional, included based on API include parameter)
+  employees?: Array<{
+    id: number;
+    fullName: string;
+    employeeCode?: string;
+  }>;
 }
 
 // Request interface for filtering positions
-export interface GetListPositionRequest extends Omit<PaginationRequest, "name"> {
+export interface GetListPositionRequest
+  extends Omit<PaginationRequest, "name"> {
   // Position fields for filtering (supports OR search)
   name?: string | string[];
 }
@@ -36,4 +43,3 @@ export interface CreatePositionRequest {
 export interface UpdatePositionRequest {
   name?: string;
 }
-

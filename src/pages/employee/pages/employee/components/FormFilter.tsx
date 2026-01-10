@@ -5,8 +5,9 @@ import BoxFilter from "@/components/common/shared/BoxFiltered";
 import { useEmployeeContext } from "../EmployeeContext";
 import type { GetListEmployeeRequest } from "@/apis/employee/model/Employee";
 import DateRangePicker from "@/components/common/form/DateRangePicker";
-import SelectListPosition from "../SelectListPosition";
 import SelectListDepartment from "@/components/common/form/SelectListDepartment";
+import SelectListPosition from "@/components/common/form/SelectListPosition";
+import dayjs from "dayjs";
 
 interface FormFilterProps {
   onSearch?: () => void;
@@ -22,7 +23,23 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
 
   const onFinish = useCallback(
     (values: GetListEmployeeRequest) => {
-      handleFilterSubmit(values);
+      const { created_range_picker, updated_range_picker, ...restValues } =
+        values;
+      handleFilterSubmit({
+        ...restValues,
+        created_date_from: created_range_picker?.[0]
+          ? dayjs(created_range_picker[0]).startOf("day").unix()
+          : undefined,
+        created_date_to: created_range_picker?.[1]
+          ? dayjs(created_range_picker[1]).endOf("day").unix()
+          : undefined,
+        updated_date_from: updated_range_picker?.[0]
+          ? dayjs(updated_range_picker[0]).startOf("day").unix()
+          : undefined,
+        updated_date_to: updated_range_picker?.[1]
+          ? dayjs(updated_range_picker[1]).endOf("day").unix()
+          : undefined,
+      });
 
       if (onSearch) {
         setTimeout(() => onSearch(), 100);
