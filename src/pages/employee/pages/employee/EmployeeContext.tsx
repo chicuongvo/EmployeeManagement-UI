@@ -57,6 +57,7 @@ export const EmployeeProvider: React.FC<{
     "string",
     "fullName"
   );
+  const q = useGetParam<string>("q", "string");
   const departmentId = useGetParam<string>("departmentId", "string");
   const positionId = useGetParam<string>("positionId", "string");
   const isActiveParam = useGetParam<string>("isActive", "string");
@@ -73,6 +74,7 @@ export const EmployeeProvider: React.FC<{
     return {
       general_code: generalCode,
       general_code_type: generalCodeType,
+      q,
       departmentId,
       positionId,
       isActive:
@@ -92,6 +94,7 @@ export const EmployeeProvider: React.FC<{
   }, [
     generalCode,
     generalCodeType,
+    q,
     departmentId,
     positionId,
     isActiveParam,

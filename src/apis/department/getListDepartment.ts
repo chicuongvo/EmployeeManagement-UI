@@ -1,16 +1,18 @@
-import axiosApi from "@/utils/axiosApi";
+import requestApi from "@/utils/requestApi";
 import type {
   GetListDepartmentRequest,
   GetListDepartmentResponse,
 } from "./model/Department";
 
-export const getListDepartment = async (
-  params?: GetListDepartmentRequest
-): Promise<GetListDepartmentResponse> => {
-  const response = await axiosApi.get<{
-    code: string;
-    data: GetListDepartmentResponse;
-  }>("/department", { params });
-
-  return response.data.data;
+const endpoints = {
+  department: "/department",
 };
+
+const getList =
+  (url: string) =>
+  async (
+    params: GetListDepartmentRequest
+  ): Promise<GetListDepartmentResponse> =>
+    requestApi.get<GetListDepartmentResponse>(url, params);
+
+export const getListDepartment = getList(endpoints.department);

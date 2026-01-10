@@ -82,6 +82,9 @@ export interface EMPLOYEE {
 }
 
 export interface GetListEmployeeRequest extends PaginationRequest {
+  // Quick search filter (searches in employeeCode and fullName)
+  q?: string;
+  
   departmentId?: number | number[] | string | string[];
   positionId?: number | number[] | string | string[];
   isActive?: boolean;

@@ -1,13 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { type QueryKey, useQuery } from "@tanstack/react-query";
 import { Select, type SelectProps, Checkbox } from "antd";
-import { useCallback, useState, useMemo } from "react";
+import { useCallback, useState, useMemo, type ReactNode } from "react";
 
 import { debounce } from "@/utils/debounce";
 
 type SelectListGenericProps<T, R> = {
   fetcher: (search: string) => Promise<R>;
-  mapOptions: (data: R) => { value: string | number; label: string }[];
+  mapOptions: (data: R) => {
+    value: string | number;
+    label: string | ReactNode;
+    title?: string;
+    [key: string]: any;
+  }[];
   queryKey: string | QueryKey;
   queryEnabled?: boolean;
   showSelectAll?: boolean;

@@ -54,7 +54,7 @@ const SelectListDepartment = ({
       }}
       fetcher={(search) =>
         getListDepartment({
-          name: search,
+          q: search,
         })
       }
       mapOptions={(data: GetListDepartmentResponse) => {
@@ -68,7 +68,7 @@ const SelectListDepartment = ({
 
         // Options from search results
         const options =
-          data?.data?.map((d) => ({
+          data?.data.data?.map((d) => ({
             value: d.id,
             label: `${d.name} (${d.departmentCode})`,
           })) || [];
