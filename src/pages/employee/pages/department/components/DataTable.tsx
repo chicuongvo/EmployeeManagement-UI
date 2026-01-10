@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import { Avatar, Button } from "antd";
@@ -13,6 +14,15 @@ import TableComponent from "@/components/common/table/TableComponent";
 import CopyTextPopover from "@/components/common/shared/CopyTextPopover";
 import type { DEPARTMENT } from "@/apis/department";
 import ActiveStatus from "@/components/common/status/ActiveStatus";
+import { TABS } from "..";
+import type { POSITION } from "@/apis/position/model/Position";
+
+const TAB_POSITION_EXCLUDE_COLUMNS = [
+  COLUMN_KEYS.DEPARTMENT,
+  COLUMN_KEYS.CODE,
+  COLUMN_KEYS.DESCRIPTION,
+  COLUMN_KEYS.FOUNDED_AT,
+];
 
 const DataTable = () => {
   const {
@@ -21,11 +31,15 @@ const DataTable = () => {
     handleFilterSubmit,
     params,
     setSelectedDepartment,
+    tab,
   } = useDepartmentContext();
 
-  const { setListDepartmentActiveKey, listDepartmentActiveKey } = useTableStore(
-    (state) => state
-  );
+  const {
+    setListDepartmentActiveKey,
+    listDepartmentActiveKey,
+    setListPositionActiveKey,
+    listPositionActiveKey,
+  } = useTableStore((state) => state);
 
   const baseColumns: ColumnsType<DEPARTMENT> = useMemo(
     () => [
@@ -42,16 +56,16 @@ const DataTable = () => {
         align: "center",
       },
       {
-        title: "Mã phòng ban",
-        dataIndex: "departmentCode",
-        key: COLUMN_KEYS.DEPARTMENT_CODE,
+        title: tab === TABS.DEPARTMENT ? "Mã phòng ban" : "Mã chức vụ",
+        dataIndex: tab === TABS.DEPARTMENT ? "departmentCode" : "code",
+        key: COLUMN_KEYS.CODE,
         align: "center",
         fixed: "left",
         width: 150,
         render: (value) => <CopyTextPopover text={value} />,
       },
       {
-        title: "Tên phòng ban",
+        title: tab === TABS.DEPARTMENT ? "Tên phòng ban" : "Tên chức vụ",
         dataIndex: "name",
         key: COLUMN_KEYS.NAME,
         width: 140,
@@ -138,22 +152,42 @@ const DataTable = () => {
       dataResponse?.data.pagination.page,
       dataResponse?.data.pagination.limit,
       setSelectedDepartment,
+      tab,
     ]
   );
 
   const columns = useMemo(() => {
+    if (tab === TABS.POSITION) {
+      return baseColumns.filter(
+        (col) => !TAB_POSITION_EXCLUDE_COLUMNS.includes(col.key as any)
+      );
+    }
     return baseColumns;
-  }, [baseColumns]);
+  }, [baseColumns, tab]);
 
   useEffect(() => {
-    if (!listDepartmentActiveKey) {
+    if (tab === TABS.DEPARTMENT && !listDepartmentActiveKey) {
       setListDepartmentActiveKey(
         columns
           .map((col) => col.key as string)
           .filter((key) => key !== COLUMN_KEYS.ACTION)
       );
     }
-  }, [columns, setListDepartmentActiveKey, listDepartmentActiveKey]);
+    if (tab === TABS.POSITION && !listPositionActiveKey) {
+      setListPositionActiveKey(
+        columns
+          .map((col) => col.key as string)
+          .filter((key) => key !== COLUMN_KEYS.ACTION)
+      );
+    }
+  }, [
+    columns,
+    setListDepartmentActiveKey,
+    listDepartmentActiveKey,
+    setListPositionActiveKey,
+    listPositionActiveKey,
+    tab,
+  ]);
 
   const paginationConfig = useMemo(
     () => ({
@@ -181,10 +215,18 @@ const DataTable = () => {
       isSuccess={isSuccess}
       rowKey={(record) => record.id || ""}
       dataSource={dataResponse?.data.data}
-      columns={columns}
+      columns={columns as ColumnsType<DEPARTMENT | POSITION>}
       scroll={{ x: true }}
-      activeKeys={listDepartmentActiveKey}
-      setActiveKeys={setListDepartmentActiveKey}
+      activeKeys={
+        tab === TABS.DEPARTMENT
+          ? listDepartmentActiveKey
+          : listPositionActiveKey || []
+      }
+      setActiveKeys={
+        tab === TABS.DEPARTMENT
+          ? setListDepartmentActiveKey
+          : setListPositionActiveKey
+      }
       pagination={paginationConfig}
       onChange={(p) =>
         handleFilterSubmit?.({

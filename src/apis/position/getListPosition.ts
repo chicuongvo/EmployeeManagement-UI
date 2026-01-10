@@ -1,17 +1,16 @@
-import axiosApi from "@/utils/axiosApi";
+import requestApi from "@/utils/requestApi";
 import type {
   GetListPositionRequest,
   GetListPositionResponse,
 } from "./model/Position";
 
-export const getListPosition = async (
-  params?: GetListPositionRequest
-): Promise<GetListPositionResponse> => {
-  const response = await axiosApi.get<{
-    code: string;
-    data: GetListPositionResponse;
-  }>("/position", { params });
-
-  return response.data.data;
+const endpoints = {
+  position: "/position",
 };
 
+const getList =
+  (url: string) =>
+  async (params: GetListPositionRequest): Promise<GetListPositionResponse> =>
+    requestApi.get<GetListPositionResponse>(url, params);
+
+export const getListPosition = getList(endpoints.position);

@@ -9,9 +9,11 @@ import MainLayout from "@/layout/MainLayout";
 
 const route: RouteItem = {
   path: "/employee",
-  name: "Hồ sơ nhân viên",
+  name: (
+    <span className="font-primary">Hồ sơ nhân viên</span>
+  ) as unknown as string,
   element: <MainLayout />,
-  icon: <FaUserGroup className="text-base" />,
+  icon: <FaUserGroup className="text-base font-primary" />,
   children: [
     {
       path: "employees",

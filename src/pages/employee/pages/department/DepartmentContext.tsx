@@ -18,6 +18,12 @@ import type {
   GetListDepartmentRequest,
   GetListDepartmentResponse,
 } from "@/apis/department/model/Department";
+import type {
+  GetListPositionRequest,
+  GetListPositionResponse,
+} from "@/apis/position/model/Position";
+import { TABS } from ".";
+import { getListPosition } from "@/apis/position";
 // import { useUpdateEmployee } from "@/apis/employee/createUpdateEmployee";
 // import { getListFile, GetListFileResponse } from "@/apis/files/getListFile";
 
@@ -27,10 +33,12 @@ interface DepartmentContextType {
   setPopupUpdateEmployee: React.Dispatch<React.SetStateAction<boolean>>;
   popupUpdateEmployee: boolean;
   refetch: () => void;
-  dataResponse?: GetListDepartmentResponse;
+  dataResponse?: GetListDepartmentResponse | GetListPositionResponse;
   isLoading: boolean;
   isSuccess: boolean;
-  handleFilterSubmit: (values: GetListDepartmentRequest) => void;
+  handleFilterSubmit: (
+    values: GetListDepartmentRequest | GetListPositionRequest
+  ) => void;
   setSelectedDepartment: React.Dispatch<
     React.SetStateAction<DEPARTMENT | null>
   >;
@@ -126,7 +134,9 @@ export const DepartmentProvider: React.FC<{
 
   const { isLoading, data, refetch, isSuccess } = useQuery({
     queryKey: ["departments", params, tab],
-    queryFn: (): Promise<GetListDepartmentResponse> => {
+    queryFn: (): Promise<
+      GetListDepartmentResponse | GetListPositionResponse
+    > => {
       const modifiedParams = {
         ...params,
         [`${params.general_code_type ?? ""}`]: params.general_code
@@ -136,7 +146,9 @@ export const DepartmentProvider: React.FC<{
 
       modifiedParams.general_code = undefined;
       modifiedParams.general_code_type = undefined;
-      return getListDepartment(modifiedParams);
+      return tab === TABS.DEPARTMENT
+        ? getListDepartment(modifiedParams)
+        : getListPosition(modifiedParams);
     },
 
     //   return getListDepartment(modifiedParams);
@@ -146,7 +158,9 @@ export const DepartmentProvider: React.FC<{
 
   console.log("data", data);
 
-  const handleFilterSubmit = (values: GetListDepartmentRequest) => {
+  const handleFilterSubmit = (
+    values: GetListDepartmentRequest | GetListPositionRequest
+  ) => {
     setSearchParams(
       queryString.stringify(
         {
