@@ -13,14 +13,14 @@ export const TABS = {
 
 const Index = () => {
   const dataTableRef = useRef<HTMLDivElement>(null);
-  const { refetch, tab } = useEmployeeContext();
+  const { tab } = useEmployeeContext();
   const [, setSearchParams] = useSearchParams();
 
   const handleChangeTab = (key: string) => {
     setSearchParams({ tab: key });
   };
 
-  const tabs: TabsProps["items"] = [{ key: "1", label: "Employee List" }];
+  const tabs: TabsProps["items"] = [{ key: "1", label: "Danh sách nhân viên" }];
 
   const scrollToDataTable = () => {
     if (dataTableRef.current) {
@@ -37,15 +37,15 @@ const Index = () => {
         breadcrumb: {
           items: [
             {
-              title: "Master list",
+              title: "Hồ sơ nhân sự",
             },
             {
-              title: "Employee",
+              title: "Hồ sơ nhân viên",
             },
           ],
         },
       }}
-      title={<PageTitle title="Employee Management" />}
+      title={<PageTitle title="Hồ sơ nhân viên" />}
     >
       <Tabs
         type="card"

@@ -1,6 +1,6 @@
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
-import { Button } from "antd";
+import { Avatar, Button } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 
 import useTableStore from "@/stores/tableStore";
@@ -12,6 +12,7 @@ import TooltipTruncatedText from "@/components/common/shared/TooltipTruncatedTex
 import TableComponent from "@/components/common/table/TableComponent";
 import type { EMPLOYEE } from "@/apis/employee/model/Employee";
 import CopyTextPopover from "@/components/common/shared/CopyTextPopover";
+import { WorkStatus } from "@/components/common/status";
 
 const DataTable = () => {
   const {
@@ -30,7 +31,7 @@ const DataTable = () => {
   const baseColumns: ColumnsType<EMPLOYEE> = useMemo(
     () => [
       {
-        title: "No",
+        title: "STT",
         key: COLUMN_KEYS.NO,
         render: (_, __, index: number) => {
           const currentPage = dataResponse?.data.pagination.page ?? 1;
@@ -42,40 +43,32 @@ const DataTable = () => {
         align: "center",
       },
       {
-        title: "Employee Code",
+        title: "Mã nhân viên",
         dataIndex: "employeeCode",
         key: COLUMN_KEYS.EMPLOYEE_CODE,
-        width: 150,
+        align: "center",
         fixed: "left",
-        align: "left",
+        width: 120,
         render: (value) => <CopyTextPopover text={value} />,
       },
       {
-        title: "Full Name",
-        dataIndex: "fullName",
+        title: "Họ và tên",
+        dataIndex: "employeeCode",
         key: COLUMN_KEYS.FULL_NAME,
-        fixed: "left",
-        width: 200,
-        render: (value) => <TooltipTruncatedText value={value} />,
-      },
-      {
-        title: "Email",
-        dataIndex: "email",
-        key: COLUMN_KEYS.EMAIL,
+        width: 250,
         align: "left",
-        width: 200,
-        render: (value) => <TooltipTruncatedText value={value} />,
+        render: (_, record) => (
+          <div className="flex items-center gap-2">
+            <Avatar src={record.avatar} size={40} />
+            <div className="flex flex-col">
+              <span className="text-sm font-medium">{record.fullName}</span>
+              <span className="text-xs text-gray-500">{record.email}</span>
+            </div>
+          </div>
+        ),
       },
       {
-        title: "Phone",
-        dataIndex: "phone",
-        key: COLUMN_KEYS.PHONE,
-        align: "left",
-        width: 150,
-        render: (value) => <TooltipTruncatedText value={value} />,
-      },
-      {
-        title: "Department",
+        title: "Phòng ban",
         dataIndex: ["department", "name"],
         key: COLUMN_KEYS.DEPARTMENT,
         align: "left",
@@ -83,7 +76,7 @@ const DataTable = () => {
         render: (value) => <TooltipTruncatedText value={value} />,
       },
       {
-        title: "Position",
+        title: "Vị trí",
         dataIndex: ["position", "name"],
         key: COLUMN_KEYS.POSITION,
         align: "left",
@@ -91,22 +84,24 @@ const DataTable = () => {
         render: (value) => <TooltipTruncatedText value={value} />,
       },
       {
-        title: "Status",
-        dataIndex: "isActive",
-        key: COLUMN_KEYS.STATUS,
-        align: "center",
-        width: 100,
-        render: (value) => (value ? "Active" : "Inactive"),
+        title: "SĐT",
+        dataIndex: "phone",
+        key: COLUMN_KEYS.PHONE,
+        align: "left",
+        width: 120,
+        render: (value) => <TooltipTruncatedText value={value} />,
       },
+
       {
-        title: "Work Status",
+        title: "Trạng thái",
         dataIndex: "workStatus",
         key: COLUMN_KEYS.WORK_STATUS,
         align: "center",
-        width: 120,
+        width: 150,
+        render: (value) => <WorkStatus status={value} />,
       },
       {
-        title: "Created At",
+        title: "Ngày tạo",
         dataIndex: "createdAt",
         align: "left",
         key: COLUMN_KEYS.CREATED_AT,
@@ -114,7 +109,7 @@ const DataTable = () => {
         render: (value) => dayjs(value).format("DD/MM/YYYY HH:mm"),
       },
       {
-        title: "Updated At",
+        title: "Ngày cập nhật",
         dataIndex: "updatedAt",
         align: "left",
         key: COLUMN_KEYS.UPDATED_AT,
@@ -122,9 +117,9 @@ const DataTable = () => {
         render: (value) => dayjs(value).format("DD/MM/YYYY HH:mm"),
       },
       {
-        title: "Action",
+        title: "Hành động",
         key: COLUMN_KEYS.ACTION,
-        width: 60,
+        width: 120,
         fixed: "right",
         align: "center",
         render: (_, record) => (

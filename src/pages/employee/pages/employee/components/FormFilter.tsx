@@ -61,11 +61,11 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
   const optionsInput = useMemo(() => {
     if (tab == "1") {
       return [
-        { value: "fullName", label: "Full Name" },
+        { value: "fullName", label: "Tên" },
         { value: "email", label: "Email" },
-        { value: "phone", label: "Phone" },
-        { value: "employeeCode", label: "Employee Code" },
-        { value: "citizenId", label: "Citizen ID" },
+        { value: "phone", label: "SĐT" },
+        { value: "employeeCode", label: "Mã nhân viên" },
+        { value: "citizenId", label: "CCCD" },
       ];
     }
     return [];
@@ -77,7 +77,7 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
         name: "general_code",
         component: (
           <Input
-            placeholder="Input code"
+            placeholder="Nhập"
             allowClear
             addonBefore={
               <Form.Item name="general_code_type" noStyle>
@@ -90,18 +90,22 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
 
       {
         name: "departmentId",
-        component: <SelectListDepartment placeholder="Department" allowClear />,
+        component: (
+          <SelectListDepartment placeholder="- Chọn phòng ban -" allowClear />
+        ),
       },
       {
         name: "positionId",
-        component: <SelectListPosition placeholder="Position" allowClear />,
+        component: (
+          <SelectListPosition placeholder="- Chọn vị trí -" allowClear />
+        ),
       },
       {
         name: "created_range_picker",
         component: (
           <DateRangePicker
             format="DD/MM/YYYY"
-            placeholder={["Created From Date", "To Date"]}
+            placeholder={["Tạo từ ngày", "Đến ngày"]}
           />
         ),
       },
@@ -110,7 +114,7 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
         component: (
           <DateRangePicker
             format="DD/MM/YYYY"
-            placeholder={["Update From Date", "To Date"]}
+            placeholder={["Cập nhật từ ngày", "Đến ngày"]}
           />
         ),
       },

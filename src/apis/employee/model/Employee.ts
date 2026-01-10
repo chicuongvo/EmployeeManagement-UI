@@ -25,7 +25,21 @@ export interface WorkHistory {
   createdAt: Date;
 }
 
-export type WorkStatus = "ACTIVE" | "RESIGNED" | "TERMINATED" | "RETIRED";
+export type WorkStatus =
+  | "WORKING_ONSITE"
+  | "WORK_FROM_HOME"
+  | "BUSINESS_TRIP"
+  | "TRAINING"
+  | "ON_LEAVE_PERSONAL"
+  | "ON_LEAVE_SICK"
+  | "ON_LEAVE_MATERNITY"
+  | "ON_LEAVE_VACATION"
+  | "OFF_DUTY"
+  | "ABSENT"
+  | "RESIGNED"
+  | "TERMINATED"
+  | "RETIRED"
+  | "ACTIVE"; // Legacy for backward compatibility
 export type Gender = "MALE" | "FEMALE" | "OTHER";
 export type Education =
   | "HIGH_SCHOOL"
