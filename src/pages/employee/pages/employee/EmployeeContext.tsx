@@ -58,8 +58,8 @@ export const EmployeeProvider: React.FC<{
     "fullName"
   );
   const q = useGetParam<string>("q", "string");
-  const departmentId = useGetParam<string>("departmentId", "string");
-  const positionId = useGetParam<string>("positionId", "string");
+  const departmentId = useGetParam<number>("departmentId", "number");
+  const positionId = useGetParam<number>("positionId", "number");
   const isActiveParam = useGetParam<string>("isActive", "string");
   const page = useGetParam<number>("page", "number");
   const limit = useGetParam<number>("limit", "number");
