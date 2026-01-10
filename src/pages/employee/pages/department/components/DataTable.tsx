@@ -12,6 +12,7 @@ import TooltipTruncatedText from "@/components/common/shared/TooltipTruncatedTex
 import TableComponent from "@/components/common/table/TableComponent";
 import CopyTextPopover from "@/components/common/shared/CopyTextPopover";
 import type { DEPARTMENT } from "@/apis/department";
+import ActiveStatus from "@/components/common/status/ActiveStatus";
 
 const DataTable = () => {
   const {
@@ -108,7 +109,14 @@ const DataTable = () => {
         width: 150,
         render: (value) => dayjs(value).format("DD/MM/YYYY HH:mm"),
       },
-
+      {
+        title: "Trạng thái",
+        dataIndex: "status",
+        key: COLUMN_KEYS.STATUS,
+        align: "center",
+        width: 150,
+        render: (value) => <ActiveStatus status={value} />,
+      },
       {
         title: "Hành động",
         key: COLUMN_KEYS.ACTION,

@@ -26,6 +26,7 @@ export interface DEPARTMENT {
     fullName: string;
     employeeCode?: string;
   }>;
+  status: "ACTIVE" | "INACTIVE";
 }
 
 // Request interface for filtering departments

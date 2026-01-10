@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Tag } from "antd";
 import type { WorkStatus as WorkStatusType } from "@/apis/employee/model/Employee";
 
@@ -91,4 +92,3 @@ const WorkStatus = ({ status, size = "default" }: WorkStatusProps) => {
 };
 
 export default WorkStatus;
-
