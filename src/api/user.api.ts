@@ -5,10 +5,15 @@ import type {
   CreateUserRequest,
 } from "../types/User";
 
+export interface SignInRequest {
+  employeeCode: string;
+  password: string;
+}
+
 export const signIn = async (
-  signInData: SignInData
+  signInData: SignInRequest
 ): Promise<Partial<UserResponse>> => {
-  const response = await axiosClient.post("/auth/login", signInData);
+  const response = await axiosClient.post("/auth/sign-in", signInData);
 
   return response.data.data;
 };

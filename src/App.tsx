@@ -6,7 +6,7 @@ import Footer from "./components/Client/Footer";
 
 function App() {
   return (
-    <div className="font-primary dark:bg-gray-800 ">
+    <div className="font-primary bg-white">
       <ScrollToTop />
       <Navbar />
       <main className="max-w-7xl min-h-dvh mx-auto px-4 sm:px-6 lg:px-8 py-8">

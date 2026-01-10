@@ -356,3 +356,458 @@ export const dashboardStats = {
     { name: "Other", value: 5, color: "#6B7280" },
   ],
 };
+
+// Update Request Mock Data
+export interface UpdateRequestMock {
+  id: number;
+  content: string;
+  status: "PENDING" | "APPROVED" | "NOT_APPROVED";
+  requestedById: number;
+  reviewedById?: number | null;
+  createdAt?: string;
+  updatedAt?: string;
+  requestedBy?: {
+    id: number;
+    fullName: string;
+    email: string;
+  };
+  reviewedBy?: {
+    id: number;
+    fullName: string;
+    email: string;
+  } | null;
+}
+
+export const mockUpdateRequests: UpdateRequestMock[] = [
+  {
+    id: 1,
+    content: "Xin phép được thay đổi email từ nguyenvana@company.com sang nguyenvana.new@company.com vì lý do bảo mật. Email cũ đã bị lộ thông tin và tôi muốn đổi sang email mới để đảm bảo an toàn.",
+    status: "PENDING",
+    requestedById: 1,
+    reviewedById: null,
+    createdAt: "2024-01-15T08:30:00Z",
+    updatedAt: "2024-01-15T08:30:00Z",
+    requestedBy: {
+      id: 1,
+      fullName: "Nguyễn Văn A",
+      email: "nguyenvana@company.com",
+    },
+    reviewedBy: null,
+  },
+  {
+    id: 2,
+    content: "Tôi muốn cập nhật số điện thoại từ 0901234567 sang 0909876543. Số điện thoại cũ đã không còn sử dụng nữa.",
+    status: "PENDING",
+    requestedById: 2,
+    reviewedById: 5,
+    createdAt: "2024-01-14T10:15:00Z",
+    updatedAt: "2024-01-16T09:20:00Z",
+    requestedBy: {
+      id: 2,
+      fullName: "Trần Thị B",
+      email: "tranthib@company.com",
+    },
+    reviewedBy: {
+      id: 5,
+      fullName: "Lê Văn C",
+      email: "levanc@company.com",
+    },
+  },
+  {
+    id: 3,
+    content: "Yêu cầu thay đổi địa chỉ từ '123 Đường ABC, Quận 1, TP.HCM' sang '456 Đường XYZ, Quận 3, TP.HCM' do đã chuyển nhà.",
+    status: "APPROVED",
+    requestedById: 3,
+    reviewedById: 5,
+    createdAt: "2024-01-10T14:00:00Z",
+    updatedAt: "2024-01-12T16:30:00Z",
+    requestedBy: {
+      id: 3,
+      fullName: "Phạm Văn D",
+      email: "phamvand@company.com",
+    },
+    reviewedBy: {
+      id: 5,
+      fullName: "Lê Văn C",
+      email: "levanc@company.com",
+    },
+  },
+  {
+    id: 4,
+    content: "Xin được cập nhật thông tin trình độ học vấn từ 'Đại học' lên 'Thạc sĩ' vì tôi đã hoàn thành chương trình thạc sĩ vào tháng 12/2023.",
+    status: "NOT_APPROVED",
+    requestedById: 4,
+    reviewedById: 5,
+    createdAt: "2024-01-08T11:45:00Z",
+    updatedAt: "2024-01-11T10:00:00Z",
+    requestedBy: {
+      id: 4,
+      fullName: "Hoàng Thị E",
+      email: "hoangthie@company.com",
+    },
+    reviewedBy: {
+      id: 5,
+      fullName: "Lê Văn C",
+      email: "levanc@company.com",
+    },
+  },
+  {
+    id: 5,
+    content: "Yêu cầu thay đổi phòng ban từ 'Phòng Kỹ thuật' sang 'Phòng Kinh doanh' theo yêu cầu điều chuyển công tác.",
+    status: "PENDING",
+    requestedById: 6,
+    reviewedById: null,
+    createdAt: "2024-01-17T09:00:00Z",
+    updatedAt: "2024-01-17T09:00:00Z",
+    requestedBy: {
+      id: 6,
+      fullName: "Võ Văn F",
+      email: "vovanf@company.com",
+    },
+    reviewedBy: null,
+  },
+  {
+    id: 6,
+    content: "Xin phép cập nhật thông tin ngân hàng: số tài khoản từ 1234567890 sang 9876543210, ngân hàng từ 'Vietcombank' sang 'BIDV'.",
+    status: "PENDING",
+    requestedById: 7,
+    reviewedById: 5,
+    createdAt: "2024-01-16T13:20:00Z",
+    updatedAt: "2024-01-17T14:15:00Z",
+    requestedBy: {
+      id: 7,
+      fullName: "Đặng Thị G",
+      email: "dangthig@company.com",
+    },
+    reviewedBy: {
+      id: 5,
+      fullName: "Lê Văn C",
+      email: "levanc@company.com",
+    },
+  },
+  {
+    id: 7,
+    content: "Tôi muốn thay đổi chức vụ từ 'Nhân viên' sang 'Trưởng nhóm' sau khi được thăng chức vào tháng 1/2024.",
+    status: "APPROVED",
+    requestedById: 8,
+    reviewedById: 5,
+    createdAt: "2024-01-05T08:00:00Z",
+    updatedAt: "2024-01-07T15:45:00Z",
+    requestedBy: {
+      id: 8,
+      fullName: "Bùi Văn H",
+      email: "buivanh@company.com",
+    },
+    reviewedBy: {
+      id: 5,
+      fullName: "Lê Văn C",
+      email: "levanc@company.com",
+    },
+  },
+  {
+    id: 8,
+    content: "Yêu cầu cập nhật thông tin hợp đồng: thay đổi mức lương từ 15,000,000 VNĐ lên 18,000,000 VNĐ theo thỏa thuận mới.",
+    status: "PENDING",
+    requestedById: 9,
+    reviewedById: null,
+    createdAt: "2024-01-18T10:30:00Z",
+    updatedAt: "2024-01-18T10:30:00Z",
+    requestedBy: {
+      id: 9,
+      fullName: "Ngô Thị I",
+      email: "ngothii@company.com",
+    },
+    reviewedBy: null,
+  },
+];
+
+// Contract Mock Data
+export interface ContractMock {
+  id: number;
+  contractCode: string;
+  type: "FULL_TIME" | "PART_TIME" | "INTERNSHIP" | "PROBATION" | "TEMPORARY" | "FREELANCE" | "OUTSOURCE";
+  startDate: string;
+  endDate: string;
+  signedDate: string;
+  status: "DRAFT" | "ACTIVE" | "EXPIRED" | "TERMINATED" | "PENDING" | "RENEWED";
+  dailySalary: number;
+  allowance: number;
+  note?: string | null;
+  attachment?: string | null;
+  createdAt: string;
+  signedById: number;
+  employeeId: number;
+  employee?: {
+    id: number;
+    fullName: string;
+    email: string;
+  };
+  signedBy?: {
+    id: number;
+    fullName: string;
+    email: string;
+  };
+}
+
+export const mockContracts: ContractMock[] = [
+  {
+    id: 1,
+    contractCode: "CT001",
+    type: "FULL_TIME",
+    startDate: "2024-01-01T00:00:00Z",
+    endDate: "2024-12-31T23:59:59Z",
+    signedDate: "2023-12-15T00:00:00Z",
+    status: "ACTIVE",
+    dailySalary: 500000,
+    allowance: 1000000,
+    note: "Hợp đồng lao động chính thức, thời hạn 1 năm",
+    attachment: "https://res.cloudinary.com/demo/image/upload/v1234567890/contracts/ct001.pdf",
+    createdAt: "2023-12-15T08:00:00Z",
+    signedById: 5,
+    employeeId: 1,
+    employee: {
+      id: 1,
+      fullName: "Nguyễn Văn A",
+      email: "nguyenvana@company.com",
+    },
+    signedBy: {
+      id: 5,
+      fullName: "Lê Văn C",
+      email: "levanc@company.com",
+    },
+  },
+  {
+    id: 2,
+    contractCode: "CT002",
+    type: "PART_TIME",
+    startDate: "2024-02-01T00:00:00Z",
+    endDate: "2024-08-01T23:59:59Z",
+    signedDate: "2024-01-20T00:00:00Z",
+    status: "ACTIVE",
+    dailySalary: 300000,
+    allowance: 500000,
+    note: "Hợp đồng bán thời gian, làm việc 4 giờ/ngày",
+    attachment: null,
+    createdAt: "2024-01-20T09:30:00Z",
+    signedById: 5,
+    employeeId: 2,
+    employee: {
+      id: 2,
+      fullName: "Trần Thị B",
+      email: "tranthib@company.com",
+    },
+    signedBy: {
+      id: 5,
+      fullName: "Lê Văn C",
+      email: "levanc@company.com",
+    },
+  },
+  {
+    id: 3,
+    contractCode: "CT003",
+    type: "INTERNSHIP",
+    startDate: "2024-03-01T00:00:00Z",
+    endDate: "2024-06-01T23:59:59Z",
+    signedDate: "2024-02-25T00:00:00Z",
+    status: "ACTIVE",
+    dailySalary: 200000,
+    allowance: 300000,
+    note: "Hợp đồng thực tập sinh, thời hạn 3 tháng",
+    attachment: "https://res.cloudinary.com/demo/image/upload/v1234567890/contracts/ct003.jpg",
+    createdAt: "2024-02-25T10:15:00Z",
+    signedById: 5,
+    employeeId: 3,
+    employee: {
+      id: 3,
+      fullName: "Phạm Văn D",
+      email: "phamvand@company.com",
+    },
+    signedBy: {
+      id: 5,
+      fullName: "Lê Văn C",
+      email: "levanc@company.com",
+    },
+  },
+  {
+    id: 4,
+    contractCode: "CT004",
+    type: "FULL_TIME",
+    startDate: "2023-06-01T00:00:00Z",
+    endDate: "2023-12-31T23:59:59Z",
+    signedDate: "2023-05-20T00:00:00Z",
+    status: "EXPIRED",
+    dailySalary: 450000,
+    allowance: 800000,
+    note: "Hợp đồng đã hết hạn, cần gia hạn",
+    attachment: null,
+    createdAt: "2023-05-20T14:00:00Z",
+    signedById: 5,
+    employeeId: 4,
+    employee: {
+      id: 4,
+      fullName: "Hoàng Thị E",
+      email: "hoangthie@company.com",
+    },
+    signedBy: {
+      id: 5,
+      fullName: "Lê Văn C",
+      email: "levanc@company.com",
+    },
+  },
+  {
+    id: 5,
+    contractCode: "CT005",
+    type: "PROBATION",
+    startDate: "2024-01-15T00:00:00Z",
+    endDate: "2024-04-15T23:59:59Z",
+    signedDate: "2024-01-10T00:00:00Z",
+    status: "ACTIVE",
+    dailySalary: 400000,
+    allowance: 600000,
+    note: "Hợp đồng thử việc, thời hạn 3 tháng",
+    attachment: "https://res.cloudinary.com/demo/image/upload/v1234567890/contracts/ct005.pdf",
+    createdAt: "2024-01-10T11:20:00Z",
+    signedById: 5,
+    employeeId: 6,
+    employee: {
+      id: 6,
+      fullName: "Võ Văn F",
+      email: "vovanf@company.com",
+    },
+    signedBy: {
+      id: 5,
+      fullName: "Lê Văn C",
+      email: "levanc@company.com",
+    },
+  },
+  {
+    id: 6,
+    contractCode: "CT006",
+    type: "FULL_TIME",
+    startDate: "2024-02-01T00:00:00Z",
+    endDate: "2025-01-31T23:59:59Z",
+    signedDate: "2024-01-25T00:00:00Z",
+    status: "PENDING",
+    dailySalary: 550000,
+    allowance: 1200000,
+    note: "Hợp đồng đang chờ duyệt",
+    attachment: null,
+    createdAt: "2024-01-25T13:45:00Z",
+    signedById: 5,
+    employeeId: 7,
+    employee: {
+      id: 7,
+      fullName: "Đặng Thị G",
+      email: "dangthig@company.com",
+    },
+    signedBy: {
+      id: 5,
+      fullName: "Lê Văn C",
+      email: "levanc@company.com",
+    },
+  },
+  {
+    id: 7,
+    contractCode: "CT007",
+    type: "FREELANCE",
+    startDate: "2024-03-01T00:00:00Z",
+    endDate: "2024-05-31T23:59:59Z",
+    signedDate: "2024-02-28T00:00:00Z",
+    status: "ACTIVE",
+    dailySalary: 600000,
+    allowance: 0,
+    note: "Hợp đồng freelance, làm việc theo dự án",
+    attachment: "https://res.cloudinary.com/demo/image/upload/v1234567890/contracts/ct007.pdf",
+    createdAt: "2024-02-28T15:30:00Z",
+    signedById: 5,
+    employeeId: 8,
+    employee: {
+      id: 8,
+      fullName: "Bùi Văn H",
+      email: "buivanh@company.com",
+    },
+    signedBy: {
+      id: 5,
+      fullName: "Lê Văn C",
+      email: "levanc@company.com",
+    },
+  },
+  {
+    id: 8,
+    contractCode: "CT008",
+    type: "FULL_TIME",
+    startDate: "2023-01-01T00:00:00Z",
+    endDate: "2023-12-31T23:59:59Z",
+    signedDate: "2022-12-20T00:00:00Z",
+    status: "RENEWED",
+    dailySalary: 480000,
+    allowance: 900000,
+    note: "Hợp đồng đã được gia hạn",
+    attachment: null,
+    createdAt: "2022-12-20T10:00:00Z",
+    signedById: 5,
+    employeeId: 9,
+    employee: {
+      id: 9,
+      fullName: "Ngô Thị I",
+      email: "ngothii@company.com",
+    },
+    signedBy: {
+      id: 5,
+      fullName: "Lê Văn C",
+      email: "levanc@company.com",
+    },
+  },
+  {
+    id: 9,
+    contractCode: "CT009",
+    type: "TEMPORARY",
+    startDate: "2024-04-01T00:00:00Z",
+    endDate: "2024-07-01T23:59:59Z",
+    signedDate: "2024-03-25T00:00:00Z",
+    status: "DRAFT",
+    dailySalary: 350000,
+    allowance: 400000,
+    note: "Hợp đồng tạm thời, đang soạn thảo",
+    attachment: null,
+    createdAt: "2024-03-25T09:00:00Z",
+    signedById: 5,
+    employeeId: 10,
+    employee: {
+      id: 10,
+      fullName: "Lý Văn K",
+      email: "lyvank@company.com",
+    },
+    signedBy: {
+      id: 5,
+      fullName: "Lê Văn C",
+      email: "levanc@company.com",
+    },
+  },
+  {
+    id: 10,
+    contractCode: "CT010",
+    type: "OUTSOURCE",
+    startDate: "2024-01-01T00:00:00Z",
+    endDate: "2024-12-31T23:59:59Z",
+    signedDate: "2023-12-28T00:00:00Z",
+    status: "TERMINATED",
+    dailySalary: 700000,
+    allowance: 1500000,
+    note: "Hợp đồng đã bị chấm dứt trước thời hạn",
+    attachment: "https://res.cloudinary.com/demo/image/upload/v1234567890/contracts/ct010.pdf",
+    createdAt: "2023-12-28T16:20:00Z",
+    signedById: 5,
+    employeeId: 11,
+    employee: {
+      id: 11,
+      fullName: "Trương Thị L",
+      email: "truongthil@company.com",
+    },
+    signedBy: {
+      id: 5,
+      fullName: "Lê Văn C",
+      email: "levanc@company.com",
+    },
+  },
+];

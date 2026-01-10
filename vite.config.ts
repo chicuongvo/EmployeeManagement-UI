@@ -11,4 +11,11 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    allowedHosts: [
+      "localhost",
+      "127.0.0.1",
+      "nondeductively-semipopular-orlando.ngrok-free.dev",
+    ],
+  },
 });
