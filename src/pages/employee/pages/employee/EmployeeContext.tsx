@@ -10,7 +10,7 @@ import React, {
 import { useSearchParams } from "react-router-dom";
 
 import useGetParam from "@/hooks/useGetParam";
-import useTableStore from "@/stores/tableStore";
+// import useTableStore from "@/stores/tableStore";
 
 import { getListEmployee } from "@/apis/employee/getListEmployee";
 import type {
@@ -18,7 +18,7 @@ import type {
   GetListEmployeeResponse,
   EMPLOYEE,
 } from "@/apis/employee/model/Employee";
-import { useUpdateEmployee } from "@/apis/employee/createUpdateEmployee";
+// import { useUpdateEmployee } from "@/apis/employee/createUpdateEmployee";
 // import { getListFile, GetListFileResponse } from "@/apis/files/getListFile";
 
 interface EmployeeContextType {
@@ -44,26 +44,21 @@ const EmployeeContext = createContext<EmployeeContextType | undefined>(
 export const EmployeeProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const [_, setSearchParams] = useSearchParams();
-  const { listEmployeeActiveKey } = useTableStore((state) => state);
+  const [, setSearchParams] = useSearchParams();
+  //   const { listEmployeeActiveKey } = useTableStore((state) => state);
   const [popupUpdateEmployee, setPopupUpdateEmployee] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<EMPLOYEE | null>(
     null
   );
 
-  // const fullName = useGetParam<string>("fullName", "string");
-  // const email = useGetParam<string>("email", "string");
-  // const phone = useGetParam<string>("phone", "string");
-  // const citizenId = useGetParam<string>("citizenId", "string");
-  // const employeeCode = useGetParam<string>("employeeCode", "string");
   const generalCode = useGetParam<string>("general_code", "string");
   const generalCodeType = useGetParam<string>(
     "general_code_type",
     "string",
     "fullName"
   );
-  const department = useGetParam<string>("department", "string");
-  const position = useGetParam<string>("position", "string");
+  const departmentId = useGetParam<string>("departmentId", "string");
+  const positionId = useGetParam<string>("positionId", "string");
   const isActiveParam = useGetParam<string>("isActive", "string");
   const page = useGetParam<number>("page", "number");
   const limit = useGetParam<number>("limit", "number");
@@ -74,8 +69,8 @@ export const EmployeeProvider: React.FC<{
     return {
       general_code: generalCode,
       general_code_type: generalCodeType,
-      department,
-      position,
+      departmentId,
+      positionId,
       isActive:
         isActiveParam === "true"
           ? true
@@ -89,8 +84,8 @@ export const EmployeeProvider: React.FC<{
   }, [
     generalCode,
     generalCodeType,
-    department,
-    position,
+    departmentId,
+    positionId,
     isActiveParam,
     page,
     limit,

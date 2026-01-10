@@ -5,6 +5,8 @@ import BoxFilter from "@/components/common/shared/BoxFiltered";
 import { useEmployeeContext } from "../EmployeeContext";
 import type { GetListEmployeeRequest } from "@/apis/employee/model/Employee";
 import DateRangePicker from "@/components/common/form/DateRangePicker";
+import SelectListPosition from "../SelectListPosition";
+import SelectListDepartment from "@/components/common/form/SelectListDepartment";
 
 interface FormFilterProps {
   onSearch?: () => void;
@@ -70,12 +72,12 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
       },
 
       {
-        name: "department",
-        component: <Input placeholder="Department" allowClear />,
+        name: "departmentId",
+        component: <SelectListDepartment placeholder="Department" allowClear />,
       },
       {
-        name: "position",
-        component: <Input placeholder="Position" allowClear />,
+        name: "positionId",
+        component: <SelectListPosition placeholder="Position" allowClear />,
       },
       {
         name: "created_range_picker",
@@ -95,7 +97,9 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
           />
         ),
       },
-    ], [optionsInput]);
+    ],
+    [optionsInput]
+  );
 
   return (
     <Card className="mb-3 py-1" size="small">
