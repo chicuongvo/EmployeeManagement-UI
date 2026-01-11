@@ -1,6 +1,7 @@
 import { Navigate, type RouteObject } from "react-router-dom";
 
 import employee_route from "./pages/employee/route";
+import project_route from "./pages/project/route";
 
 
 export type RouteItem = Omit<RouteObject, "children"> & {
@@ -23,6 +24,7 @@ const routes: RouteItem[] = [
         element: <Navigate to={ROUTER_DASHBOARD} replace />,
     } as RouteItem,
     employee_route,
+    project_route,
 ];
 
 const getRoute = ({

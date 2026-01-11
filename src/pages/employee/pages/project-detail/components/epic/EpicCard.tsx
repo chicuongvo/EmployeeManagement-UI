@@ -1,5 +1,6 @@
 import { Card, Tag, Avatar, Progress, Tooltip } from "antd";
 import { EditOutlined, DeleteOutlined, CalendarOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import { type Epic, EpicPriority } from "@/apis/epic";
 import { useProjectDetail } from "../../ProjectDetailContext";
@@ -9,7 +10,8 @@ interface EpicCardProps {
 }
 
 const EpicCard = ({ epic }: EpicCardProps) => {
-    const { setSelectedEpic } = useProjectDetail();
+    const { setSelectedEpic, projectId } = useProjectDetail();
+    const navigate = useNavigate();
 
     const getPriorityColor = (priority: EpicPriority) => {
         const colors = {
@@ -35,16 +37,23 @@ const EpicCard = ({ epic }: EpicCardProps) => {
     const progress = 0;
     const taskCount = epic._count?.tasks || 0;
 
+    const handleCardClick = () => {
+        // Navigate to tasks page
+        navigate(`/projects/${projectId}/epics/${epic.id}/tasks`);
+    };
+
+    const handleEdit = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setSelectedEpic(epic);
+    };
+
     return (
         <Card
             size="small"
             className="hover:shadow-md transition-shadow cursor-pointer"
-            onClick={() => setSelectedEpic(epic)}
+            onClick={handleCardClick}
             actions={[
-                <EditOutlined key="edit" onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedEpic(epic);
-                }} />,
+                <EditOutlined key="edit" onClick={handleEdit} />,
                 <DeleteOutlined key="delete" onClick={(e) => {
                     e.stopPropagation();
                     // Handle delete
