@@ -8,6 +8,7 @@ import DateRangePicker from "@/components/common/form/DateRangePicker";
 import SelectListDepartment from "@/components/common/form/SelectListDepartment";
 import SelectListPosition from "@/components/common/form/SelectListPosition";
 import dayjs from "dayjs";
+import { convertToDateRange } from "@/utils/convertToDateRange";
 
 interface FormFilterProps {
   onSearch?: () => void;
@@ -55,6 +56,14 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
   const initialValues = useMemo(() => {
     return {
       ...params,
+      created_range_picker: convertToDateRange(
+        params.created_date_from,
+        params.created_date_to
+      ),
+      updated_range_picker: convertToDateRange(
+        params.updated_date_from,
+        params.updated_date_to
+      ),
     };
   }, [params]);
 
