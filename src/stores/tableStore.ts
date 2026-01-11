@@ -2,60 +2,68 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 
 interface AuthState {
-    listEmployeeManagementKey?: string[];
-    listEmployeeActiveKey?: string[];
-    listUpdateRequestActiveKey?: string[];
-    listContractActiveKey?: string[];
+  listEmployeeManagementKey?: string[];
+  listEmployeeActiveKey?: string[];
+  listDepartmentActiveKey?: string[];
+  listPositionActiveKey?: string[];
+  listProjectActiveKey?: string[];
 
-    setListEmployeeManagementKey: (listEmployeeManagementKey?: string[]) => void;
-    setListEmployeeActiveKey: (listEmployeeActiveKey?: string[]) => void;
-    setListUpdateRequestActiveKey: (listUpdateRequestActiveKey?: string[]) => void;
-    setListContractActiveKey: (listContractActiveKey?: string[]) => void;
+  setListEmployeeManagementKey: (listEmployeeManagementKey?: string[]) => void;
+  setListEmployeeActiveKey: (listEmployeeActiveKey?: string[]) => void;
+  setListDepartmentActiveKey: (listDepartmentActiveKey?: string[]) => void;
+  setListPositionActiveKey: (listPositionActiveKey?: string[]) => void;
+  setListProjectActiveKey: (listProjectActiveKey?: string[]) => void;
 }
 
 const useTableStore = create<AuthState>()(
-    devtools(
-        persist(
-            (set) => ({
-
-                setListEmployeeManagementKey: (listEmployeeManagementKey) => {
-                    set({
-                        listEmployeeManagementKey,
-                    });
-                },
-                setListEmployeeActiveKey: (listEmployeeActiveKey) => {
-                    set({
-                        listEmployeeActiveKey,
-                    });
-                },
-                setListUpdateRequestActiveKey: (listUpdateRequestActiveKey) => {
-                    set({
-                        listUpdateRequestActiveKey,
-                    });
-                },
-                setListContractActiveKey: (listContractActiveKey) => {
-                    set({
-                        listContractActiveKey,
-                    });
-                },
-            }),
-            {
-                name: "table_keys_store",
-                partialize: ({
-                    listEmployeeManagementKey,
-                    listEmployeeActiveKey,
-                    listUpdateRequestActiveKey,
-                    listContractActiveKey,
-                }) => ({
-                    listEmployeeManagementKey,
-                    listEmployeeActiveKey,
-                    listUpdateRequestActiveKey,
-                    listContractActiveKey,
-                }),
-            }
-        ),
-        { enabled: import.meta.env.MODE !== "production" }
-    )
+  devtools(
+    persist(
+      (set) => ({
+        setListEmployeeManagementKey: (listEmployeeManagementKey) => {
+          set({
+            listEmployeeManagementKey,
+          });
+        },
+        setListEmployeeActiveKey: (listEmployeeActiveKey) => {
+          set({
+            listEmployeeActiveKey,
+          });
+        },
+        setListDepartmentActiveKey: (listDepartmentActiveKey) => {
+          set({
+            listDepartmentActiveKey,
+          });
+        },
+        setListPositionActiveKey: (listPositionActiveKey) => {
+          set({
+            listPositionActiveKey,
+          });
+        },
+        setListProjectActiveKey: (listProjectActiveKey) => {
+          set({
+            listProjectActiveKey,
+          });
+        },
+      }),
+      {
+        name: "table_keys_store",
+        partialize: ({
+          listEmployeeManagementKey,
+          listEmployeeActiveKey,
+          listDepartmentActiveKey,
+          listPositionActiveKey,
+          listProjectActiveKey,
+        }) => ({
+          listEmployeeManagementKey,
+          listEmployeeActiveKey,
+          listDepartmentActiveKey,
+          listPositionActiveKey,
+          listProjectActiveKey,
+        }),
+      }
+    ),
+    { enabled: import.meta.env.MODE !== "production" }
+  )
 );
 
 export default useTableStore;

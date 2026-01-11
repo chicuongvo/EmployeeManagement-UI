@@ -47,6 +47,27 @@ function App() {
   const router = createBrowserRouter(getRoutes(), { basename });
 
   return (
+    <ConfigProvider
+      locale={lang === "vi" ? viVN : enUS}
+      theme={{
+        token: {
+          fontFamily:
+            '"Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+          fontSize: 14,
+          fontSizeHeading1: 24,
+          fontSizeHeading2: 20,
+          fontSizeHeading3: 18,
+          fontSizeHeading4: 16,
+          fontSizeHeading5: 14,
+          fontSizeLG: 16,
+          fontSizeSM: 12,
+          fontSizeXL: 18,
+        },
+      }}
+    >
+      <Toaster richColors position="top-center" />
+      <RouterProvider router={router} />
+    </ConfigProvider>
     <UserProvider>
       <ConfigProvider locale={lang === "vi" ? viVN : enUS}>
         <Toaster richColors position="top-center" />

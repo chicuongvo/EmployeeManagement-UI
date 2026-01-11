@@ -105,11 +105,33 @@ const MainLayout = () => {
   // ========================================
 
   return (
-    <div id="plm-layout" className="h-screen overflow-auto">
+    <div
+      id="plm-layout"
+      className="h-screen overflow-auto font-sans"
+      style={{
+        fontFamily:
+          '"Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+      }}
+    >
       <ProConfigProvider hashed={false}>
         <ConfigProvider
           getTargetContainer={() => {
             return document.getElementById("plm-layout") || document.body;
+          }}
+          theme={{
+            token: {
+              fontFamily:
+                '"Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+              fontSize: 14,
+              fontSizeHeading1: 24,
+              fontSizeHeading2: 20,
+              fontSizeHeading3: 18,
+              fontSizeHeading4: 16,
+              fontSizeHeading5: 14,
+              fontSizeLG: 16,
+              fontSizeSM: 12,
+              fontSizeXL: 18,
+            },
           }}
         >
           <ProLayout
@@ -137,6 +159,17 @@ const MainLayout = () => {
             route={{ path: "/", routes: menus }}
             location={location}
             token={{
+              fontFamily:
+                '"Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+              fontSize: 14,
+              fontSizeHeading1: 24,
+              fontSizeHeading2: 20,
+              fontSizeHeading3: 18,
+              fontSizeHeading4: 16,
+              fontSizeHeading5: 14,
+              fontSizeLG: 16,
+              fontSizeSM: 12,
+              fontSizeXL: 18,
               colorTextAppListIcon: "#ddd",
               colorTextAppListIconHover: "#fff",
               bgLayout: "#f6f7f9",
@@ -210,7 +243,7 @@ const MainLayout = () => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             headerTitleRender={(logo: any, title: any, _: any) => {
               const defaultDom = (
-                <Link to={ROUTER_DASHBOARD}>
+                <Link to={ROUTER_DASHBOARD} className="font-primary">
                   {logo}
                   {title}
                 </Link>
@@ -229,7 +262,7 @@ const MainLayout = () => {
               if (props?.collapsed) return undefined;
               return (
                 <div
-                  className="text-gray-300"
+                  className="text-gray-300 font-primary"
                   style={{
                     textAlign: "center",
                     paddingBlockStart: 12,
@@ -250,11 +283,14 @@ const MainLayout = () => {
                   href={item.path || "/"}
                   target="_blank"
                   rel="noopener noreferrer"
+                  className="font-primary"
                 >
                   {dom}
                 </a>
               ) : (
-                <Link to={item.path || "/"}>{dom}</Link>
+                <Link to={item.path || "/"} className="font-primary">
+                  {dom}
+                </Link>
               );
             }}
             fixSiderbar

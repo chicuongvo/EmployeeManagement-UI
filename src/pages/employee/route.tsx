@@ -1,7 +1,8 @@
-import { FaListCheck } from "react-icons/fa6";
+import { FaUserGroup } from "react-icons/fa6";
 
 import { type RouteItem } from "@/routes";
 import { EmployeeProvider } from "./pages/employee/EmployeeContext";
+import { DepartmentProvider } from "./pages/department/DepartmentContext";
 import EmployeePage from "./pages/employee";
 import { UpdateRequestProvider } from "./pages/update-request/UpdateRequestContext";
 import UpdateRequestPage from "./pages/update-request";
@@ -9,17 +10,20 @@ import MyRequestsPage from "./pages/update-request/my-requests";
 import { ContractProvider } from "./pages/contract/ContractContext";
 import ContractPage from "./pages/contract";
 import MyContractsPage from "./pages/contract/my-contracts";
+import DepartmentPage from "./pages/department";
 import MainLayout from "@/layout/MainLayout";
 
 const route: RouteItem = {
   path: "/employee",
-  name: "Employee",
+  name: (
+    <span className="font-primary">Hồ sơ nhân viên</span>
+  ) as unknown as string,
   element: <MainLayout />,
-  icon: <FaListCheck className="text-base" />,
+  icon: <FaUserGroup className="text-base font-primary" />,
   children: [
     {
       path: "employees",
-      name: "Employee",
+      name: "Hồ sơ nhân sự",
       element: (
         <EmployeeProvider>
           <EmployeePage />
@@ -53,6 +57,15 @@ const route: RouteItem = {
       path: "my-contracts",
       name: "Hợp đồng của tôi",
       element: <MyContractsPage />,
+    },
+    {
+      path: "departments",
+      name: "Phòng ban",
+      element: (
+        <DepartmentProvider>
+          <DepartmentPage />
+        </DepartmentProvider>
+      ),
     },
   ],
 };
