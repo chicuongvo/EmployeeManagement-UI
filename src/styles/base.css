@@ -35,6 +35,75 @@ body {
   font-family: var(--font-primary);
   font-size: 14px;
   line-height: 1.5;
+<<<<<<< HEAD
+=======
+}
+
+/* Utility class for primary font */
+.font-primary {
+  font-family: var(--font-primary);
+}
+
+/* Smaller font sizes for better readability */
+html {
+  font-size: 13px;
+}
+
+body,
+p,
+span,
+div,
+a,
+button,
+input,
+select,
+textarea,
+label {
+  font-size: 13px;
+}
+
+h1 {
+  font-size: 24px;
+  line-height: 1.4;
+}
+
+h2 {
+  font-size: 20px;
+  line-height: 1.4;
+}
+
+h3 {
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+h4 {
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+h5 {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+h6 {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+p,
+span,
+div,
+a,
+button,
+input,
+select,
+textarea,
+label,
+::placeholder {
+  font-size: 13px;
+>>>>>>> 8eb21d017747ecdd58fdff3476f1075d20e6c7df
 }
 
 /* Utility class for primary font */

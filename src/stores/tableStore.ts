@@ -6,11 +6,13 @@ interface AuthState {
   listEmployeeActiveKey?: string[];
   listDepartmentActiveKey?: string[];
   listPositionActiveKey?: string[];
+  listProjectActiveKey?: string[];
 
   setListEmployeeManagementKey: (listEmployeeManagementKey?: string[]) => void;
   setListEmployeeActiveKey: (listEmployeeActiveKey?: string[]) => void;
   setListDepartmentActiveKey: (listDepartmentActiveKey?: string[]) => void;
   setListPositionActiveKey: (listPositionActiveKey?: string[]) => void;
+  setListProjectActiveKey: (listProjectActiveKey?: string[]) => void;
 }
 
 const useTableStore = create<AuthState>()(
@@ -37,6 +39,11 @@ const useTableStore = create<AuthState>()(
             listPositionActiveKey,
           });
         },
+        setListProjectActiveKey: (listProjectActiveKey) => {
+          set({
+            listProjectActiveKey,
+          });
+        },
       }),
       {
         name: "table_keys_store",
@@ -45,11 +52,13 @@ const useTableStore = create<AuthState>()(
           listEmployeeActiveKey,
           listDepartmentActiveKey,
           listPositionActiveKey,
+          listProjectActiveKey,
         }) => ({
           listEmployeeManagementKey,
           listEmployeeActiveKey,
           listDepartmentActiveKey,
           listPositionActiveKey,
+          listProjectActiveKey,
         }),
       }
     ),

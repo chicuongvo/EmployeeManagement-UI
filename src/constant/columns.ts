@@ -197,6 +197,12 @@ export const COLUMN_KEYS = {
   DEPARTMENT_CODE: "department_code",
   FOUNDED_AT: "founded_at",
   EMPLOYEE_NUMBER: "employee_number",
+  // Project specific columns
+  MANAGER: "manager",
+  START_DATE: "start_date",
+  END_DATE: "end_date",
+  BUDGET: "budget",
+  MEMBER_COUNT: "member_count",
 } as const;
 
 export type ColumnKey = (typeof COLUMN_KEYS)[keyof typeof COLUMN_KEYS];
