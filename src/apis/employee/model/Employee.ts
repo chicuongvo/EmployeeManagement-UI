@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-object-type */
+import type { BaseResponse } from "@/types/common";
 import type { PaginationRequest, PaginationResponse } from "@/types/pagination";
 
 export interface Department {
@@ -39,8 +40,10 @@ export type WorkStatus =
   | "RESIGNED"
   | "TERMINATED"
   | "RETIRED"
-  | "ACTIVE"; // Legacy for backward compatibility
+  | "ACTIVE";
+
 export type Gender = "MALE" | "FEMALE" | "OTHER";
+export type MaritalStatus = "SINGLE" | "MARRIED" | "DIVORCED" | "WIDOWED";
 export type Education =
   | "HIGH_SCHOOL"
   | "ASSOCIATE_DEGREE"
@@ -67,6 +70,17 @@ export interface EMPLOYEE {
   major?: string;
   siNo?: string; // Social Insurance Number
   hiNo?: string; // Health Insurance Number
+  resumeLink?: string; // Sơ yếu lí lịch (link pdf)
+  bankAccount?: string; // Bank account info (Bank name, Account Name, Account Number, Bank branch)
+  maritalStatus?: MaritalStatus; // Tình trạng hôn nhân
+  permanentAddress?: string; // Địa chỉ thường trú
+  currentAddress?: string; // Địa chỉ hiện tại
+  school?: string; // Trường
+  studyPeriod?: string; // Thời gian học
+  degreeCertificate?: string; // Bằng cấp (file pdf)
+  foreignLanguageLevel?: string; // Trình độ ngoại ngữ
+  itSkillLevel?: string; // Trình độ tin học
+  healthCertificate?: string; // Giấy khám sức khỏe (link pdf)
   departmentId: number;
   positionId: number;
   workStatus: WorkStatus;
@@ -84,7 +98,7 @@ export interface EMPLOYEE {
 export interface GetListEmployeeRequest extends PaginationRequest {
   // Quick search filter (searches in employeeCode and fullName)
   q?: string;
-  
+
   departmentId?: number | number[] | string | string[];
   positionId?: number | number[] | string | string[];
   isActive?: boolean;
@@ -97,3 +111,67 @@ export interface GetListEmployeeRequest extends PaginationRequest {
 }
 
 export interface GetListEmployeeResponse extends PaginationResponse<EMPLOYEE> {}
+
+export interface GetEmployeeRequest {
+  id: number;
+}
+export interface GetEmployeeResponse extends BaseResponse<EMPLOYEE> {}
+
+export interface CreateEmployeeRequest {
+  fullName: string;
+  avatar?: string;
+  gender: Gender;
+  birthday: string | Date;
+  citizenId: string;
+  phone: string;
+  email: string;
+  ethnicity?: string;
+  religion?: string;
+  education?: Education;
+  major?: string;
+  siNo?: string;
+  hiNo?: string;
+  resumeLink?: string;
+  bankAccount?: string;
+  maritalStatus?: MaritalStatus;
+  permanentAddress?: string;
+  currentAddress?: string;
+  school?: string;
+  studyPeriod?: string;
+  degreeCertificate?: string;
+  foreignLanguageLevel?: string;
+  itSkillLevel?: string;
+  healthCertificate?: string;
+  departmentId?: number;
+  positionId: number;
+}
+
+export interface UpdateEmployeeRequest {
+  fullName?: string;
+  avatar?: string;
+  gender?: Gender;
+  birthday?: string | Date;
+  citizenId?: string;
+  phone?: string;
+  email?: string;
+  ethnicity?: string;
+  religion?: string;
+  education?: Education;
+  major?: string;
+  siNo?: string;
+  hiNo?: string;
+  resumeLink?: string;
+  bankAccount?: string;
+  maritalStatus?: MaritalStatus;
+  permanentAddress?: string;
+  currentAddress?: string;
+  school?: string;
+  studyPeriod?: string;
+  degreeCertificate?: string;
+  foreignLanguageLevel?: string;
+  itSkillLevel?: string;
+  healthCertificate?: string;
+  departmentId?: number;
+  positionId?: number;
+  workStatus?: WorkStatus;
+}

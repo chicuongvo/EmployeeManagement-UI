@@ -90,7 +90,7 @@ h6 {
   line-height: 1.4;
 }
 
-p,
+/* p,
 span,
 div,
 a,
@@ -101,7 +101,7 @@ textarea,
 label,
 ::placeholder {
   font-size: 13px;
-}
+} */
 
 .roboto-slab-regular {
   font-family: "Roboto Slab", monospace;

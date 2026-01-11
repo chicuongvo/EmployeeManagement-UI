@@ -6,6 +6,8 @@ import { DepartmentProvider } from "./pages/department/DepartmentContext";
 import EmployeePage from "./pages/employee";
 import DepartmentPage from "./pages/department";
 import MainLayout from "@/layout/MainLayout";
+import EmployeeDetailPage from "./pages/employee_detail";
+import { EmployeeDetailProvider } from "./pages/employee_detail/EmployeeDetailContex";
 
 const route: RouteItem = {
   path: "/employee",
@@ -23,6 +25,26 @@ const route: RouteItem = {
           <EmployeePage />
         </EmployeeProvider>
       ),
+    },
+    {
+      path: "employees/add-new",
+      name: "Thêm mới",
+      element: (
+        <EmployeeDetailProvider>
+          <EmployeeDetailPage />
+        </EmployeeDetailProvider>
+      ),
+      hideInMenu: true,
+    },
+    {
+      path: "employees/:id",
+      name: "Chi tiết",
+      element: (
+        <EmployeeDetailProvider>
+          <EmployeeDetailPage />
+        </EmployeeDetailProvider>
+      ),
+      hideInMenu: true,
     },
     {
       path: "departments",

@@ -1,0 +1,714 @@
+/* eslint-disable react-refresh/only-export-components */
+import {
+  Card,
+  Collapse,
+  DatePicker,
+  Form,
+  Input,
+  Select,
+  type InputProps,
+} from "antd";
+import type { TextAreaProps } from "antd/es/input";
+import { useEmployeeDetailContext } from "../EmployeeDetailContex";
+import type { EMPLOYEE } from "@/apis/employee/model/Employee";
+import ImageUpload from "@/components/common/form/ImageUpload";
+import FileUpload from "@/components/common/form/FileUpload";
+import SelectListEthnicity from "@/components/common/form/SelectListEthnicity";
+import AutoCompleteReligion from "@/components/common/form/AutoCompleteReligion";
+import AddressInput from "@/components/common/form/AddressInput";
+import type { AddressValue } from "@/apis/address/model/Address";
+import dayjs from "dayjs";
+import Link from "antd/es/typography/Link";
+import SelectListDepartment from "@/components/common/form/SelectListDepartment";
+import SelectListPosition from "@/components/common/form/SelectListPosition";
+
+const { TextArea } = Input;
+
+export const FORM_FIELDS = {
+  // ===== System & Identity =====
+  ID: "id",
+  EMPLOYEE_CODE: "employee_code",
+  ROLE: "role",
+  IS_ACTIVE: "is_active",
+  PASSWORD: "password",
+  CREATED_AT: "created_at",
+
+  // ===== Personal Information =====
+  FULL_NAME: "fullName",
+  AVATAR: "avatar",
+  GENDER: "gender",
+  BIRTHDAY: "birthday",
+  CITIZEN_ID: "citizenId",
+  ETHNICITY: "ethnicity",
+  RELIGION: "religion",
+  MARITAL_STATUS: "maritalStatus",
+
+  // ===== Contact Information =====
+  PHONE: "phone",
+  EMAIL: "email",
+  PERMANENT_ADDRESS: "permanentAddress",
+  CURRENT_ADDRESS: "currentAddress",
+
+  // ===== Education & Skills =====
+  EDUCATION: "education",
+  MAJOR: "major",
+  SCHOOL: "school",
+  STUDY_PERIOD: "studyPeriod",
+  DEGREE_CERTIFICATE: "degreeCertificate",
+  FOREIGN_LANGUAGE_LEVEL: "foreignLanguageLevel",
+  IT_SKILL_LEVEL: "itSkillLevel",
+
+  // ===== Insurance & Finance =====
+  SI_NO: "siNo",
+  HI_NO: "hiNo",
+  BANK_ACCOUNT: "bankAccount",
+
+  // ===== Documents =====
+  RESUME_LINK: "resumeLink",
+  HEALTH_CERTIFICATE: "healthCertificate",
+
+  // ===== Work Information (non-FK) =====
+  WORK_STATUS: "workStatus",
+
+  DEPARTMENT_ID: "departmentId",
+  POSITION_ID: "positionId",
+} as const;
+
+const SYSTEM_FIELDS = [
+  FORM_FIELDS.EMPLOYEE_CODE,
+  FORM_FIELDS.CREATED_AT,
+  FORM_FIELDS.IS_ACTIVE,
+  FORM_FIELDS.EMPLOYEE_CODE,
+  FORM_FIELDS.CREATED_AT,
+  FORM_FIELDS.WORK_STATUS,
+];
+
+const CREATE_HIDDEN_FIELDS = [...SYSTEM_FIELDS];
+
+const UPDATE_HIDDEN_FIELDS: string[] = [];
+
+interface Props {
+  changeInfoValue: Partial<EMPLOYEE>;
+  initialValues: Partial<EMPLOYEE>;
+  setChangeInfoValue: (value: Partial<EMPLOYEE>) => void;
+}
+
+const GeneralInformation = (_props: Props) => {
+  const { isCreate, isEditable } = useEmployeeDetailContext();
+
+  // Helper function to extract "Province, District, Ward" from full address string
+  const extractAddressForDefaultValue = (
+    address: string | AddressValue | undefined
+  ): string | undefined => {
+    if (!address) return undefined;
+
+    // If it's already an AddressValue object, use value prop instead
+    if (typeof address === "object" && "provinceCode" in address) {
+      return undefined;
+    }
+
+    // If it's a string, extract the last 3 parts (Ward, District, Province)
+    // and reorder to "Province, District, Ward" format
+    if (typeof address === "string") {
+      const parts = address
+        .split(",")
+        .map((part) => part.trim())
+        .filter(Boolean);
+      if (parts.length >= 3) {
+        // Vietnamese address format: "specificAddress, Ward, District, Province"
+        // We need: "Province, District, Ward"
+        const [province, district, ward] = [
+          parts[parts.length - 1], // Province (last)
+          parts[parts.length - 2], // District (second last)
+          parts[parts.length - 3], // Ward (third last)
+        ];
+        return `${province}, ${district}, ${ward}`;
+      }
+    }
+
+    return undefined;
+  };
+
+  // Helper function to check if address is AddressValue object
+  const getAddressValue = (
+    address: string | AddressValue | undefined
+  ): AddressValue | undefined => {
+    if (!address) return undefined;
+    if (typeof address === "object" && "provinceCode" in address) {
+      return address as AddressValue;
+    }
+    return undefined;
+  };
+
+  // Gender options
+  const genderOptions = [
+    { value: "MALE", label: "Nam" },
+    { value: "FEMALE", label: "Nữ" },
+    { value: "OTHER", label: "Khác" },
+  ];
+
+  // Marital Status options
+  const maritalStatusOptions = [
+    { value: "SINGLE", label: "Độc thân" },
+    { value: "MARRIED", label: "Đã kết hôn" },
+    { value: "DIVORCED", label: "Ly dị" },
+    { value: "WIDOWED", label: "Góa" },
+  ];
+
+  // Education options
+  const educationOptions = [
+    { value: "HIGH_SCHOOL", label: "Trung học phổ thông" },
+    { value: "ASSOCIATE_DEGREE", label: "Cao đẳng" },
+    { value: "BACHELOR_DEGREE", label: "Đại học" },
+    { value: "MASTER_DEGREE", label: "Thạc sĩ" },
+    { value: "DOCTORATE_DEGREE", label: "Tiến sĩ" },
+    { value: "POST_DOCTORAL", label: "Sau tiến sĩ" },
+    { value: "VOCATIONAL_TRAINING", label: "Dạy nghề" },
+    { value: "OTHER", label: "Khác" },
+  ];
+
+  // Helper function to get form field config
+  const getFieldConfig = (
+    name: string,
+    label: string,
+    component: React.ReactNode,
+    required = false
+  ) => ({
+    name,
+    label,
+    component,
+    required,
+  });
+
+  const renderInput = (
+    label: string,
+    value: string,
+    inputType:
+      | "text"
+      | "email"
+      | "password"
+      | "number"
+      | "tel"
+      | "url"
+      | "search"
+      | "date"
+      | "time"
+      | "datetime-local"
+      | "month"
+      | "week"
+      | "color"
+      | "file"
+      | "range"
+      | "textarea" = "text",
+    inputProps: InputProps | TextAreaProps = {}
+  ) => {
+    if (!isCreate && !isEditable) {
+      return <div>{value}</div>;
+    }
+
+    if (inputType === "textarea") {
+      const textAreaProps = inputProps as Omit<InputProps, "type"> &
+        TextAreaProps;
+      return (
+        <TextArea placeholder={label} defaultValue={value} {...textAreaProps} />
+      );
+    }
+
+    return (
+      <Input
+        placeholder={label}
+        defaultValue={value}
+        type={inputType}
+        {...(inputProps as InputProps)}
+      />
+    );
+  };
+
+  const renderDepartmentPositionField = (
+    type: "department" | "position",
+    id: number
+  ) => {
+    return isEditable ? (
+      type === "department" ? (
+        <SelectListDepartment
+          placeholder="Chọn phòng ban"
+          value={_props.initialValues.departmentId ?? undefined}
+          onChange={(value: number) => {
+            _props.setChangeInfoValue({
+              ..._props.changeInfoValue,
+              departmentId: value ?? undefined,
+            });
+          }}
+        />
+      ) : (
+        <SelectListPosition
+          placeholder="Chọn vị trí"
+          value={_props.initialValues.positionId ?? undefined}
+          onChange={(value: number) => {
+            _props.setChangeInfoValue({
+              ..._props.changeInfoValue,
+              positionId: value ?? undefined,
+            });
+          }}
+        />
+      )
+    ) : (
+      <Link href={`/${type}/${id}`}>
+        {(_props.initialValues[
+          `${type}Name` as keyof typeof _props.initialValues
+        ] as string) ?? "Chưa cập nhật"}
+      </Link>
+    );
+  };
+
+  const renderAddress = (
+    address: string | AddressValue | undefined,
+    onChange: (value: AddressValue | undefined) => void
+  ) => {
+    return isEditable ? (
+      <AddressInput
+        placeholder={{
+          province: "Chọn tỉnh/thành phố",
+          district: "Chọn quận/huyện",
+          ward: "Chọn phường/xã",
+          specificAddress: "Nhập địa chỉ chi tiết",
+        }}
+        value={getAddressValue(address)}
+        defaultValue={extractAddressForDefaultValue(address)}
+        onChange={onChange}
+      />
+    ) : (
+      <span>{typeof address === "string" ? address : ""}</span>
+    );
+  };
+
+  const systemFields = [
+    getFieldConfig(
+      FORM_FIELDS.EMPLOYEE_CODE,
+      "Mã nhân viên",
+      <span>{_props.initialValues.employeeCode}</span>
+    ),
+    getFieldConfig(
+      FORM_FIELDS.CREATED_AT,
+      "Ngày tạo",
+      <span>
+        {dayjs(_props.initialValues.createdAt).format("DD/MM/YYYY HH:mm:ss")}
+      </span>
+    ),
+    getFieldConfig(
+      FORM_FIELDS.DEPARTMENT_ID,
+      "Phòng ban",
+      renderDepartmentPositionField(
+        "department",
+        _props.initialValues.departmentId ?? 0
+      )
+    ),
+    getFieldConfig(
+      FORM_FIELDS.POSITION_ID,
+      "Vị trí",
+      renderDepartmentPositionField(
+        "position",
+        _props.initialValues.positionId ?? 0
+      )
+    ),
+    getFieldConfig(
+      FORM_FIELDS.IS_ACTIVE,
+      "Trạng thái",
+      <Select
+        placeholder="Chọn trạng thái"
+        options={[
+          { value: true, label: "Đang hoạt động" },
+          { value: false, label: "Đã khóa" },
+        ]}
+      />
+    ),
+    getFieldConfig(
+      FORM_FIELDS.WORK_STATUS,
+      "Trạng thái làm việc",
+      <Select
+        placeholder="Chọn trạng thái làm việc"
+        options={[
+          { value: "WORKING_ONSITE", label: "Đang làm việc" },
+          { value: "WORK_FROM_HOME", label: "Làm việc từ xa" },
+          { value: "BUSINESS_TRIP", label: "Đi công tác" },
+          { value: "TRAINING", label: "Đang đào tạo" },
+        ]}
+      />
+    ),
+  ];
+
+  const personalFields = [
+    getFieldConfig(
+      FORM_FIELDS.FULL_NAME,
+      "Họ và tên",
+      renderInput("Nhập họ và tên", _props.initialValues.fullName ?? ""),
+      true
+    ),
+    getFieldConfig(
+      FORM_FIELDS.GENDER,
+      "Giới tính",
+      <Select placeholder="Chọn giới tính" options={genderOptions} />,
+      true
+    ),
+    getFieldConfig(
+      FORM_FIELDS.BIRTHDAY,
+      "Ngày sinh",
+      <DatePicker
+        format="DD/MM/YYYY"
+        placeholder="Chọn ngày sinh"
+        className="w-full"
+      />,
+      true
+    ),
+    getFieldConfig(
+      FORM_FIELDS.CITIZEN_ID,
+      "CCCD/CMND",
+      renderInput("Nhập số CCCD/CMND", _props.initialValues.citizenId ?? ""),
+      true
+    ),
+    getFieldConfig(
+      FORM_FIELDS.ETHNICITY,
+      "Dân tộc",
+      <SelectListEthnicity
+        placeholder="Chọn dân tộc"
+        value={_props.initialValues.ethnicity ?? undefined}
+        onChange={(value: string) => {
+          _props.setChangeInfoValue({
+            ..._props.changeInfoValue,
+            ethnicity: value ?? undefined,
+          });
+        }}
+      />
+    ),
+    getFieldConfig(
+      FORM_FIELDS.RELIGION,
+      "Tôn giáo",
+      <AutoCompleteReligion
+        placeholder="Chọn tôn giáo"
+        value={_props.initialValues.religion ?? undefined}
+        onChange={(value: string) => {
+          _props.setChangeInfoValue({
+            ..._props.changeInfoValue,
+            religion: value ?? undefined,
+          });
+        }}
+      />
+    ),
+    getFieldConfig(
+      FORM_FIELDS.MARITAL_STATUS,
+      "Tình trạng hôn nhân",
+      <Select
+        placeholder="Chọn tình trạng hôn nhân"
+        options={maritalStatusOptions}
+        allowClear
+      />
+    ),
+    getFieldConfig(
+      FORM_FIELDS.AVATAR,
+      "Ảnh đại diện",
+      <ImageUpload
+        urlImage={_props.initialValues.avatar}
+        onChange={(url) => {
+          _props.setChangeInfoValue({
+            ..._props.changeInfoValue,
+            avatar: url ?? undefined,
+          });
+        }}
+      />,
+      true
+    ),
+  ];
+
+  // Contact Information Fields
+  const contactFields = [
+    getFieldConfig(
+      FORM_FIELDS.PHONE,
+      "Số điện thoại",
+      renderInput("Nhập số điện thoại", _props.initialValues.phone ?? ""),
+      true
+    ),
+    getFieldConfig(
+      FORM_FIELDS.EMAIL,
+      "Email",
+      renderInput("Nhập email", _props.initialValues.email ?? ""),
+      true
+    ),
+    getFieldConfig(
+      FORM_FIELDS.PERMANENT_ADDRESS,
+      "Địa chỉ thường trú",
+      renderAddress(
+        _props.initialValues.permanentAddress,
+        (value: AddressValue | undefined) => {
+          _props.setChangeInfoValue({
+            ..._props.changeInfoValue,
+            permanentAddress: value?.fullAddress ?? undefined,
+          });
+        }
+      ),
+      true
+    ),
+    getFieldConfig(
+      FORM_FIELDS.CURRENT_ADDRESS,
+      "Địa chỉ hiện tại",
+      renderAddress(
+        _props.initialValues.currentAddress,
+        (value: AddressValue | undefined) => {
+          _props.setChangeInfoValue({
+            ..._props.changeInfoValue,
+            currentAddress: value?.fullAddress ?? undefined,
+          });
+        }
+      ),
+      true
+    ),
+  ];
+
+  // Education & Skills Fields
+  const educationFields = [
+    getFieldConfig(
+      FORM_FIELDS.EDUCATION,
+      "Trình độ học vấn",
+      <Select placeholder="Chọn trình độ học vấn" options={educationOptions} />
+    ),
+    getFieldConfig(
+      FORM_FIELDS.SCHOOL,
+      "Trường",
+      renderInput("Nhập tên trường", _props.initialValues.school ?? "")
+    ),
+    getFieldConfig(
+      FORM_FIELDS.MAJOR,
+      "Chuyên ngành",
+      renderInput("Nhập chuyên ngành", _props.initialValues.major ?? "")
+    ),
+    // getFieldConfig(
+    //   FORM_FIELDS.STUDY_PERIOD,
+    //   "Thời gian học",
+    //   <DateRangePicker
+    //     format="DD/MM/YYYY"
+    //     placeholder={["Từ ngày", "Đến ngày"]}
+    //     value={
+    //       parsedStudyPeriod[0] && parsedStudyPeriod[1]
+    //         ? parsedStudyPeriod
+    //         : undefined
+    //     }
+    //     onChange={(dates) => {
+    //       if (dates && dates[0] && dates[1]) {
+    //         const startDate = dates[0].format("DD/MM/YYYY");
+    //         const endDate = dates[1].format("DD/MM/YYYY");
+    //         const dateRangeString = `${startDate} - ${endDate}`;
+    //         _props.setChangeInfoValue({
+    //           ..._props.changeInfoValue,
+    //           studyPeriod: dateRangeString,
+    //         });
+    //         setParsedStudyPeriod([dates[0], dates[1]]);
+    //       } else {
+    //         _props.setChangeInfoValue({
+    //           ..._props.changeInfoValue,
+    //           studyPeriod: undefined,
+    //         });
+    //         setParsedStudyPeriod([undefined, undefined]);
+    //       }
+    //     }}
+    //   />
+    // ),
+    getFieldConfig(
+      FORM_FIELDS.DEGREE_CERTIFICATE,
+      "Bằng cấp",
+      <FileUpload
+        urlFile={_props.initialValues.degreeCertificate}
+        placeholder="Tải lên"
+        onChange={(url) => {
+          _props.setChangeInfoValue({
+            ..._props.changeInfoValue,
+            degreeCertificate: url ?? undefined,
+          });
+        }}
+      />
+    ),
+    getFieldConfig(
+      FORM_FIELDS.FOREIGN_LANGUAGE_LEVEL,
+      "Trình độ ngoại ngữ",
+      <Input placeholder="Nhập trình độ ngoại ngữ" />
+    ),
+    getFieldConfig(
+      FORM_FIELDS.IT_SKILL_LEVEL,
+      "Trình độ tin học",
+      <Input placeholder="Nhập trình độ tin học" />
+    ),
+  ];
+
+  // Insurance & Finance Fields
+  const insuranceFields = [
+    getFieldConfig(
+      FORM_FIELDS.SI_NO,
+      "Số thẻ BHXH",
+      renderInput("Nhập số sổ BHXH", _props.initialValues.siNo ?? ""),
+      true
+    ),
+    getFieldConfig(
+      FORM_FIELDS.HI_NO,
+      "Số thẻ BHYT",
+      renderInput("Nhập số thẻ BHYT", _props.initialValues.hiNo ?? ""),
+      true
+    ),
+    getFieldConfig(
+      FORM_FIELDS.BANK_ACCOUNT,
+      "Tài khoản ngân hàng",
+      renderInput(
+        "Tên ngân hàng, Tên tài khoản, Số tài khoản, Chi nhánh",
+        _props.initialValues.bankAccount ?? "",
+        "textarea",
+        { rows: 3 }
+      ),
+      true
+    ),
+  ];
+
+  // Documents Fields
+  const documentsFields = [
+    getFieldConfig(
+      FORM_FIELDS.RESUME_LINK,
+      "Sơ yếu lí lịch",
+      <FileUpload
+        urlFile={_props.initialValues.resumeLink}
+        placeholder="Tải lên"
+        onChange={(url) => {
+          _props.setChangeInfoValue({
+            ..._props.changeInfoValue,
+            resumeLink: url ?? undefined,
+          });
+        }}
+      />,
+      true
+    ),
+    getFieldConfig(
+      FORM_FIELDS.HEALTH_CERTIFICATE,
+      "Giấy khám sức khỏe",
+      <FileUpload
+        urlFile={_props.initialValues.healthCertificate}
+        placeholder="Tải lên"
+        onChange={(url) => {
+          _props.setChangeInfoValue({
+            ..._props.changeInfoValue,
+            healthCertificate: url ?? undefined,
+          });
+        }}
+      />,
+      true
+    ),
+  ];
+
+  // Filter fields based on create/update mode
+  const filterFields = (fields: typeof personalFields) => {
+    if (isCreate) {
+      return fields.filter(
+        (field) =>
+          !CREATE_HIDDEN_FIELDS.includes(
+            field.name as (typeof CREATE_HIDDEN_FIELDS)[number]
+          )
+      );
+    }
+    return fields.filter(
+      (field) =>
+        !UPDATE_HIDDEN_FIELDS.includes(
+          field.name as (typeof UPDATE_HIDDEN_FIELDS)[number]
+        )
+    );
+  };
+
+  const renderFormFields = (fields: typeof personalFields) => {
+    const filteredFields = filterFields(fields);
+    return (
+      <div className="grid grid-cols-2 gap-x-16 gap-y-4 pb-2">
+        {filteredFields.map((field) => (
+          <Form.Item
+            key={field.name}
+            label={field.label}
+            name={field.name}
+            required={field.required}
+          >
+            {field.component}
+          </Form.Item>
+        ))}
+      </div>
+    );
+  };
+
+  const renderCollapse = (
+    key: string,
+    label: string,
+    fields: typeof personalFields,
+    className?: string
+  ) => {
+    return (
+      <Collapse
+        defaultActiveKey={[key]}
+        bordered={false}
+        className={`custom-collapse w-full ${className || ""}`}
+        items={[
+          {
+            key,
+            label: (
+              <div className="relative">
+                <b>{label}</b>
+              </div>
+            ),
+            children: (
+              <Card
+                size="small"
+                className="shadow-sm"
+                styles={{ body: { padding: "16px" } }}
+              >
+                {renderFormFields(fields)}
+              </Card>
+            ),
+          },
+        ]}
+      />
+    );
+  };
+
+  const collapseList = [
+    {
+      key: "0",
+      label: "Thông tin hệ thống",
+      fields: systemFields,
+      //   hidden: isCreate,
+    },
+    {
+      key: "1",
+      label: "Thông tin cá nhân",
+      fields: personalFields,
+    },
+    {
+      key: "2",
+      label: "Thông tin liên hệ",
+      fields: contactFields,
+    },
+    {
+      key: "3",
+      label: "Học vấn & Kỹ năng",
+      fields: educationFields,
+    },
+    {
+      key: "4",
+      label: "Bảo hiểm & Tài chính",
+      fields: insuranceFields,
+    },
+    {
+      key: "5",
+      label: "Tài liệu",
+      fields: documentsFields,
+    },
+  ];
+
+  return (
+    <div className="my-3 w-full space-y-10 flex flex-col gap-5">
+      {collapseList.map((collapse) =>
+        renderCollapse(collapse.key, collapse.label, collapse.fields)
+      )}
+    </div>
+  );
+};
+
+export default GeneralInformation;

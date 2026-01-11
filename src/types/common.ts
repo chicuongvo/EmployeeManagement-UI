@@ -1,5 +1,6 @@
-export interface BaseResponse {
-    message: string;
-    code: number;
-    error_detail?: string;
+export interface BaseResponse<T> {
+  message: string;
+  code: number;
+  error_detail?: string;
+  data?: T;
 }
