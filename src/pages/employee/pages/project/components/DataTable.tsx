@@ -11,7 +11,6 @@ import { COLUMN_KEYS } from "@/constant/columns";
 import { useProjectContext } from "../ProjectContext";
 import TooltipTruncatedText from "@/components/common/shared/TooltipTruncatedText";
 import TableComponent from "@/components/common/table/TableComponent";
-import CopyTextPopover from "@/components/common/shared/CopyTextPopover";
 import type { Project, ProjectStatus } from "@/apis/project";
 
 const getStatusColor = (status: ProjectStatus): string => {
@@ -69,7 +68,18 @@ const DataTable = () => {
                 width: 200,
                 align: "left",
                 fixed: "left",
-                render: (value) => <CopyTextPopover text={value} />,
+                render: (value, record) => (
+                    <a
+                        href={`/employee/projects/${record.id}`}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            window.location.href = `/employee/projects/${record.id}`;
+                        }}
+                        className="text-blue-600 hover:text-blue-800 hover:underline"
+                    >
+                        {value}
+                    </a>
+                ),
             },
             {
                 title: "Mô tả",
