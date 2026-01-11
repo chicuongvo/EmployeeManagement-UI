@@ -39,14 +39,14 @@ const ProjectDetailPage = () => {
                     items: [
                         {
                             title: "Quản lý dự án",
-                            path: "/employee/projects",
+                            path: "/projects",
                         },
                         {
                             title: `Dự án #${projectId}`,
                         },
                     ],
                 },
-                onBack: () => navigate("/employee/projects"),
+                onBack: () => navigate("/projects"),
             }}
             title={<PageTitle title={`Dự án #${projectId}`} />}
         >

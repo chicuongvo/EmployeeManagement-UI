@@ -70,10 +70,10 @@ const DataTable = () => {
                 fixed: "left",
                 render: (value, record) => (
                     <a
-                        href={`/employee/projects/${record.id}`}
+                        href={`/projects/${record.id}`}
                         onClick={(e) => {
                             e.preventDefault();
-                            window.location.href = `/employee/projects/${record.id}`;
+                            window.location.href = `/projects/${record.id}`;
                         }}
                         className="text-blue-600 hover:text-blue-800 hover:underline"
                     >

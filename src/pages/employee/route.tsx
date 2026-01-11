@@ -1,15 +1,10 @@
 import { FaUserGroup } from "react-icons/fa6";
-import { FaProjectDiagram } from "react-icons/fa";
 
 import { type RouteItem } from "@/routes";
 import { EmployeeProvider } from "./pages/employee/EmployeeContext";
 import { DepartmentProvider } from "./pages/department/DepartmentContext";
-import { ProjectProvider } from "./pages/project/ProjectContext";
-import { ProjectDetailProvider } from "./pages/project-detail/ProjectDetailContext";
 import EmployeePage from "./pages/employee";
 import DepartmentPage from "./pages/department";
-import ProjectPage from "./pages/project";
-import ProjectDetailPage from "./pages/project-detail";
 import MainLayout from "@/layout/MainLayout";
 
 const route: RouteItem = {
@@ -37,25 +32,6 @@ const route: RouteItem = {
           <DepartmentPage />
         </DepartmentProvider>
       ),
-    },
-    {
-      path: "projects",
-      name: "Quản lý dự án",
-      icon: <FaProjectDiagram />,
-      element: (
-        <ProjectProvider>
-          <ProjectPage />
-        </ProjectProvider>
-      ),
-    },
-    {
-      path: "projects/:projectId",
-      element: (
-        <ProjectDetailProvider>
-          <ProjectDetailPage />
-        </ProjectDetailProvider>
-      ),
-      hideInMenu: true,
     },
   ],
 };
