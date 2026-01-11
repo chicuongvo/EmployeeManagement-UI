@@ -11,11 +11,25 @@ import type {
 // Get all update requests
 export const getAllUpdateRequests = async (
   params?: UpdateRequestQueryParams
-): Promise<UpdateRequestResponse[]> => {
+): Promise<{ data: UpdateRequestResponse[]; pagination: { page: number; limit: number; total: number; totalPages: number } }> => {
   const response = await axiosClient.get("/update-request", { params });
-  // Backend returns { data: UpdateRequestResponse[], pagination: {...} }
+  // Backend returns { code: "SUCCESS", data: { data: UpdateRequestResponse[], pagination: {...} } }
   const result = response.data.data;
-  return Array.isArray(result) ? result : result?.data || [];
+  // If result has pagination structure, return it
+  if (result && typeof result === 'object' && 'data' in result && 'pagination' in result) {
+    return result;
+  }
+  // Fallback: if it's just an array, wrap it
+  const data = Array.isArray(result) ? result : result?.data || [];
+  return {
+    data,
+    pagination: {
+      page: params?.page || 1,
+      limit: params?.limit || 10,
+      total: data.length,
+      totalPages: Math.ceil(data.length / (params?.limit || 10)),
+    },
+  };
 };
 
 // Get update request by ID

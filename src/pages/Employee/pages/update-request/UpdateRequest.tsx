@@ -12,8 +12,6 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table";
 import {
-  Plus,
-  Pencil,
   Eye,
   Trash2,
   User,
@@ -53,19 +51,11 @@ import {
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
 import { DataTableViewOptions } from "@/components/data-table/data-table-view-options";
-import { UpdateRequestForm } from "@/components/update-request/UpdateRequestForm";
 import type {
   UpdateRequestResponse,
   RequestStatus,
-  CreateUpdateRequestRequest,
-  UpdateUpdateRequestRequest,
 } from "@/types/UpdateRequest";
-import {
-  deleteUpdateRequest,
-  reviewRequest,
-  createUpdateRequest,
-  updateUpdateRequest,
-} from "@/services/update-request";
+import { deleteUpdateRequest, reviewRequest } from "@/services/update-request";
 import { toast } from "react-toastify";
 
 const UpdateRequestTableContent = () => {
@@ -82,56 +72,11 @@ const UpdateRequestTableContent = () => {
   const [statusFilter, setStatusFilter] = React.useState<string>("all");
 
   // Dialog states
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = React.useState(false);
-  const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = React.useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [selectedRequest, setSelectedRequest] =
     React.useState<UpdateRequestResponse | null>(null);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-
-  const handleCreate = async (
-    data: CreateUpdateRequestRequest | UpdateUpdateRequestRequest
-  ) => {
-    setIsSubmitting(true);
-    try {
-      if ("requestedById" in data) {
-        await createUpdateRequest(data as CreateUpdateRequestRequest);
-        toast.success("Gửi đơn xin thành công");
-        setIsCreateDialogOpen(false);
-        refreshUpdateRequests();
-      }
-    } catch (error) {
-      toast.error("Gửi đơn xin thất bại");
-      console.error(error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleUpdate = async (
-    data: CreateUpdateRequestRequest | UpdateUpdateRequestRequest
-  ) => {
-    if (!selectedRequest) return;
-    setIsSubmitting(true);
-    try {
-      if (!("requestedById" in data)) {
-        await updateUpdateRequest(
-          selectedRequest.id,
-          data as UpdateUpdateRequestRequest
-        );
-        toast.success("Cập nhật đơn xin thành công");
-        setIsEditDialogOpen(false);
-        setSelectedRequest(null);
-        refreshUpdateRequests();
-      }
-    } catch (error) {
-      toast.error("Cập nhật đơn xin thất bại");
-      console.error(error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const handleDelete = async () => {
     if (!selectedRequest) return;
@@ -148,11 +93,6 @@ const UpdateRequestTableContent = () => {
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const openEditDialog = (request: UpdateRequestResponse) => {
-    setSelectedRequest(request);
-    setIsEditDialogOpen(true);
   };
 
   const openViewDialog = (request: UpdateRequestResponse) => {
@@ -301,46 +241,15 @@ const UpdateRequestTableContent = () => {
             >
               <Eye className="h-4 w-4" />
             </Button>
-            {request.status === "PENDING" && (
-              <>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 w-8 p-0"
-                  onClick={() => openEditDialog(request)}
-                  title="Chỉnh sửa"
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                  onClick={() => openDeleteDialog(request)}
-                  title="Xóa"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 w-8 p-0 text-green-600 hover:text-green-700 hover:bg-green-50"
-                  onClick={() => handleReview(request.id, "APPROVED")}
-                  title="Phê duyệt"
-                >
-                  <CheckCircle2 className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                  onClick={() => handleReview(request.id, "NOT_APPROVED")}
-                  title="Từ chối"
-                >
-                  <XCircle className="h-4 w-4" />
-                </Button>
-              </>
-            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+              onClick={() => openDeleteDialog(request)}
+              title="Xóa"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
           </div>
         );
       },
@@ -385,10 +294,6 @@ const UpdateRequestTableContent = () => {
             Quản lý các yêu cầu cập nhật thông tin
           </p>
         </div>
-        <Button onClick={() => setIsCreateDialogOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Tạo yêu cầu mới
-        </Button>
       </div>
       <div className="flex items-center py-4 gap-4">
         <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -464,54 +369,6 @@ const UpdateRequestTableContent = () => {
         </Table>
       </div>
       <DataTablePagination table={table} />
-
-      {/* Create Dialog */}
-      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>Tạo yêu cầu cập nhật mới</DialogTitle>
-            <DialogDescription>
-              Điền thông tin để tạo yêu cầu cập nhật mới
-            </DialogDescription>
-          </DialogHeader>
-          <UpdateRequestForm
-            mode="create"
-            onSubmit={async (data) => {
-              if ("requestedById" in data) {
-                await handleCreate(data);
-              }
-            }}
-            onCancel={() => setIsCreateDialogOpen(false)}
-            isLoading={isSubmitting}
-          />
-        </DialogContent>
-      </Dialog>
-
-      {/* Edit Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle>Chỉnh sửa yêu cầu cập nhật</DialogTitle>
-            <DialogDescription>
-              Cập nhật thông tin yêu cầu cập nhật
-            </DialogDescription>
-          </DialogHeader>
-          <UpdateRequestForm
-            mode="edit"
-            initialData={selectedRequest}
-            onSubmit={async (data) => {
-              if (!("requestedById" in data)) {
-                await handleUpdate(data);
-              }
-            }}
-            onCancel={() => {
-              setIsEditDialogOpen(false);
-              setSelectedRequest(null);
-            }}
-            isLoading={isSubmitting}
-          />
-        </DialogContent>
-      </Dialog>
 
       {/* View Dialog */}
       <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
@@ -616,25 +473,14 @@ const UpdateRequestTableContent = () => {
             </Button>
             {selectedRequest?.status === "PENDING" && (
               <>
-                {selectedRequest.status === "PENDING" && (
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setIsViewDialogOpen(false);
-                      openEditDialog(selectedRequest);
-                    }}
-                  >
-                    <Pencil className="mr-2 h-4 w-4" />
-                    Chỉnh sửa
-                  </Button>
-                )}
                 <Button
                   variant="outline"
                   onClick={() => {
                     handleReview(selectedRequest.id, "NOT_APPROVED");
                     setIsViewDialogOpen(false);
+                    setSelectedRequest(null);
                   }}
-                  className="text-red-600 hover:text-red-700"
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
                 >
                   <XCircle className="mr-2 h-4 w-4" />
                   Từ chối
@@ -643,8 +489,9 @@ const UpdateRequestTableContent = () => {
                   onClick={() => {
                     handleReview(selectedRequest.id, "APPROVED");
                     setIsViewDialogOpen(false);
+                    setSelectedRequest(null);
                   }}
-                  className="bg-green-600 hover:bg-green-700"
+                  className="bg-green-600 hover:bg-green-700 text-white"
                 >
                   <CheckCircle2 className="mr-2 h-4 w-4" />
                   Phê duyệt

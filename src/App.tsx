@@ -31,6 +31,7 @@ import enUS from "antd/es/locale/en_US";
 
 import { getRoutes } from "@/routes";
 import useLayoutStore from "@/stores/layoutStore";
+import { UserProvider } from "@/contexts/user/userContext.tsx";
 import "dayjs/locale/vi";
 
 const basename = document.querySelector("base")?.getAttribute("href") ?? "/";
@@ -46,10 +47,12 @@ function App() {
   const router = createBrowserRouter(getRoutes(), { basename });
 
   return (
-    <ConfigProvider locale={lang === "vi" ? viVN : enUS}>
-      <Toaster richColors position="top-center" />
-      <RouterProvider router={router} />
-    </ConfigProvider>
+    <UserProvider>
+      <ConfigProvider locale={lang === "vi" ? viVN : enUS}>
+        <Toaster richColors position="top-center" />
+        <RouterProvider router={router} />
+      </ConfigProvider>
+    </UserProvider>
   );
 }
 

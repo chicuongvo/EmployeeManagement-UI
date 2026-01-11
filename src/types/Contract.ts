@@ -80,7 +80,15 @@ export type ContractQueryParams = {
   status?: ContractStatus;
   type?: ContractType;
   employeeId?: number;
-  managerId?: number;
+  signedById?: number;
+  contractCode?: string;
+  sort?: string;
+  start_date_from?: string;
+  start_date_to?: string;
+  end_date_from?: string;
+  end_date_to?: string;
+  created_date_from?: string;
+  created_date_to?: string;
 };
 
 export type ContractStats = {

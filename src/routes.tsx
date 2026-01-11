@@ -1,6 +1,7 @@
 import { Navigate, type RouteObject } from "react-router-dom";
 
-import employee_route from "./pages/employee/route";
+import employee_route from "./pages/Employee/route";
+import Login from "./pages/Auth/Login";
 
 
 export type RouteItem = Omit<RouteObject, "children"> & {
@@ -13,6 +14,7 @@ export type RouteItem = Omit<RouteObject, "children"> & {
 };
 
 export const ROUTER_DASHBOARD = "/employee/employees";
+export const ROUTER_LOGIN = "/auth/login";
 
 export const DEFAULT_ROUTE = "/employee/employees";
 
@@ -21,6 +23,11 @@ const routes: RouteItem[] = [
         path: "/",
         hideInMenu: true,
         element: <Navigate to={ROUTER_DASHBOARD} replace />,
+    } as RouteItem,
+    {
+        path: "/auth/login",
+        hideInMenu: true,
+        element: <Login />,
     } as RouteItem,
     employee_route,
 ];

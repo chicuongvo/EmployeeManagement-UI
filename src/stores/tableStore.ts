@@ -4,9 +4,13 @@ import { devtools, persist } from "zustand/middleware";
 interface AuthState {
     listEmployeeManagementKey?: string[];
     listEmployeeActiveKey?: string[];
+    listUpdateRequestActiveKey?: string[];
+    listContractActiveKey?: string[];
 
     setListEmployeeManagementKey: (listEmployeeManagementKey?: string[]) => void;
     setListEmployeeActiveKey: (listEmployeeActiveKey?: string[]) => void;
+    setListUpdateRequestActiveKey: (listUpdateRequestActiveKey?: string[]) => void;
+    setListContractActiveKey: (listContractActiveKey?: string[]) => void;
 }
 
 const useTableStore = create<AuthState>()(
@@ -24,15 +28,29 @@ const useTableStore = create<AuthState>()(
                         listEmployeeActiveKey,
                     });
                 },
+                setListUpdateRequestActiveKey: (listUpdateRequestActiveKey) => {
+                    set({
+                        listUpdateRequestActiveKey,
+                    });
+                },
+                setListContractActiveKey: (listContractActiveKey) => {
+                    set({
+                        listContractActiveKey,
+                    });
+                },
             }),
             {
                 name: "table_keys_store",
                 partialize: ({
                     listEmployeeManagementKey,
-                    listEmployeeActiveKey
+                    listEmployeeActiveKey,
+                    listUpdateRequestActiveKey,
+                    listContractActiveKey,
                 }) => ({
                     listEmployeeManagementKey,
-                    listEmployeeActiveKey
+                    listEmployeeActiveKey,
+                    listUpdateRequestActiveKey,
+                    listContractActiveKey,
                 }),
             }
         ),

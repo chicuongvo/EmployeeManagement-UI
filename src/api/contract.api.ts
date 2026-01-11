@@ -12,11 +12,38 @@ import type {
 // Get all contracts
 export const getAllContracts = async (
   params?: ContractQueryParams
-): Promise<ContractResponse[]> => {
+): Promise<{
+  data: ContractResponse[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}> => {
   const response = await axiosClient.get("/contract", { params });
-  // Backend returns { data: ContractResponse[], pagination: {...} }
+  // Backend returns { code: "SUCCESS", data: { data: ContractResponse[], pagination: {...} } }
   const result = response.data.data;
-  return Array.isArray(result) ? result : result?.data || [];
+  // If result has pagination structure, return it
+  if (
+    result &&
+    typeof result === "object" &&
+    "data" in result &&
+    "pagination" in result
+  ) {
+    return result;
+  }
+  // Fallback: if it's just an array, wrap it
+  const data = Array.isArray(result) ? result : result?.data || [];
+  return {
+    data,
+    pagination: {
+      page: params?.page || 1,
+      limit: params?.limit || 10,
+      total: data.length,
+      totalPages: Math.ceil(data.length / (params?.limit || 10)),
+    },
+  };
 };
 
 // Get contract by ID
@@ -32,7 +59,10 @@ export const createContract = async (
   data: CreateContractRequest | FormData
 ): Promise<ContractResponse> => {
   const response = await axiosClient.post("/contract", data, {
-    headers: data instanceof FormData ? { "Content-Type": "multipart/form-data" } : undefined,
+    headers:
+      data instanceof FormData
+        ? { "Content-Type": "multipart/form-data" }
+        : undefined,
   });
   return response.data.data;
 };
@@ -43,7 +73,10 @@ export const updateContract = async (
   data: UpdateContractRequest | FormData
 ): Promise<ContractResponse> => {
   const response = await axiosClient.put(`/contract/${id}`, data, {
-    headers: data instanceof FormData ? { "Content-Type": "multipart/form-data" } : undefined,
+    headers:
+      data instanceof FormData
+        ? { "Content-Type": "multipart/form-data" }
+        : undefined,
   });
   return response.data.data;
 };
@@ -96,3 +129,33 @@ export const getContractStats = async (): Promise<ContractStats> => {
   return response.data.data;
 };
 
+// Extract contract info from PDF
+export const extractContractFromPDF = async (
+  pdfFile: File
+): Promise<{
+  contractCode: string | null;
+  type: string;
+  startDate: string | null;
+  endDate: string | null;
+  signedDate: string | null;
+  dailySalary: number | null;
+  allowance: number;
+  note: string | null;
+  employeeName: string | null;
+  employeeId: number | null;
+  signedByName: string | null;
+}> => {
+  const formData = new FormData();
+  formData.append("pdf", pdfFile);
+
+  const response = await axiosClient.post(
+    "/contract/extract-from-pdf",
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+  return response.data.data;
+};

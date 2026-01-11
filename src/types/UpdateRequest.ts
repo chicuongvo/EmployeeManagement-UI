@@ -42,8 +42,14 @@ export type ReviewRequestRequest = {
 export type UpdateRequestQueryParams = {
   page?: number;
   limit?: number;
+  sort?: string;
   status?: RequestStatus;
   requestedById?: number;
   reviewedById?: number;
+  content?: string;
+  created_date_from?: string;
+  created_date_to?: string;
+  updated_date_from?: string;
+  updated_date_to?: string;
 };
 

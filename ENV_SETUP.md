@@ -107,3 +107,4 @@ Sau khi cấu hình, kiểm tra bằng cách:
 - Kiểm tra `VITE_API_BASE_URL` trong file `.env` có đúng không
 - Kiểm tra CORS settings trên backend
 
+
