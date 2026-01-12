@@ -35,8 +35,6 @@ body {
   font-family: var(--font-primary);
   font-size: 14px;
   line-height: 1.5;
-<<<<<<< HEAD
-=======
 }
 
 /* Utility class for primary font */
@@ -103,7 +101,6 @@ textarea,
 label,
 ::placeholder {
   font-size: 13px;
->>>>>>> 8eb21d017747ecdd58fdff3476f1075d20e6c7df
 }
 
 /* Utility class for primary font */
