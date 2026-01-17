@@ -6,6 +6,9 @@ import { useSearchParams } from "react-router-dom";
 import { Tabs, type TabsProps } from "antd";
 import PageTitle from "@/components/common/shared/PageTitle";
 import { useDepartmentContext } from "./DepartmentContext";
+import PrimaryButton from "@/components/common/button/PrimaryButton";
+import { PlusOutlined } from "@ant-design/icons";
+import ModalCreateUpdateDepartmentPosition from "./components/ModalCreateUpdateDepartmentPosition";
 
 export const TABS = {
   DEPARTMENT: "1",
@@ -14,7 +17,7 @@ export const TABS = {
 
 const Index = () => {
   const dataTableRef = useRef<HTMLDivElement>(null);
-  const { tab } = useDepartmentContext();
+  const { tab, openCreateModal } = useDepartmentContext();
   const [, setSearchParams] = useSearchParams();
 
   const handleChangeTab = (key: string) => {
@@ -52,6 +55,17 @@ const Index = () => {
       title={
         <PageTitle title={tab === TABS.DEPARTMENT ? "Phòng ban" : "Chức vụ"} />
       }
+      extra={
+        <PrimaryButton
+          icon={<PlusOutlined className="icon-hover-effect" />}
+          key="new-department"
+          color="green"
+          className="font-primary"
+          onClick={openCreateModal}
+        >
+          Thêm mới
+        </PrimaryButton>
+      }
     >
       <Tabs
         type="card"
@@ -71,6 +85,7 @@ const Index = () => {
           label: tabItem.label,
         }))}
       />
+      <ModalCreateUpdateDepartmentPosition />
     </PageContainer>
   );
 };
