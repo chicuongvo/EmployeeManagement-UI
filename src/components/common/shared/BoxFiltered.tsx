@@ -14,6 +14,7 @@ interface BoxFilterProps {
     canExport?: boolean;
     onReset?: () => void;
     setIsExport?: React.Dispatch<React.SetStateAction<boolean>>;
+    prependActions?: React.ReactNode;
     children?: React.ReactNode;
 }
 
@@ -23,6 +24,7 @@ const BoxFilter: React.FC<BoxFilterProps> = ({
     onReset,
     canExport,
     setIsExport,
+    prependActions,
     children,
 }) => {
     const [_, setSearchParams] = useSearchParams();
@@ -32,6 +34,7 @@ const BoxFilter: React.FC<BoxFilterProps> = ({
             <div className="flex-1">{children}</div>
             {canSearch && (
                 <Space size="middle">
+                    {prependActions}
                     <PrimaryButton
                         onClick={() => {
                             onReset ? onReset() : setSearchParams();

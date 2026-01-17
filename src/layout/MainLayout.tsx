@@ -242,19 +242,19 @@ const MainLayout = () => {
             }}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             menuItemRender={(item: any, dom: any) => {
+              const path = item.path || "/";
               const absoluteLinkRegex = /^https?:\/\//i;
-              const isAbsoluteLink = absoluteLinkRegex.test(item.path || "/");
+              const isAbsoluteLink = absoluteLinkRegex.test(path);
+              const isDynamicRoute = typeof path === "string" && path.includes(":");
+
+              if (isDynamicRoute) return dom; // show in menu but avoid broken link
 
               return isAbsoluteLink ? (
-                <a
-                  href={item.path || "/"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
+                <a href={path} target="_blank" rel="noopener noreferrer">
                   {dom}
                 </a>
               ) : (
-                <Link to={item.path || "/"}>{dom}</Link>
+                <Link to={path}>{dom}</Link>
               );
             }}
             fixSiderbar
