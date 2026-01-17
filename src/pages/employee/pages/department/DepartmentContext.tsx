@@ -72,16 +72,12 @@ export const DepartmentProvider: React.FC<{
   const tab = useGetParam<string>("tab");
 
   // Date range filters - support both naming conventions
-  const createdDateFrom = useGetParam<number>("created_date_from", "number");
-  const createdDateTo = useGetParam<number>("created_date_to", "number");
-  const createdAtFrom = useGetParam<number>("created_at_from", "number");
-  const createdAtTo = useGetParam<number>("created_at_to", "number");
+  const created_date_from = useGetParam<number>("created_date_from", "number");
+  const created_date_to = useGetParam<number>("created_date_to", "number");
 
   // Updated date filters (requires updatedAt field in Department schema)
-  const updatedAtFrom = useGetParam<number>("updated_at_from", "number");
-  const updatedAtTo = useGetParam<number>("updated_at_to", "number");
-  const updatedByFrom = useGetParam<number>("updated_by_from", "number");
-  const updatedByTo = useGetParam<number>("updated_by_to", "number");
+  const updated_date_from = useGetParam<number>("updated_date_from", "number");
+  const updated_date_to = useGetParam<number>("updated_date_to", "number");
 
   const name = useGetParam<string>("name", "string");
   const departmentCode = useGetParam<string>("departmentCode", "string");
@@ -98,15 +94,10 @@ export const DepartmentProvider: React.FC<{
       limit,
       sort,
       // Support both naming conventions for backward compatibility
-      created_at_from: createdAtFrom || createdDateFrom,
-      created_at_to: createdAtTo || createdDateTo,
-      created_date_from: createdDateFrom, // Legacy support
-      created_date_to: createdDateTo, // Legacy support
-      // Updated date filters (requires schema changes to work)
-      updated_at_from: updatedAtFrom || updatedByFrom,
-      updated_at_to: updatedAtTo || updatedByTo,
-      updated_by_from: updatedByFrom, // Legacy support (treated as updated_at)
-      updated_by_to: updatedByTo, // Legacy support (treated as updated_at)
+      created_date_from: created_date_from,
+      created_date_to: created_date_to,
+      updated_date_from: updated_date_from,
+      updated_date_to: updated_date_to,
       general_code: generalCode,
       general_code_type: generalCodeType,
     };
@@ -118,14 +109,10 @@ export const DepartmentProvider: React.FC<{
     page,
     limit,
     sort,
-    createdDateFrom,
-    createdDateTo,
-    createdAtFrom,
-    createdAtTo,
-    updatedAtFrom,
-    updatedAtTo,
-    updatedByFrom,
-    updatedByTo,
+    created_date_from,
+    created_date_to,
+    updated_date_from,
+    updated_date_to,
     generalCode,
     generalCodeType,
   ]);
@@ -156,8 +143,6 @@ export const DepartmentProvider: React.FC<{
     enabled: !!tab,
   });
 
-  console.log("data", data);
-
   const handleFilterSubmit = (
     values: GetListDepartmentRequest | GetListPositionRequest
   ) => {
@@ -165,6 +150,8 @@ export const DepartmentProvider: React.FC<{
       queryString.stringify(
         {
           ...values,
+          created_range_picker: undefined,
+          updated_range_picker: undefined,
           tab: tab ?? 1,
         },
         { arrayFormat: "comma" }

@@ -14,6 +14,8 @@ import MeetingPage from "./pages/meeting";
 import DepartmentPage from "./pages/department";
 import VideoCall from "./pages/video-call";
 import MainLayout from "@/layout/MainLayout";
+import EmployeeDetailPage from "./pages/employee_detail";
+import { EmployeeDetailProvider } from "./pages/employee_detail/EmployeeDetailContex";
 
 const route: RouteItem = {
   path: "/employee",
@@ -31,6 +33,26 @@ const route: RouteItem = {
           <EmployeePage />
         </EmployeeProvider>
       ),
+    },
+    {
+      path: "employees/add-new",
+      name: "Thêm mới",
+      element: (
+        <EmployeeDetailProvider>
+          <EmployeeDetailPage />
+        </EmployeeDetailProvider>
+      ),
+      hideInMenu: true,
+    },
+    {
+      path: "employees/:id",
+      name: "Chi tiết",
+      element: (
+        <EmployeeDetailProvider>
+          <EmployeeDetailPage />
+        </EmployeeDetailProvider>
+      ),
+      hideInMenu: true,
     },
     {
       path: "update-requests",

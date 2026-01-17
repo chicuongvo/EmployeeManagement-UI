@@ -67,10 +67,10 @@ export const EmployeeProvider: React.FC<{
   const limit = useGetParam<number>("limit", "number");
   const sort = useGetParam<string>("sort", "string");
   const tab = useGetParam<string>("tab");
-  const createdDateFrom = useGetParam<number>("created_date_from", "number");
-  const createdDateTo = useGetParam<number>("created_date_to", "number");
-  const updatedDateFrom = useGetParam<number>("updated_date_from", "number");
-  const updatedDateTo = useGetParam<number>("updated_date_to", "number");
+  const created_date_from = useGetParam<number>("created_date_from", "number");
+  const created_date_to = useGetParam<number>("created_date_to", "number");
+  const updated_date_from = useGetParam<number>("updated_date_from", "number");
+  const updated_date_to = useGetParam<number>("updated_date_to", "number");
 
   const params = useMemo((): GetListEmployeeRequest => {
     return {
@@ -88,10 +88,10 @@ export const EmployeeProvider: React.FC<{
       page,
       limit,
       sort,
-      created_date_from: createdDateFrom,
-      created_date_to: createdDateTo,
-      updated_date_from: updatedDateFrom,
-      updated_date_to: updatedDateTo,
+      created_date_from,
+      created_date_to,
+      updated_date_from,
+      updated_date_to,
     };
   }, [
     generalCode,
@@ -103,10 +103,10 @@ export const EmployeeProvider: React.FC<{
     page,
     limit,
     sort,
-    createdDateFrom,
-    createdDateTo,
-    updatedDateFrom,
-    updatedDateTo,
+    created_date_from,
+    created_date_to,
+    updated_date_from,
+    updated_date_to,
   ]);
 
   const paramsStr = useMemo(() => JSON.stringify(params), [params]);
@@ -133,6 +133,8 @@ export const EmployeeProvider: React.FC<{
       queryString.stringify(
         {
           ...values,
+          created_range_picker: undefined,
+          updated_range_picker: undefined,
           tab: tab ?? 1,
         },
         { arrayFormat: "comma" }
