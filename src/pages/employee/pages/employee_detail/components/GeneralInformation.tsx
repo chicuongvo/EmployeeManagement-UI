@@ -11,7 +11,7 @@ import {
 } from "antd";
 import type { TextAreaProps } from "antd/es/input";
 import { useEmployeeDetailContext } from "../EmployeeDetailContex";
-import type { EMPLOYEE } from "@/apis/employee/model/Employee";
+import type { EMPLOYEE, WorkStatus as WorkStatusType } from "@/apis/employee/model/Employee";
 import ImageUpload from "@/components/common/form/ImageUpload";
 import FileUpload from "@/components/common/form/FileUpload";
 import SelectListEthnicity from "@/components/common/form/SelectListEthnicity";
@@ -19,9 +19,11 @@ import AutoCompleteReligion from "@/components/common/form/AutoCompleteReligion"
 import AddressInput from "@/components/common/form/AddressInput";
 import type { AddressValue } from "@/apis/address/model/Address";
 import dayjs from "dayjs";
-import Link from "antd/es/typography/Link";
 import SelectListDepartment from "@/components/common/form/SelectListDepartment";
 import SelectListPosition from "@/components/common/form/SelectListPosition";
+import { Link } from "react-router-dom";
+// import ChangeStatus from "@/components/common/status/ChangeStatus";
+import { WorkStatus } from "@/components/common/status";
 
 const { TextArea } = Input;
 
@@ -40,6 +42,10 @@ export const FORM_FIELDS = {
   GENDER: "gender",
   BIRTHDAY: "birthday",
   CITIZEN_ID: "citizenId",
+  CITIZEN_ID_FRONT_IMAGE: "citizenIdFrontImage",
+  CITIZEN_ID_BACK_IMAGE: "citizenIdBackImage",
+  CITIZEN_ID_ISSUE_DATE: "citizenIdIssueDate",
+  CITIZEN_ID_ISSUE_PLACE: "citizenIdIssuePlace",
   ETHNICITY: "ethnicity",
   RELIGION: "religion",
   MARITAL_STATUS: "maritalStatus",
@@ -73,6 +79,7 @@ export const FORM_FIELDS = {
 
   DEPARTMENT_ID: "departmentId",
   POSITION_ID: "positionId",
+  ONBOARD_DATE: "onboardDate",
 } as const;
 
 const SYSTEM_FIELDS = [
@@ -170,7 +177,7 @@ const GeneralInformation = (_props: Props) => {
     inputProps: InputProps | TextAreaProps = {}
   ) => {
     if (!isCreate && !isEditable) {
-      return <div>{value}</div>;
+      return <span>{value || "-"}</span>;
     }
 
     if (inputType === "textarea") {
@@ -190,6 +197,101 @@ const GeneralInformation = (_props: Props) => {
       />
     );
   }, [isCreate, isEditable]);
+
+  const renderSelect = useCallback((
+    value: any,
+    options: { value: any; label: string }[],
+    placeholder: string,
+    allowClear = false
+  ) => {
+    if (!isEditable) {
+      const selectedOption = options.find(opt => opt.value === value);
+      return <span>{selectedOption?.label || "-"}</span>;
+    }
+    return (
+      <Select
+        placeholder={placeholder}
+        options={options}
+        allowClear={allowClear}
+      />
+    );
+  }, [isEditable]);
+
+  const renderDatePicker = useCallback((
+    value: any,
+    format = "DD/MM/YYYY",
+    placeholder: string
+  ) => {
+    if (!isEditable) {
+      return <span>{value ? dayjs(value).format(format) : "-"}</span>;
+    }
+    return (
+      <DatePicker
+        format={format}
+        placeholder={placeholder}
+        className="w-full"
+      />
+    );
+  }, [isEditable]);
+
+  const renderImageUpload = useCallback((
+    urlImage: string | undefined,
+    onChange: (url: string | undefined) => void
+  ) => {
+    if (!isEditable) {
+      return urlImage ? <img src={urlImage} alt="" className="w-[100px]" /> : <span>-</span>;
+    }
+    return <ImageUpload urlImage={urlImage} onChange={(url) => onChange(url ?? undefined)} />;
+  }, [isEditable]);
+
+  const renderFileUpload = useCallback((
+    urlFile: string | undefined,
+    placeholder: string,
+    onChange: (url: string | undefined) => void
+  ) => {
+    if (!isEditable) {
+      return <FileUpload urlFile={urlFile} placeholder={placeholder} disabled />;
+    }
+    return (
+      <FileUpload
+        urlFile={urlFile}
+        placeholder={placeholder}
+        onChange={(url) => onChange(url ?? undefined)}
+      />
+    );
+  }, [isEditable]);
+
+  const renderSelectListEthnicity = useCallback((
+    value: string | undefined,
+    onChange: (value: string) => void
+  ) => {
+    if (!isEditable) {
+      return <span>{value || "-"}</span>;
+    }
+    return (
+      <SelectListEthnicity
+        placeholder="Chọn dân tộc"
+        value={value}
+        onChange={onChange}
+      />
+    );
+  }, [isEditable]);
+
+  const renderAutoCompleteReligion = useCallback((
+    value: string | undefined,
+    onChange: (value: string) => void
+  ) => {
+    if (!isEditable) {
+      return <span>{value || "-"}</span>;
+    }
+    return (
+      <AutoCompleteReligion
+        placeholder="Chọn tôn giáo"
+        value={value}
+        onChange={onChange}
+      />
+    );
+  }, [isEditable]);
 
   const renderDepartmentPositionField = useCallback((
     type: "department" | "position",
@@ -220,11 +322,19 @@ const GeneralInformation = (_props: Props) => {
         />
       )
     ) : (
-      <Link href={`/${type}/${id}`}>
-        {(_props.initialValues[
+      (() => {
+        const name = _props.initialValues[
           `${type}Name` as keyof typeof _props.initialValues
-        ] as string) ?? "Chưa cập nhật"}
-      </Link>
+        ] as string | undefined;
+
+        return name ? (
+          <Link to={`/${type}/${id}`} className="text-green">
+            {name}
+          </Link>
+        ) : (
+          <span>-</span>
+        );
+      })()
     );
   }, [isEditable, _props]);
 
@@ -249,17 +359,47 @@ const GeneralInformation = (_props: Props) => {
     );
   }, [isEditable, getAddressValue]);
 
+  const renderWorkStatus = useCallback((
+    value: WorkStatusType | undefined,
+    onChange: (value: WorkStatusType) => void
+  ) => {
+    if (!value) return <span>-</span>;
+
+    return (
+      <WorkStatus
+        status={value}
+      // enabledDropdown={isEditable}
+      />
+    );
+  }, [isEditable]);
+
+  // const renderActiveStatus = useCallback((
+  //   value: boolean | undefined,
+  //   onChange: (value: boolean) => void
+  // ) => {
+  //   if (value === undefined) return <span>-</span>;
+
+  //   return (
+  //     <ChangeStatus
+  //       type="isActive"
+  //       value={value}
+  //       onChangeStatus={(newValue) => onChange(newValue as boolean)}
+  //       enabledDropdown={isEditable}
+  //     />
+  //   );
+  // }, [isEditable]);
+
   const systemFields = useMemo(() => [
     getFieldConfig(
       FORM_FIELDS.EMPLOYEE_CODE,
       "Mã nhân viên",
-      <span>{_props.initialValues.employeeCode}</span>
+      <span>{_props.initialValues.employeeCode || "-"}</span>
     ),
     getFieldConfig(
       FORM_FIELDS.CREATED_AT,
       "Ngày tạo",
       <span>
-        {dayjs(_props.initialValues.createdAt).format("DD/MM/YYYY HH:mm:ss")}
+        {_props.initialValues.createdAt ? dayjs(_props.initialValues.createdAt).format("DD/MM/YYYY HH:mm:ss") : "-"}
       </span>
     ),
     getFieldConfig(
@@ -278,31 +418,43 @@ const GeneralInformation = (_props: Props) => {
         _props.initialValues.positionId ?? 0
       )
     ),
-    getFieldConfig(
-      FORM_FIELDS.IS_ACTIVE,
-      "Trạng thái",
-      <Select
-        placeholder="Chọn trạng thái"
-        options={[
-          { value: true, label: "Đang hoạt động" },
-          { value: false, label: "Đã khóa" },
-        ]}
-      />
-    ),
+    // getFieldConfig(
+    //   FORM_FIELDS.IS_ACTIVE,
+    //   "Trạng thái",
+    //   renderActiveStatus(
+    //     _props.initialValues.isActive,
+    //     (value: boolean) => {
+    //       _props.setChangeInfoValue({
+    //         ..._props.changeInfoValue,
+    //         isActive: value,
+    //       });
+    //     }
+    //   )
+    // ),
     getFieldConfig(
       FORM_FIELDS.WORK_STATUS,
       "Trạng thái làm việc",
-      <Select
-        placeholder="Chọn trạng thái làm việc"
-        options={[
-          { value: "WORKING_ONSITE", label: "Đang làm việc" },
-          { value: "WORK_FROM_HOME", label: "Làm việc từ xa" },
-          { value: "BUSINESS_TRIP", label: "Đi công tác" },
-          { value: "TRAINING", label: "Đang đào tạo" },
-        ]}
-      />
+      renderWorkStatus(
+        _props.initialValues.workStatus,
+        (value: WorkStatusType) => {
+          _props.setChangeInfoValue({
+            ..._props.changeInfoValue,
+            workStatus: value,
+          });
+        }
+      )
     ),
-  ], [isEditable]);
+    getFieldConfig(
+      FORM_FIELDS.ONBOARD_DATE,
+      "Ngày nhận việc",
+      renderDatePicker(
+        _props.initialValues.onboardDate,
+        "DD/MM/YYYY",
+        "Chọn ngày nhận việc"
+      ),
+      true
+    ),
+  ], [isEditable, _props.initialValues, renderDepartmentPositionField, renderSelect, renderWorkStatus, renderDatePicker]);
 
   const personalFields = useMemo(() => [
     getFieldConfig(
@@ -314,17 +466,21 @@ const GeneralInformation = (_props: Props) => {
     getFieldConfig(
       FORM_FIELDS.GENDER,
       "Giới tính",
-      <Select placeholder="Chọn giới tính" options={genderOptions} />,
+      renderSelect(
+        _props.initialValues.gender,
+        genderOptions,
+        "Chọn giới tính"
+      ),
       true
     ),
     getFieldConfig(
       FORM_FIELDS.BIRTHDAY,
       "Ngày sinh",
-      <DatePicker
-        format="DD/MM/YYYY"
-        placeholder="Chọn ngày sinh"
-        className="w-full"
-      />,
+      renderDatePicker(
+        _props.initialValues.birthday,
+        "DD/MM/YYYY",
+        "Chọn ngày sinh"
+      ),
       true
     ),
     getFieldConfig(
@@ -334,57 +490,100 @@ const GeneralInformation = (_props: Props) => {
       true
     ),
     getFieldConfig(
+      FORM_FIELDS.CITIZEN_ID_FRONT_IMAGE,
+      "CCCD mặt trước",
+      renderImageUpload(
+        _props.initialValues.citizenIdFrontImage,
+        (url) => {
+          _props.setChangeInfoValue({
+            ..._props.changeInfoValue,
+            citizenIdFrontImage: url ?? undefined,
+          });
+        }
+      ),
+      true
+    ),
+    getFieldConfig(
+      FORM_FIELDS.CITIZEN_ID_BACK_IMAGE,
+      "CCCD mặt sau",
+      renderImageUpload(
+        _props.initialValues.citizenIdBackImage,
+        (url) => {
+          _props.setChangeInfoValue({
+            ..._props.changeInfoValue,
+            citizenIdBackImage: url ?? undefined,
+          });
+        }
+      ),
+      true
+    ),
+    getFieldConfig(
+      FORM_FIELDS.CITIZEN_ID_ISSUE_DATE,
+      "Ngày cấp",
+      renderDatePicker(
+        _props.initialValues.citizenIdIssueDate,
+        "DD/MM/YYYY",
+        "Chọn ngày cấp"
+      ),
+      true
+    ),
+    getFieldConfig(
+      FORM_FIELDS.CITIZEN_ID_ISSUE_PLACE,
+      "Nơi cấp",
+      renderInput("Nhập nơi cấp", _props.initialValues.citizenIdIssuePlace ?? ""),
+      true
+    ),
+    getFieldConfig(
       FORM_FIELDS.ETHNICITY,
       "Dân tộc",
-      <SelectListEthnicity
-        placeholder="Chọn dân tộc"
-        value={_props.initialValues.ethnicity ?? undefined}
-        onChange={(value: string) => {
+      renderSelectListEthnicity(
+        _props.initialValues.ethnicity ?? undefined,
+        (value: string) => {
           _props.setChangeInfoValue({
             ..._props.changeInfoValue,
             ethnicity: value ?? undefined,
           });
-        }}
-      />
+        }
+      )
     ),
     getFieldConfig(
       FORM_FIELDS.RELIGION,
       "Tôn giáo",
-      <AutoCompleteReligion
-        placeholder="Chọn tôn giáo"
-        value={_props.initialValues.religion ?? undefined}
-        onChange={(value: string) => {
+      renderAutoCompleteReligion(
+        _props.initialValues.religion ?? undefined,
+        (value: string) => {
           _props.setChangeInfoValue({
             ..._props.changeInfoValue,
             religion: value ?? undefined,
           });
-        }}
-      />
+        }
+      )
     ),
     getFieldConfig(
       FORM_FIELDS.MARITAL_STATUS,
       "Tình trạng hôn nhân",
-      <Select
-        placeholder="Chọn tình trạng hôn nhân"
-        options={maritalStatusOptions}
-        allowClear
-      />
+      renderSelect(
+        _props.initialValues.maritalStatus,
+        maritalStatusOptions,
+        "Chọn tình trạng hôn nhân",
+        true
+      )
     ),
     getFieldConfig(
       FORM_FIELDS.AVATAR,
       "Ảnh đại diện",
-      <ImageUpload
-        urlImage={_props.initialValues.avatar}
-        onChange={(url) => {
+      renderImageUpload(
+        _props.initialValues.avatar,
+        (url) => {
           _props.setChangeInfoValue({
             ..._props.changeInfoValue,
             avatar: url ?? undefined,
           });
-        }}
-      />,
+        }
+      ),
       true
     ),
-  ], [isEditable]);
+  ], [isEditable, _props, genderOptions, maritalStatusOptions, renderInput, renderSelect, renderDatePicker, renderSelectListEthnicity, renderAutoCompleteReligion, renderImageUpload]);
 
   // Contact Information Fields
   const contactFields = useMemo(() => [
@@ -435,7 +634,11 @@ const GeneralInformation = (_props: Props) => {
     getFieldConfig(
       FORM_FIELDS.EDUCATION,
       "Trình độ học vấn",
-      <Select placeholder="Chọn trình độ học vấn" options={educationOptions} />
+      renderSelect(
+        _props.initialValues.education,
+        educationOptions,
+        "Chọn trình độ học vấn"
+      )
     ),
     getFieldConfig(
       FORM_FIELDS.SCHOOL,
@@ -450,28 +653,28 @@ const GeneralInformation = (_props: Props) => {
     getFieldConfig(
       FORM_FIELDS.DEGREE_CERTIFICATE,
       "Bằng cấp",
-      <FileUpload
-        urlFile={_props.initialValues.degreeCertificate}
-        placeholder="Tải lên"
-        onChange={(url) => {
+      renderFileUpload(
+        _props.initialValues.degreeCertificate,
+        "Tải lên",
+        (url) => {
           _props.setChangeInfoValue({
             ..._props.changeInfoValue,
             degreeCertificate: url ?? undefined,
           });
-        }}
-      />
+        }
+      )
     ),
     getFieldConfig(
       FORM_FIELDS.FOREIGN_LANGUAGE_LEVEL,
       "Trình độ ngoại ngữ",
-      <Input placeholder="Nhập trình độ ngoại ngữ" />
+      renderInput("Nhập trình độ ngoại ngữ", _props.initialValues.foreignLanguageLevel ?? "")
     ),
     getFieldConfig(
       FORM_FIELDS.IT_SKILL_LEVEL,
       "Trình độ tin học",
-      <Input placeholder="Nhập trình độ tin học" />
+      renderInput("Nhập trình độ tin học", _props.initialValues.itSkillLevel ?? "")
     ),
-  ], [isEditable]);
+  ], [isEditable, _props, educationOptions, renderSelect, renderInput, renderFileUpload]);
 
   // Insurance & Finance Fields
   const insuranceFields = useMemo(() => [
@@ -505,34 +708,34 @@ const GeneralInformation = (_props: Props) => {
     getFieldConfig(
       FORM_FIELDS.RESUME_LINK,
       "Sơ yếu lí lịch",
-      <FileUpload
-        urlFile={_props.initialValues.resumeLink}
-        placeholder="Tải lên"
-        onChange={(url) => {
+      renderFileUpload(
+        _props.initialValues.resumeLink,
+        "Tải lên",
+        (url) => {
           _props.setChangeInfoValue({
             ..._props.changeInfoValue,
             resumeLink: url ?? undefined,
           });
-        }}
-      />,
+        }
+      ),
       true
     ),
     getFieldConfig(
       FORM_FIELDS.HEALTH_CERTIFICATE,
       "Giấy khám sức khỏe",
-      <FileUpload
-        urlFile={_props.initialValues.healthCertificate}
-        placeholder="Tải lên"
-        onChange={(url) => {
+      renderFileUpload(
+        _props.initialValues.healthCertificate,
+        "Tải lên",
+        (url) => {
           _props.setChangeInfoValue({
             ..._props.changeInfoValue,
             healthCertificate: url ?? undefined,
           });
-        }}
-      />,
+        }
+      ),
       true
     ),
-  ], [isEditable]);
+  ], [isEditable, _props, renderFileUpload]);
 
   // Filter fields based on create/update mode
   const filterFields = useCallback((fields: typeof personalFields) => {

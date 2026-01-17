@@ -31,6 +31,7 @@ const DataTable = () => {
     handleFilterSubmit,
     params,
     setSelectedDepartment,
+    setSelectedPosition,
     tab,
   } = useDepartmentContext();
 
@@ -141,7 +142,11 @@ const DataTable = () => {
           <Button
             type="text"
             onClick={() => {
-              setSelectedDepartment(record);
+              if (tab === TABS.DEPARTMENT) {
+                setSelectedDepartment(record as DEPARTMENT);
+              } else {
+                setSelectedPosition(record as any);
+              }
             }}
             icon={<EditOutlined style={{ color: "#10b981" }} />}
           />

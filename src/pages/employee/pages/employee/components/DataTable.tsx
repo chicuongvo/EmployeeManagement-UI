@@ -114,6 +114,14 @@ const DataTable = () => {
         render: (value) => <WorkStatus status={value} />,
       },
       {
+        title: "Ngày nhận việc",
+        dataIndex: "onboardDate",
+        align: "left",
+        key: COLUMN_KEYS.ONBOARD_DATE,
+        width: 150,
+        render: (value) => dayjs(value).format("DD/MM/YYYY HH:mm"),
+      },
+      {
         title: "Ngày tạo",
         dataIndex: "createdAt",
         align: "left",
@@ -121,14 +129,7 @@ const DataTable = () => {
         width: 150,
         render: (value) => dayjs(value).format("DD/MM/YYYY HH:mm"),
       },
-      {
-        title: "Ngày cập nhật",
-        dataIndex: "updatedAt",
-        align: "left",
-        key: COLUMN_KEYS.UPDATED_AT,
-        width: 150,
-        render: (value) => dayjs(value).format("DD/MM/YYYY HH:mm"),
-      },
+
     ],
     [
       dataResponse?.data.pagination.page,

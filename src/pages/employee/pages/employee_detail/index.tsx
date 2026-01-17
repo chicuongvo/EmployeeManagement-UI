@@ -1,25 +1,7 @@
 import { Form } from "antd";
-// import GeneralInformation from "./components/GeneralInformation";
-// import { usePOMDetailContext } from "./POMDetailContext";
-// import { PageContainer } from "@ant-design/pro-components";
-// import { useTranslation } from "react-i18next";
-// import PageTitle from "@/components/shared/PageTitle";
-// import CircleButton from "@/components/button/CircleButton";
 import { MdEditSquare, MdSaveAs } from "react-icons/md";
 import { IoMdCloseCircle } from "react-icons/io";
-// import { STATUS } from "@/constant/status";
-// import Loading from "@/components/loading/Loading";
-// import { useCallback, useEffect, useMemo, useState } from "react";
-// import { useNavigate } from "react-router-dom";
-// import { POM_QUERY_KEY } from "@/constant/queryKey";
-// import { useQueryClient } from "@tanstack/react-query";
-// import MeasurementInformation from "./components/MeasurementInformation";
-// import { MEASUREMENT } from "@/apis/measurements/models/Measurement";
-// import { useCreatePOM, useUpdatePOM } from "@/apis/pom/createUpdatePOM";
-// import { RESPONSE_CODE } from "@/constant/responseCode";
-// import { v4 as uuid } from "uuid";
-// import { getRelativeUrl } from "@/utils/getRelativeUrl";
-// import { convertPrivateToPublicUrl } from "@/utils/convertPrivateToPublicUrl";
+
 
 import PageTitle from "@/components/common/shared/PageTitle";
 import { PageContainer } from "@ant-design/pro-components";
@@ -43,14 +25,6 @@ import { useUpdateEmployee } from "@/apis/employee/createUpdateEmployee";
 import { useNavigate } from "react-router-dom";
 import PerformanceSection from "./components/PerformanceSection";
 
-// export interface MeasurementInfo extends Partial<MEASUREMENT> {
-//   uuid?: string;
-//   isNew?: boolean;
-//   isDeleted?: boolean;
-//   isUpdated?: boolean;
-//   oldData?: Partial<MEASUREMENT>;
-// }
-
 const Index = () => {
   const {
     employee,
@@ -60,21 +34,7 @@ const Index = () => {
     setEditMode,
     editMode,
   } = useEmployeeDetailContext();
-  //   const { t } = useTranslation();
   const navigate = useNavigate();
-  //   const {
-  //     pom,
-  //     measurements,
-  //     isEditable,
-  //     isCreate,
-  //     editMode,
-  //     setEditMode,
-  //     isLoadingPOM,
-  //     isLoadingMeasurement,
-  //     refetchPOM,
-  //     refetchMeasurement,
-  //   } = usePOMDetailContext();
-  //   const queryClient = useQueryClient();
   const [form] = Form.useForm();
 
   const [changeInfoValue, setChangeInfoValue] = useState<Partial<EMPLOYEE>>({});
@@ -87,6 +47,8 @@ const Index = () => {
         gender: employee.gender,
         birthday: employee.birthday ? dayjs(employee.birthday) : undefined,
         citizenId: employee.citizenId,
+        citizenIdIssueDate: employee.citizenIdIssueDate ? dayjs(employee.citizenIdIssueDate) : undefined,
+        citizenIdIssuePlace: employee.citizenIdIssuePlace,
         ethnicity: employee.ethnicity,
         religion: employee.religion,
         maritalStatus: employee.maritalStatus,
@@ -106,6 +68,11 @@ const Index = () => {
         bankAccount: employee.bankAccount,
         resumeLink: employee.resumeLink,
         healthCertificate: employee.healthCertificate,
+        positionId: employee.positionId,
+        departmentId: employee.departmentId,
+        citizenIdFrontImage: employee.citizenIdFrontImage,
+        citizenIdBackImage: employee.citizenIdBackImage,
+        onboardDate: employee.onboardDate ? dayjs(employee.onboardDate) : undefined,
       });
     }
   }, [employee, form]);
@@ -120,6 +87,8 @@ const Index = () => {
       gender: employee.gender,
       birthday: employee.birthday ? dayjs(employee.birthday) : undefined,
       citizenId: employee.citizenId,
+      citizenIdIssueDate: employee.citizenIdIssueDate ? dayjs(employee.citizenIdIssueDate) : undefined,
+      citizenIdIssuePlace: employee.citizenIdIssuePlace,
       ethnicity: employee.ethnicity,
       religion: employee.religion,
       maritalStatus: employee.maritalStatus,
@@ -139,26 +108,18 @@ const Index = () => {
       bankAccount: employee.bankAccount,
       resumeLink: employee.resumeLink,
       healthCertificate: employee.healthCertificate,
+      positionId: employee.positionId,
+      departmentId: employee.departmentId,
+      positionName: employee.position?.name,
+      departmentName: employee.department?.name,
+      workStatus: employee.workStatus,
+      isActive: employee.isActive,
+      createdAt: employee.createdAt,
+      citizenIdFrontImage: employee.citizenIdFrontImage,
+      citizenIdBackImage: employee.citizenIdBackImage,
+      onboardDate: employee.onboardDate ? dayjs(employee.onboardDate) : undefined,
     };
   }, [employee]);
-
-  //   const initialMeasurementInfoValues: MeasurementInfo[] = useMemo(
-  //     () =>
-  //       measurements?.map((item) => ({
-  //         ...item,
-  //         uuid: uuid(),
-  //       })),
-  //     [measurements]
-  //   );
-
-  //   const setInitialInfo = useCallback(() => {
-  //     setChangeInfoValue(initialGeneralInfoValues);
-  //     setMeasurementInformation(initialMeasurementInfoValues);
-  //   }, [initialGeneralInfoValues, initialMeasurementInfoValues]);
-
-  //   useEffect(() => {
-  //     setInitialInfo();
-  //   }, [setInitialInfo]);
 
   const { mutate: createEmployee, isPending: isLoadingCreateEmployee } =
     useCreateEmployee({
@@ -214,7 +175,14 @@ const Index = () => {
       ? dayjs(changeInfoValue.birthday).toISOString()
       : undefined;
 
-    // Convert address to string (handle both AddressValue object and string)
+    const citizenIdIssueDateString = changeInfoValue.citizenIdIssueDate
+      ? dayjs(changeInfoValue.citizenIdIssueDate).format("YYYY-MM-DD")
+      : undefined;
+
+    const onboardDateString = changeInfoValue.onboardDate
+      ? dayjs(changeInfoValue.onboardDate).format("YYYY-MM-DD")
+      : undefined;
+
     const convertAddressToString = (
       address: string | AddressValue | undefined
     ): string | undefined => {
@@ -241,6 +209,8 @@ const Index = () => {
         gender: changeInfoValue.gender as Gender,
         birthday: birthdayString as string,
         citizenId: changeInfoValue.citizenId as string,
+        citizenIdIssueDate: citizenIdIssueDateString,
+        citizenIdIssuePlace: changeInfoValue.citizenIdIssuePlace,
         phone: changeInfoValue.phone as string,
         email: changeInfoValue.email as string,
         ethnicity: changeInfoValue.ethnicity,
@@ -265,6 +235,9 @@ const Index = () => {
         departmentId:
           formValues.departmentId || employee?.departmentId || undefined,
         positionId: formValues.positionId || employee?.positionId || 0,
+        citizenIdFrontImage: changeInfoValue.citizenIdFrontImage,
+        citizenIdBackImage: changeInfoValue.citizenIdBackImage,
+        onboardDate: onboardDateString,
       };
 
       createEmployee(createPayload);
@@ -286,6 +259,12 @@ const Index = () => {
       }
       if (changeInfoValue.citizenId !== undefined) {
         updatePayload.citizenId = changeInfoValue.citizenId;
+      }
+      if (citizenIdIssueDateString) {
+        updatePayload.citizenIdIssueDate = citizenIdIssueDateString;
+      }
+      if (changeInfoValue.citizenIdIssuePlace !== undefined) {
+        updatePayload.citizenIdIssuePlace = changeInfoValue.citizenIdIssuePlace;
       }
       if (changeInfoValue.phone !== undefined) {
         updatePayload.phone = changeInfoValue.phone;
@@ -355,6 +334,15 @@ const Index = () => {
       if (formValues.workStatus !== undefined) {
         updatePayload.workStatus = formValues.workStatus;
       }
+      if (changeInfoValue.citizenIdFrontImage !== undefined) {
+        updatePayload.citizenIdFrontImage = changeInfoValue.citizenIdFrontImage;
+      }
+      if (changeInfoValue.citizenIdBackImage !== undefined) {
+        updatePayload.citizenIdBackImage = changeInfoValue.citizenIdBackImage;
+      }
+      if (onboardDateString !== undefined) {
+        updatePayload.onboardDate = onboardDateString;
+      }
 
       updateEmployee(updatePayload);
     }
@@ -367,36 +355,6 @@ const Index = () => {
     updateEmployee,
   ]);
 
-  //   const handleCreateUpdateSize = useCallback(() => {
-  //     const payload = {
-  //       id: pom?.id,
-  //       ...changeInfoValue,
-  //       image_url: getRelativeUrl(changeInfoValue.image_url || ""),
-  //     };
-
-  //     if (isCreate) {
-  //       createPOM({
-  //         ...payload,
-  //         measurement_ids:
-  //           measurementInformation
-  //             ?.filter((item) => item.isNew)
-  //             ?.map((item) => item.id || 0) || [],
-  //       });
-  //     } else {
-  //       updatePOM({
-  //         ...payload,
-  //         add_measurement_ids:
-  //           measurementInformation
-  //             ?.filter((item) => (item.isNew || item.isUpdated) && !!item.id)
-  //             ?.map((item) => item.id || 0) || [],
-  //         del_measurement_ids:
-  //           measurementInformation
-  //             ?.filter((item) => (item.isDeleted || !!item.oldData) && !!item.id)
-  //             ?.map((item) => item.oldData?.id || item.id || 0) || [],
-  //       });
-  //     }
-  //   }, [pom, changeInfoValue, measurementInformation, isCreate]);
-
   const disableSubmit = useMemo(() => {
     if (isCreate) {
       const hasAllRequiredFields =
@@ -407,6 +365,9 @@ const Index = () => {
         changeInfoValue.avatar &&
         changeInfoValue.phone &&
         changeInfoValue.email &&
+        changeInfoValue.citizenIdIssueDate &&
+        changeInfoValue.citizenIdIssuePlace &&
+        changeInfoValue.onboardDate &&
         changeInfoValue.permanentAddress &&
         changeInfoValue.currentAddress &&
         changeInfoValue.siNo &&
@@ -419,54 +380,6 @@ const Index = () => {
     }
     return false;
   }, [changeInfoValue, isCreate]);
-
-  // console.log("disableSubmit", disableSubmit);
-  // console.log(
-  //   "fullName:",
-  //   !!changeInfoValue.fullName,
-  //   changeInfoValue.fullName
-  // );
-  // console.log("gender:", !!changeInfoValue.gender, changeInfoValue.gender);
-  // console.log(
-  //   "birthday:",
-  //   !!changeInfoValue.birthday,
-  //   changeInfoValue.birthday
-  // );
-  // console.log(
-  //   "citizenId:",
-  //   !!changeInfoValue.citizenId,
-  //   changeInfoValue.citizenId
-  // );
-  // console.log("avatar:", !!changeInfoValue.avatar, changeInfoValue.avatar);
-  // console.log("phone:", !!changeInfoValue.phone, changeInfoValue.phone);
-  // console.log("email:", !!changeInfoValue.email, changeInfoValue.email);
-  // console.log(
-  //   "permanentAddress:",
-  //   !!changeInfoValue.permanentAddress,
-  //   changeInfoValue.permanentAddress
-  // );
-  // console.log(
-  //   "currentAddress:",
-  //   !!changeInfoValue.currentAddress,
-  //   changeInfoValue.currentAddress
-  // );
-  // console.log("siNo:", !!changeInfoValue.siNo, changeInfoValue.siNo);
-  // console.log("hiNo:", !!changeInfoValue.hiNo, changeInfoValue.hiNo);
-  // console.log(
-  //   "bankAccount:",
-  //   !!changeInfoValue.bankAccount,
-  //   changeInfoValue.bankAccount
-  // );
-  // console.log(
-  //   "resumeLink:",
-  //   !!changeInfoValue.resumeLink,
-  //   changeInfoValue.resumeLink
-  // );
-  // console.log(
-  //   "healthCertificate:",
-  //   !!changeInfoValue.healthCertificate,
-  //   changeInfoValue.healthCertificate
-  // );
 
   const renderActionButton = useCallback(() => {
     if (isEditable) {
@@ -499,7 +412,7 @@ const Index = () => {
       <div className="w-fit mx-auto min-h-14 px-8 rounded-full bg-gray-300/20 backdrop-blur-md flex gap-2 justify-center items-center shadow-lg">
         <CircleButton
           onClick={() => {
-            // setEditMode(true);
+            setEditMode(true);
           }}
           icon={<MdEditSquare size={32} className="icon-hover-effect" />}
           key="edit"
@@ -563,19 +476,13 @@ const Index = () => {
             changeInfoValue={changeInfoValue}
             initialValues={initialGeneralInfoValues as Partial<EMPLOYEE>}
             setChangeInfoValue={setChangeInfoValue}
+
           />
         </div>
       </Form>
-      {/* <MeasurementInformation
-        form={measurementForm}
-        measurementInformation={measurementInformation}
-        setMeasurementInformation={setMeasurementInformation}
-        initialMeasurementInfoValues={initialMeasurementInfoValues}
-      />*/}
       <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
         {renderActionButton()}
       </div>
-      {/* <Loading isLoading={isLoadingPOM || isLoadingMeasurement} /> */}
     </PageContainer>
   );
 };
