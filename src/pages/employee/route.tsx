@@ -1,4 +1,5 @@
 import { FaUserGroup } from "react-icons/fa6";
+import { Outlet } from "react-router-dom";
 
 import { type RouteItem } from "@/routes";
 import { EmployeeProvider } from "./pages/employee/EmployeeContext";
@@ -8,6 +9,9 @@ import DepartmentPage from "./pages/department";
 import MainLayout from "@/layout/MainLayout";
 import EmployeeDetailPage from "./pages/employee_detail";
 import { EmployeeDetailProvider } from "./pages/employee_detail/EmployeeDetailContex";
+
+import PerformancePage from "@/pages/employee/pages/performance";
+import PerformanceDetailPage from "@/pages/employee/pages/performanceDetail";
 
 const route: RouteItem = {
   path: "/employee",
@@ -54,6 +58,23 @@ const route: RouteItem = {
           <DepartmentPage />
         </DepartmentProvider>
       ),
+    },
+    {
+      path: "performance",
+      name: "Performance",
+      element: <Outlet />,
+      children: [
+        {
+          index: true,
+          name: "Performance",
+          element: <PerformancePage />,
+        },
+        {
+          path: ":id",
+          name: "Performance Detail",
+          element: <PerformanceDetailPage />,
+        },
+      ],
     },
   ],
 };
