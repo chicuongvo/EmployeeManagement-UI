@@ -8,6 +8,13 @@ export interface Department {
   departmentCode: string;
   managerId?: number;
   createdAt: Date;
+  manager?: {
+    id: number;
+    fullName: string;
+    avatar?: string;
+    email: string;
+    phone: string;
+  };
 }
 
 export interface Position {
@@ -110,12 +117,12 @@ export interface GetListEmployeeRequest extends PaginationRequest {
   employeeCode?: string | string[];
 }
 
-export interface GetListEmployeeResponse extends PaginationResponse<EMPLOYEE> {}
+export interface GetListEmployeeResponse extends PaginationResponse<EMPLOYEE> { }
 
 export interface GetEmployeeRequest {
   id: number;
 }
-export interface GetEmployeeResponse extends BaseResponse<EMPLOYEE> {}
+export interface GetEmployeeResponse extends BaseResponse<EMPLOYEE> { }
 
 export interface CreateEmployeeRequest {
   fullName: string;

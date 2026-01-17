@@ -36,11 +36,12 @@ import type {
 import type { AddressValue } from "@/apis/address/model/Address";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import dayjs from "dayjs";
-import { BasicInformation } from "./components/BasicInformation";
+import BasicInformation from "./components/BasicInformation";
 import CircleButton from "@/components/common/button/CircleButton";
 import { useCreateEmployee } from "@/apis/employee/createUpdateEmployee";
 import { useUpdateEmployee } from "@/apis/employee/createUpdateEmployee";
 import { useNavigate } from "react-router-dom";
+import PerformanceSection from "./components/PerformanceSection";
 
 // export interface MeasurementInfo extends Partial<MEASUREMENT> {
 //   uuid?: string;
@@ -161,9 +162,9 @@ const Index = () => {
 
   const { mutate: createEmployee, isPending: isLoadingCreateEmployee } =
     useCreateEmployee({
-      onSuccess: () => {
+      onSuccess: (res: any) => {
         refetchEmployee();
-        navigate("/employee/employees");
+        navigate(`/employee/employees/${res.data.id}`);
       },
     });
 
@@ -532,7 +533,7 @@ const Index = () => {
             },
             {
               title: "Chi tiết nhân viên",
-              href: "/master-list/pom?tab=1",
+              href: "/employee/employees?limit=10&page=1&tab=1",
             },
             {
               title: isCreate ? "Thêm mới" : "Chi tiết",
@@ -552,8 +553,12 @@ const Index = () => {
         initialValues={initialGeneralInfoValues}
         onValuesChange={handleFormValuesChange}
       >
-        <div className="flex flex-row gap-4 w-full px-6">
-          {!isCreate && <BasicInformation />}
+        <div className="flex flex-row gap-4 w-full px-6 my-3 ">
+          {!isCreate &&
+            <div className="w-[300px] flex-shrink-0 flex-col gap-3">
+              <BasicInformation />
+              <PerformanceSection />
+            </div>}
           <GeneralInformation
             changeInfoValue={changeInfoValue}
             initialValues={initialGeneralInfoValues as Partial<EMPLOYEE>}

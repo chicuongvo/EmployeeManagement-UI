@@ -1,4 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
+import React, { useCallback, useMemo } from "react";
 import {
   Card,
   Collapse,
@@ -96,41 +97,7 @@ interface Props {
 const GeneralInformation = (_props: Props) => {
   const { isCreate, isEditable } = useEmployeeDetailContext();
 
-  // Helper function to extract "Province, District, Ward" from full address string
-  const extractAddressForDefaultValue = (
-    address: string | AddressValue | undefined
-  ): string | undefined => {
-    if (!address) return undefined;
-
-    // If it's already an AddressValue object, use value prop instead
-    if (typeof address === "object" && "provinceCode" in address) {
-      return undefined;
-    }
-
-    // If it's a string, extract the last 3 parts (Ward, District, Province)
-    // and reorder to "Province, District, Ward" format
-    if (typeof address === "string") {
-      const parts = address
-        .split(",")
-        .map((part) => part.trim())
-        .filter(Boolean);
-      if (parts.length >= 3) {
-        // Vietnamese address format: "specificAddress, Ward, District, Province"
-        // We need: "Province, District, Ward"
-        const [province, district, ward] = [
-          parts[parts.length - 1], // Province (last)
-          parts[parts.length - 2], // District (second last)
-          parts[parts.length - 3], // Ward (third last)
-        ];
-        return `${province}, ${district}, ${ward}`;
-      }
-    }
-
-    return undefined;
-  };
-
-  // Helper function to check if address is AddressValue object
-  const getAddressValue = (
+  const getAddressValue = useCallback((
     address: string | AddressValue | undefined
   ): AddressValue | undefined => {
     if (!address) return undefined;
@@ -138,25 +105,25 @@ const GeneralInformation = (_props: Props) => {
       return address as AddressValue;
     }
     return undefined;
-  };
+  }, []);
 
-  // Gender options
-  const genderOptions = [
+  // Memoize gender options
+  const genderOptions = useMemo(() => [
     { value: "MALE", label: "Nam" },
     { value: "FEMALE", label: "Nữ" },
     { value: "OTHER", label: "Khác" },
-  ];
+  ], []);
 
-  // Marital Status options
-  const maritalStatusOptions = [
+  // Memoize marital status options
+  const maritalStatusOptions = useMemo(() => [
     { value: "SINGLE", label: "Độc thân" },
     { value: "MARRIED", label: "Đã kết hôn" },
     { value: "DIVORCED", label: "Ly dị" },
     { value: "WIDOWED", label: "Góa" },
-  ];
+  ], []);
 
-  // Education options
-  const educationOptions = [
+  // Memoize education options
+  const educationOptions = useMemo(() => [
     { value: "HIGH_SCHOOL", label: "Trung học phổ thông" },
     { value: "ASSOCIATE_DEGREE", label: "Cao đẳng" },
     { value: "BACHELOR_DEGREE", label: "Đại học" },
@@ -165,10 +132,10 @@ const GeneralInformation = (_props: Props) => {
     { value: "POST_DOCTORAL", label: "Sau tiến sĩ" },
     { value: "VOCATIONAL_TRAINING", label: "Dạy nghề" },
     { value: "OTHER", label: "Khác" },
-  ];
+  ], []);
 
   // Helper function to get form field config
-  const getFieldConfig = (
+  const getFieldConfig = useCallback((
     name: string,
     label: string,
     component: React.ReactNode,
@@ -178,9 +145,9 @@ const GeneralInformation = (_props: Props) => {
     label,
     component,
     required,
-  });
+  }), []);
 
-  const renderInput = (
+  const renderInput = useCallback((
     label: string,
     value: string,
     inputType:
@@ -222,9 +189,9 @@ const GeneralInformation = (_props: Props) => {
         {...(inputProps as InputProps)}
       />
     );
-  };
+  }, [isCreate, isEditable]);
 
-  const renderDepartmentPositionField = (
+  const renderDepartmentPositionField = useCallback((
     type: "department" | "position",
     id: number
   ) => {
@@ -259,9 +226,9 @@ const GeneralInformation = (_props: Props) => {
         ] as string) ?? "Chưa cập nhật"}
       </Link>
     );
-  };
+  }, [isEditable, _props]);
 
-  const renderAddress = (
+  const renderAddress = useCallback((
     address: string | AddressValue | undefined,
     onChange: (value: AddressValue | undefined) => void
   ) => {
@@ -274,15 +241,15 @@ const GeneralInformation = (_props: Props) => {
           specificAddress: "Nhập địa chỉ chi tiết",
         }}
         value={getAddressValue(address)}
-        defaultValue={extractAddressForDefaultValue(address)}
+        // defaultValue={extractAddressForDefaultValue(address)}
         onChange={onChange}
       />
     ) : (
       <span>{typeof address === "string" ? address : ""}</span>
     );
-  };
+  }, [isEditable, getAddressValue]);
 
-  const systemFields = [
+  const systemFields = useMemo(() => [
     getFieldConfig(
       FORM_FIELDS.EMPLOYEE_CODE,
       "Mã nhân viên",
@@ -335,9 +302,9 @@ const GeneralInformation = (_props: Props) => {
         ]}
       />
     ),
-  ];
+  ], [isEditable]);
 
-  const personalFields = [
+  const personalFields = useMemo(() => [
     getFieldConfig(
       FORM_FIELDS.FULL_NAME,
       "Họ và tên",
@@ -417,10 +384,10 @@ const GeneralInformation = (_props: Props) => {
       />,
       true
     ),
-  ];
+  ], [isEditable]);
 
   // Contact Information Fields
-  const contactFields = [
+  const contactFields = useMemo(() => [
     getFieldConfig(
       FORM_FIELDS.PHONE,
       "Số điện thoại",
@@ -461,10 +428,10 @@ const GeneralInformation = (_props: Props) => {
       ),
       true
     ),
-  ];
+  ], [isEditable]);
 
   // Education & Skills Fields
-  const educationFields = [
+  const educationFields = useMemo(() => [
     getFieldConfig(
       FORM_FIELDS.EDUCATION,
       "Trình độ học vấn",
@@ -480,37 +447,6 @@ const GeneralInformation = (_props: Props) => {
       "Chuyên ngành",
       renderInput("Nhập chuyên ngành", _props.initialValues.major ?? "")
     ),
-    // getFieldConfig(
-    //   FORM_FIELDS.STUDY_PERIOD,
-    //   "Thời gian học",
-    //   <DateRangePicker
-    //     format="DD/MM/YYYY"
-    //     placeholder={["Từ ngày", "Đến ngày"]}
-    //     value={
-    //       parsedStudyPeriod[0] && parsedStudyPeriod[1]
-    //         ? parsedStudyPeriod
-    //         : undefined
-    //     }
-    //     onChange={(dates) => {
-    //       if (dates && dates[0] && dates[1]) {
-    //         const startDate = dates[0].format("DD/MM/YYYY");
-    //         const endDate = dates[1].format("DD/MM/YYYY");
-    //         const dateRangeString = `${startDate} - ${endDate}`;
-    //         _props.setChangeInfoValue({
-    //           ..._props.changeInfoValue,
-    //           studyPeriod: dateRangeString,
-    //         });
-    //         setParsedStudyPeriod([dates[0], dates[1]]);
-    //       } else {
-    //         _props.setChangeInfoValue({
-    //           ..._props.changeInfoValue,
-    //           studyPeriod: undefined,
-    //         });
-    //         setParsedStudyPeriod([undefined, undefined]);
-    //       }
-    //     }}
-    //   />
-    // ),
     getFieldConfig(
       FORM_FIELDS.DEGREE_CERTIFICATE,
       "Bằng cấp",
@@ -535,10 +471,10 @@ const GeneralInformation = (_props: Props) => {
       "Trình độ tin học",
       <Input placeholder="Nhập trình độ tin học" />
     ),
-  ];
+  ], [isEditable]);
 
   // Insurance & Finance Fields
-  const insuranceFields = [
+  const insuranceFields = useMemo(() => [
     getFieldConfig(
       FORM_FIELDS.SI_NO,
       "Số thẻ BHXH",
@@ -562,10 +498,10 @@ const GeneralInformation = (_props: Props) => {
       ),
       true
     ),
-  ];
+  ], [isEditable]);
 
   // Documents Fields
-  const documentsFields = [
+  const documentsFields = useMemo(() => [
     getFieldConfig(
       FORM_FIELDS.RESUME_LINK,
       "Sơ yếu lí lịch",
@@ -596,10 +532,10 @@ const GeneralInformation = (_props: Props) => {
       />,
       true
     ),
-  ];
+  ], [isEditable]);
 
   // Filter fields based on create/update mode
-  const filterFields = (fields: typeof personalFields) => {
+  const filterFields = useCallback((fields: typeof personalFields) => {
     if (isCreate) {
       return fields.filter(
         (field) =>
@@ -614,9 +550,9 @@ const GeneralInformation = (_props: Props) => {
           field.name as (typeof UPDATE_HIDDEN_FIELDS)[number]
         )
     );
-  };
+  }, [isCreate]);
 
-  const renderFormFields = (fields: typeof personalFields) => {
+  const renderFormFields = useCallback((fields: typeof personalFields) => {
     const filteredFields = filterFields(fields);
     return (
       <div className="grid grid-cols-2 gap-x-16 gap-y-4 pb-2">
@@ -632,9 +568,9 @@ const GeneralInformation = (_props: Props) => {
         ))}
       </div>
     );
-  };
+  }, [filterFields]);
 
-  const renderCollapse = (
+  const renderCollapse = useCallback((
     key: string,
     label: string,
     fields: typeof personalFields,
@@ -666,9 +602,9 @@ const GeneralInformation = (_props: Props) => {
         ]}
       />
     );
-  };
+  }, [renderFormFields]);
 
-  const collapseList = [
+  const collapseList = useMemo(() => [
     {
       key: "0",
       label: "Thông tin hệ thống",
@@ -700,10 +636,10 @@ const GeneralInformation = (_props: Props) => {
       label: "Tài liệu",
       fields: documentsFields,
     },
-  ];
+  ], [systemFields, personalFields, contactFields, educationFields, insuranceFields, documentsFields]);
 
   return (
-    <div className="my-3 w-full space-y-10 flex flex-col gap-5">
+    <div className="w-full space-y-10 flex flex-col gap-5">
       {collapseList.map((collapse) =>
         renderCollapse(collapse.key, collapse.label, collapse.fields)
       )}
@@ -711,4 +647,4 @@ const GeneralInformation = (_props: Props) => {
   );
 };
 
-export default GeneralInformation;
+export default React.memo(GeneralInformation);

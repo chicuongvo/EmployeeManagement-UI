@@ -13,6 +13,7 @@ import TableComponent from "@/components/common/table/TableComponent";
 import type { EMPLOYEE } from "@/apis/employee/model/Employee";
 import CopyTextPopover from "@/components/common/shared/CopyTextPopover";
 import { WorkStatus } from "@/components/common/status";
+import { Link } from "react-router-dom";
 
 const DataTable = () => {
   const {
@@ -49,7 +50,10 @@ const DataTable = () => {
         align: "center",
         fixed: "left",
         width: 150,
-        render: (value) => <CopyTextPopover text={value} />,
+        render: (value, record) =>
+          <Link to={`/employee/employees/${record.id}`}>
+            <CopyTextPopover text={value} />
+          </Link>,
       },
       {
         title: "Họ và tên",
@@ -57,6 +61,7 @@ const DataTable = () => {
         key: COLUMN_KEYS.FULL_NAME,
         width: 250,
         align: "left",
+        fixed: "left",
         render: (_, record) => (
           <div className="flex items-center gap-2">
             <Avatar
@@ -124,23 +129,6 @@ const DataTable = () => {
         width: 150,
         render: (value) => dayjs(value).format("DD/MM/YYYY HH:mm"),
       },
-      {
-        title: "Hành động",
-        key: COLUMN_KEYS.ACTION,
-        width: 120,
-        fixed: "right",
-        align: "center",
-        render: (_, record) => (
-          <Button
-            type="text"
-            onClick={() => {
-              setSelectedEmployee(record);
-              setPopupUpdateEmployee(true);
-            }}
-            icon={<EditOutlined style={{ color: "#10b981" }} />}
-          />
-        ),
-      },
     ],
     [
       dataResponse?.data.pagination.page,
@@ -182,10 +170,13 @@ const DataTable = () => {
       dataResponse?.data.pagination.total,
       dataResponse?.data.pagination.limit,
       dataResponse?.data.pagination.page,
+
     ]
   );
 
-  console.log("dataResponse", dataResponse?.data.data);
+
+
+  console.log("dataResponse", dataResponse?.data.pagination);
   return (
     <TableComponent
       isSuccess={isSuccess}
@@ -196,13 +187,14 @@ const DataTable = () => {
       activeKeys={listEmployeeActiveKey}
       setActiveKeys={setListEmployeeActiveKey}
       pagination={paginationConfig}
-      onChange={(p) =>
+      onChange={(p) => {
+        console.log("p", p);
         handleFilterSubmit?.({
           ...params,
           page: p.current,
           limit: p.pageSize,
         })
-      }
+      }}
       editColumnMode={true}
     />
   );
