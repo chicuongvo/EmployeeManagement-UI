@@ -65,6 +65,9 @@ const FormCreateProject = ({
                 status: project.status,
                 budget: project.budget,
                 managerId: project.managerId,
+                githubRepoUrl: project.githubRepoUrl,
+                githubAppId: project.githubAppId,
+                githubAppInstallationId: project.githubAppInstallationId,
             });
         } else if (open) {
             form.resetFields();
@@ -84,6 +87,9 @@ const FormCreateProject = ({
                 status: values.status,
                 budget: values.budget,
                 managerId: values.managerId,
+                githubRepoUrl: values.githubRepoUrl,
+                githubAppId: values.githubAppId,
+                githubAppInstallationId: values.githubAppInstallationId,
             };
 
             if (project) {
@@ -176,6 +182,25 @@ const FormCreateProject = ({
                 <Form.Item label="Người quản lý" name="managerId">
                     <SelectListEmployee placeholder="Chọn người quản lý" />
                 </Form.Item>
+
+                {/* GitHub Integration Section */}
+                <div className="border-t pt-4 mt-4">
+                    <h3 className="text-base font-semibold mb-3">Tích hợp GitHub</h3>
+
+                    <Form.Item label="GitHub Repository URL" name="githubRepoUrl">
+                        <Input placeholder="https://github.com/owner/repo" />
+                    </Form.Item>
+
+                    <div className="grid grid-cols-2 gap-4">
+                        <Form.Item label="GitHub App ID" name="githubAppId">
+                            <Input placeholder="Nhập App ID" />
+                        </Form.Item>
+
+                        <Form.Item label="Installation ID" name="githubAppInstallationId">
+                            <Input placeholder="Nhập Installation ID" />
+                        </Form.Item>
+                    </div>
+                </div>
             </Form>
         </Modal>
     );
