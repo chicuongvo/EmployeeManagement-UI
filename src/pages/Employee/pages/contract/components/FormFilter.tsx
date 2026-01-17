@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { Card, Form, Input, Select, Button } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { Card, Form, Input, Select } from "antd";
 
 import BoxFilter from "@/components/common/shared/BoxFiltered";
 import { useContractContext } from "../ContractContext";
@@ -12,7 +11,7 @@ interface FormFilterProps {
 
 const FormFilter = ({ onSearch }: FormFilterProps) => {
   const [form] = Form.useForm();
-  const { params, paramsStr, handleFilterSubmit, setPopupCreateContract } = useContractContext();
+  const { params, paramsStr, handleFilterSubmit } = useContractContext();
 
   useEffect(() => {
     form.resetFields();
@@ -78,14 +77,7 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
           </Form.Item>
         </div>
 
-        <div className="pt-2 flex gap-4 justify-between items-center">
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => setPopupCreateContract(true)}
-          >
-            Tạo hợp đồng mới
-          </Button>
+        <div className="pt-2 flex gap-4 justify-end items-center">
           <BoxFilter canSearch onReset={handleReset} />
         </div>
       </Form>

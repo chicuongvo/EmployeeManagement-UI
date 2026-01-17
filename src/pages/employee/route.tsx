@@ -10,7 +10,9 @@ import MyRequestsPage from "./pages/update-request/my-requests";
 import { ContractProvider } from "./pages/contract/ContractContext";
 import ContractPage from "./pages/contract";
 import MyContractsPage from "./pages/contract/my-contracts";
+import MeetingPage from "./pages/meeting";
 import DepartmentPage from "./pages/department";
+import VideoCall from "./pages/video-call";
 import MainLayout from "@/layout/MainLayout";
 
 const route: RouteItem = {
@@ -66,6 +68,17 @@ const route: RouteItem = {
           <DepartmentPage />
         </DepartmentProvider>
       ),
+    },
+    {
+      path: "meetings",
+      name: "Cuộc họp",
+      element: <MeetingPage />,
+    },
+    {
+      path: "video-call",
+      name: "Video Call",
+      hideInMenu: true,
+      element: <VideoCall />,
     },
   ],
 };

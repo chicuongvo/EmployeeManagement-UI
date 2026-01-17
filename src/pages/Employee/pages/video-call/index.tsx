@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import {
   CallControls,
   CallingState,
@@ -13,15 +13,16 @@ import {
   type User,
 } from "@stream-io/video-react-sdk";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
-import { generateStreamToken, getDepartmentCallId } from "../../api/stream.api";
-import { updateMeeting, getMeetingById } from "../../api/meeting.api";
-import { useUser } from "../../hooks/useUser";
+import { generateStreamToken, getDepartmentCallId } from "../../../../api/stream.api";
+import { updateMeeting, getMeetingById } from "../../../../api/meeting.api";
+import { useUser } from "../../../../hooks/useUser";
 import { toast } from "react-toastify";
 import { Loader2 } from "lucide-react";
 
 export default function VideoCall() {
   const { userProfile } = useUser();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [client, setClient] = useState<StreamVideoClient | null>(null);
   const [call, setCall] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -34,6 +35,7 @@ export default function VideoCall() {
   const callRef = useRef<any>(null);
   const clientRef = useRef<StreamVideoClient | null>(null);
   const isHostRef = useRef<boolean>(false);
+  const hasNavigatedRef = useRef<boolean>(false);
 
   useEffect(() => {
     let mounted = true;
@@ -108,6 +110,7 @@ export default function VideoCall() {
           callId: callIdToUse,
           departmentName: departmentInfo.departmentName,
         });
+
         setIsLoading(false);
       } catch (err: any) {
         console.error("Error initializing call:", err);
@@ -135,7 +138,7 @@ export default function VideoCall() {
           const currentCall = callRef.current;
           const currentClient = clientRef.current;
           const isHost = isHostRef.current;
-
+          
           if (currentCall) {
             if (isHost && meetingId) {
               // If host leaves, end the call for all participants
@@ -204,11 +207,30 @@ export default function VideoCall() {
     return null;
   }
 
+  const handleCallEnd = async () => {
+    try {
+      // Update meeting status if host
+      if (meetingId && isHostRef.current) {
+        try {
+          await updateMeeting(meetingId, { status: "COMPLETED" });
+        } catch (error) {
+          console.error("Error updating meeting status:", error);
+        }
+      }
+    } catch (error) {
+      console.error("Error in handleCallEnd:", error);
+    }
+  };
+
   return (
     <div className="h-screen w-full bg-gray-900">
       <StreamVideo client={client}>
         <StreamCall call={call}>
-          <VideoCallUI callInfo={callInfo} />
+          <VideoCallUI 
+            callInfo={callInfo} 
+            meetingId={meetingId}
+            onCallEnd={handleCallEnd}
+          />
         </StreamCall>
       </StreamVideo>
     </div>
@@ -217,13 +239,84 @@ export default function VideoCall() {
 
 function VideoCallUI({
   callInfo,
+  meetingId,
+  onCallEnd,
 }: {
   callInfo: { callId: string; departmentName: string | null } | null;
+  meetingId: string | null;
+  onCallEnd?: () => void;
 }) {
   const call = useCall();
+  const navigate = useNavigate();
   const { useCallCallingState, useParticipantCount } = useCallStateHooks();
   const callingState = useCallCallingState();
   const participantCount = useParticipantCount();
+  const hasNavigatedRef = useRef<boolean>(false);
+  const prevCallingStateRef = useRef<CallingState | null>(null);
+
+  // Handle calling state changes - this detects when call ends immediately
+  useEffect(() => {
+    if (!call || !prevCallingStateRef.current) {
+      prevCallingStateRef.current = callingState;
+      return;
+    }
+
+    // If state changed from JOINED to LEFT or IDLE, call ended
+    if (
+      prevCallingStateRef.current === CallingState.JOINED &&
+      (callingState === CallingState.LEFT ||
+        callingState === CallingState.IDLE ||
+        callingState === CallingState.ENDED)
+    ) {
+      if (hasNavigatedRef.current) return;
+      hasNavigatedRef.current = true;
+
+      // Call the onCallEnd callback to update meeting status (fire and forget)
+      if (onCallEnd) {
+        onCallEnd().catch(console.error);
+      }
+
+      // Navigate back immediately
+      if (meetingId) {
+        navigate("/employee/meetings");
+      } else {
+        navigate("/employee");
+      }
+    }
+
+    prevCallingStateRef.current = callingState;
+  }, [callingState, call, meetingId, navigate, onCallEnd]);
+
+  // Also listen to call events as backup
+  useEffect(() => {
+    if (!call) return;
+
+    const handleCallEnded = async () => {
+      if (hasNavigatedRef.current) return;
+      hasNavigatedRef.current = true;
+
+      // Call the onCallEnd callback to update meeting status (fire and forget)
+      if (onCallEnd) {
+        onCallEnd().catch(console.error);
+      }
+
+      // Navigate back immediately
+      if (meetingId) {
+        navigate("/employee/meetings");
+      } else {
+        navigate("/employee");
+      }
+    };
+
+    // Listen to call ended events - these fire when call actually ends
+    call.on("call.ended", handleCallEnded);
+    call.on("call.left", handleCallEnded);
+
+    return () => {
+      call.off("call.ended", handleCallEnded);
+      call.off("call.left", handleCallEnded);
+    };
+  }, [call, meetingId, navigate, onCallEnd]);
 
   if (callingState !== CallingState.JOINED) {
     return (

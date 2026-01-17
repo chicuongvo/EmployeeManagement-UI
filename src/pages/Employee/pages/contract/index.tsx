@@ -6,7 +6,8 @@ import ModalContract from "./components/ModalContract";
 import ModalCreateContract from "./components/ModalCreateContract";
 import ModalEditContract from "./components/ModalEditContract";
 import { useSearchParams } from "react-router-dom";
-import { Tabs, type TabsProps } from "antd";
+import { Tabs, type TabsProps, Button, Card } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import PageTitle from "@/components/common/shared/PageTitle";
 import {
   useContractContext,
@@ -19,7 +20,7 @@ export const TABS = {
 
 const ContractPageContent = () => {
   const dataTableRef = useRef<HTMLDivElement>(null);
-  const { tab } = useContractContext();
+  const { tab, setPopupCreateContract } = useContractContext();
   const [_, setSearchParams] = useSearchParams();
 
   const handleChangeTab = (key: string) => {
@@ -62,6 +63,15 @@ const ContractPageContent = () => {
           key: tabItem.key,
           children: (
             <>
+              <Card className="mb-3" size="small">
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  onClick={() => setPopupCreateContract(true)}
+                >
+                  Tạo hợp đồng mới
+                </Button>
+              </Card>
               <FormFilter onSearch={scrollToDataTable} />
               <div ref={dataTableRef}>
                 <DataTable />

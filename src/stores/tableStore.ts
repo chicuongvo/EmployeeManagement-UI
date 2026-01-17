@@ -7,12 +7,18 @@ interface AuthState {
   listDepartmentActiveKey?: string[];
   listPositionActiveKey?: string[];
   listProjectActiveKey?: string[];
+  listContractActiveKey?: string[];
+  listUpdateRequestActiveKey?: string[];
+  listMeetingActiveKey?: string[];
 
   setListEmployeeManagementKey: (listEmployeeManagementKey?: string[]) => void;
   setListEmployeeActiveKey: (listEmployeeActiveKey?: string[]) => void;
   setListDepartmentActiveKey: (listDepartmentActiveKey?: string[]) => void;
   setListPositionActiveKey: (listPositionActiveKey?: string[]) => void;
   setListProjectActiveKey: (listProjectActiveKey?: string[]) => void;
+  setListContractActiveKey: (listContractActiveKey?: string[]) => void;
+  setListUpdateRequestActiveKey: (listUpdateRequestActiveKey?: string[]) => void;
+  setListMeetingActiveKey: (listMeetingActiveKey?: string[]) => void;
 }
 
 const useTableStore = create<AuthState>()(
@@ -44,6 +50,21 @@ const useTableStore = create<AuthState>()(
             listProjectActiveKey,
           });
         },
+        setListContractActiveKey: (listContractActiveKey) => {
+          set({
+            listContractActiveKey,
+          });
+        },
+        setListUpdateRequestActiveKey: (listUpdateRequestActiveKey) => {
+          set({
+            listUpdateRequestActiveKey,
+          });
+        },
+        setListMeetingActiveKey: (listMeetingActiveKey) => {
+          set({
+            listMeetingActiveKey,
+          });
+        },
       }),
       {
         name: "table_keys_store",
@@ -53,12 +74,18 @@ const useTableStore = create<AuthState>()(
           listDepartmentActiveKey,
           listPositionActiveKey,
           listProjectActiveKey,
+          listContractActiveKey,
+          listUpdateRequestActiveKey,
+          listMeetingActiveKey,
         }) => ({
           listEmployeeManagementKey,
           listEmployeeActiveKey,
           listDepartmentActiveKey,
           listPositionActiveKey,
           listProjectActiveKey,
+          listContractActiveKey,
+          listUpdateRequestActiveKey,
+          listMeetingActiveKey,
         }),
       }
     ),
