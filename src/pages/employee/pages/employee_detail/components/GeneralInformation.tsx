@@ -21,6 +21,7 @@ import type { AddressValue } from "@/apis/address/model/Address";
 import dayjs from "dayjs";
 import SelectListDepartment from "@/components/common/form/SelectListDepartment";
 import SelectListPosition from "@/components/common/form/SelectListPosition";
+import SelectListEmployee from "@/components/common/form/SelectListEmployee";
 import { Link } from "react-router-dom";
 // import ChangeStatus from "@/components/common/status/ChangeStatus";
 import { WorkStatus } from "@/components/common/status";
@@ -79,6 +80,7 @@ export const FORM_FIELDS = {
 
   DEPARTMENT_ID: "departmentId",
   POSITION_ID: "positionId",
+  DIRECT_MANAGER_ID: "directManagerId",
   ONBOARD_DATE: "onboardDate",
 } as const;
 
@@ -89,6 +91,7 @@ const SYSTEM_FIELDS = [
   FORM_FIELDS.EMPLOYEE_CODE,
   FORM_FIELDS.CREATED_AT,
   FORM_FIELDS.WORK_STATUS,
+  FORM_FIELDS.DIRECT_MANAGER_ID,
 ];
 
 const CREATE_HIDDEN_FIELDS = [...SYSTEM_FIELDS];
@@ -294,7 +297,7 @@ const GeneralInformation = (_props: Props) => {
   }, [isEditable, _props.initialValues]);
 
   const renderDepartmentPositionField = useCallback((
-    type: "department" | "position",
+    type: "department" | "position" | "employee",
     id: number
   ) => {
     return isEditable ? (
@@ -309,7 +312,7 @@ const GeneralInformation = (_props: Props) => {
             });
           }}
         />
-      ) : (
+      ) : type === "position" ? (
         <SelectListPosition
           placeholder="Chọn vị trí"
           value={_props.initialValues.positionId ?? undefined}
@@ -320,15 +323,38 @@ const GeneralInformation = (_props: Props) => {
             });
           }}
         />
+      ) : (
+        <SelectListEmployee
+          placeholder="Chọn quản lý trực tiếp"
+          value={_props.initialValues.directManagerId ?? undefined}
+          defaultValue={_props.initialValues.directManager ? [{
+            id: _props.initialValues.directManager.id,
+            name: _props.initialValues.directManager.fullName
+          }] : []}
+          onChange={(value: number) => {
+            _props.setChangeInfoValue({
+              ..._props.changeInfoValue,
+              directManagerId: value ?? undefined,
+            });
+          }}
+          allowClear
+        />
       )
     ) : (
       (() => {
-        const name = _props.initialValues[
-          `${type}Name` as keyof typeof _props.initialValues
-        ] as string | undefined;
+        let name: string | undefined;
+        if (type === "employee") {
+          name = _props.initialValues.directManager?.fullName;
+        } else {
+          name = _props.initialValues[
+            `${type}Name` as keyof typeof _props.initialValues
+          ] as string | undefined;
+        }
+
+        const linkPath = type === "employee" ? "employees" : type === "department" ? "departments" : type;
 
         return name ? (
-          <Link to={`/${type}/${id}`} className="text-green">
+          <Link to={`/employee/${linkPath}/${id}`} className="text-green">
             {name}
           </Link>
         ) : (
@@ -400,6 +426,14 @@ const GeneralInformation = (_props: Props) => {
       renderDepartmentPositionField(
         "position",
         _props.initialValues.positionId ?? 0
+      )
+    ),
+    getFieldConfig(
+      FORM_FIELDS.DIRECT_MANAGER_ID,
+      "Quản lý trực tiếp",
+      renderDepartmentPositionField(
+        "employee",
+        _props.initialValues.directManagerId ?? 0
       )
     ),
     getFieldConfig(

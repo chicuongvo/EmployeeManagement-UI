@@ -63,12 +63,12 @@ const SelectListPosition = ({
         const currentValueArray = Array.isArray(currentValue)
           ? currentValue
           : currentValue !== undefined
-          ? [currentValue]
-          : [];
+            ? [currentValue]
+            : [];
 
         // Options from search results
         const options =
-          data?.data?.data?.map((d) => ({
+          data?.data?.map((d) => ({
             value: d.id,
             label: d.name,
           })) || [];
