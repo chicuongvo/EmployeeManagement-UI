@@ -48,13 +48,13 @@ export default function PerformanceDetailPage() {
     try {
       setIsLoading(true);
       const performanceId = parseInt(id!);
-      
+
       // Fetch both performance data and criteria in parallel
       const [performanceData, criteriaData] = await Promise.all([
         performanceService.getById(performanceId),
         performanceCriteriaService.getAll(),
       ]);
-      
+
       setPerformance(performanceData);
       setDetails(performanceData.details || []);
       setCriteria(criteriaData);
@@ -330,7 +330,7 @@ export default function PerformanceDetailPage() {
       }
     >
       <Toaster position="top-right" />
-      
+
       <Tabs
         type="card"
         activeKey="1"

@@ -9,7 +9,7 @@ import type {
   UpdateDepartmentRequest,
 } from "./model/Department";
 
-export interface DepartmentResponse extends BaseResponse, DEPARTMENT {}
+export interface DepartmentResponse extends BaseResponse<DEPARTMENT> { }
 
 const urlDepartment = "/department";
 
