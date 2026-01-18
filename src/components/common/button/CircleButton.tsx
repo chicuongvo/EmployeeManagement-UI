@@ -46,8 +46,7 @@ const CircleButton = ({
       {...props}
       onClick={handleClick}
       className={cn(
-        `flex flex-col relative group overflow-hidden rounded-full px-6 py-1 duration-200 flex items-center justify-between gap-1 ${
-          disabled ? "cursor-not-allowed text-gray-300" : colorClasses
+        `flex flex-col relative group overflow-hidden rounded-full px-6 py-1 duration-200 flex items-center justify-between gap-1 cursor-pointer ${disabled ? "cursor-not-allowed text-gray-300" : colorClasses
         }`,
         className
       )}

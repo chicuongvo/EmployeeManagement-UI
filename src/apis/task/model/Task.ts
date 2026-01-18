@@ -53,9 +53,7 @@ export interface GetTasksByEpicRequest {
     epicId: number;
 }
 
-export interface GetTasksByEpicResponse extends BaseResponse {
-    data: Task[];
-}
+export interface GetTasksByEpicResponse extends BaseResponse<Task[]> { }
 
 export interface CreateTaskRequest {
     name: string;
@@ -75,6 +73,4 @@ export interface UpdateTaskRequest {
     parentTaskId?: number;
 }
 
-export interface TaskResponse extends BaseResponse {
-    data: Task;
-}
+export interface TaskResponse extends BaseResponse<Task> { }
