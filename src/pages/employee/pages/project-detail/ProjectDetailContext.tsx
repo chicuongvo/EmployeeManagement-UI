@@ -2,6 +2,7 @@ import { createContext, useContext, useState, type ReactNode } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getListEpic, type Epic } from "@/apis/epic";
+import { getProjectMembers, type ProjectMember } from "@/apis/project";
 
 interface ProjectDetailContextType {
     projectId: number;
@@ -10,6 +11,10 @@ interface ProjectDetailContextType {
     refetchEpics: () => void;
     selectedEpic: Epic | null;
     setSelectedEpic: (epic: Epic | null) => void;
+    members: ProjectMember[];
+    isLoadingMembers: boolean;
+    refetchMembers: () => void;
+    projectData: any; // Project detail response
 }
 
 const ProjectDetailContext = createContext<ProjectDetailContextType | undefined>(undefined);
@@ -24,6 +29,12 @@ export const ProjectDetailProvider = ({ children }: { children: ReactNode }) => 
         enabled: !!projectId,
     });
 
+    const { data: projectData, isLoading: isLoadingMembers, refetch: refetchMembers } = useQuery({
+        queryKey: ["projectMembers", projectId],
+        queryFn: () => getProjectMembers(Number(projectId)),
+        enabled: !!projectId,
+    });
+
     const value: ProjectDetailContextType = {
         projectId: Number(projectId),
         epics: epicsData?.data || [],
@@ -31,6 +42,10 @@ export const ProjectDetailProvider = ({ children }: { children: ReactNode }) => 
         refetchEpics: refetch,
         selectedEpic,
         setSelectedEpic,
+        members: projectData?.data?.members || [],
+        isLoadingMembers,
+        refetchMembers,
+        projectData,
     };
 
     return (

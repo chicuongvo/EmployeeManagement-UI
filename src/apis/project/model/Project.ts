@@ -32,6 +32,11 @@ export interface Project {
   managerId?: number;
   manager?: Employee;
   members?: ProjectMember[];
+  githubRepoUrl?: string;
+  githubAppId?: string;
+  githubAppInstallationId?: string;
+  githubConnected?: boolean;
+  githubLastVerified?: string;
   _count?: {
     members: number;
   };
@@ -76,6 +81,9 @@ export interface CreateProjectRequest {
   status: ProjectStatus;
   budget?: number;
   managerId?: number;
+  githubRepoUrl?: string;
+  githubAppId?: string;
+  githubAppInstallationId?: string;
 }
 
 export interface UpdateProjectRequest {
@@ -86,6 +94,9 @@ export interface UpdateProjectRequest {
   status?: ProjectStatus;
   budget?: number;
   managerId?: number;
+  githubRepoUrl?: string;
+  githubAppId?: string;
+  githubAppInstallationId?: string;
 }
 
 export interface ProjectResponse extends BaseResponse<Project> { }
