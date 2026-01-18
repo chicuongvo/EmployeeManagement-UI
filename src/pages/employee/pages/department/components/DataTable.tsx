@@ -16,6 +16,7 @@ import type { DEPARTMENT } from "@/apis/department";
 import ActiveStatus from "@/components/common/status/ActiveStatus";
 import { TABS } from "..";
 import type { POSITION } from "@/apis/position/model/Position";
+import { Link } from "react-router-dom";
 
 const TAB_POSITION_EXCLUDE_COLUMNS = [
   COLUMN_KEYS.DEPARTMENT,
@@ -63,7 +64,8 @@ const DataTable = () => {
         align: "center",
         fixed: "left",
         width: 150,
-        render: (value) => <CopyTextPopover text={value} />,
+        render: (value, record) => <Link to={`/employee/departments/${record.id}`} className="text-blue-600 hover:text-blue-800">
+          <CopyTextPopover text={value} /></Link>,
       },
       {
         title: tab === TABS.DEPARTMENT ? "Tên phòng ban" : "Tên chức vụ",
@@ -71,7 +73,6 @@ const DataTable = () => {
         key: COLUMN_KEYS.NAME,
         width: 140,
         align: "left",
-        render: (value) => <TooltipTruncatedText value={value} />,
       },
       {
         title: "Người quản lý",

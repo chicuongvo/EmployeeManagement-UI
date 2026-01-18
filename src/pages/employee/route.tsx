@@ -1,9 +1,9 @@
 import { FaUserGroup } from "react-icons/fa6";
-import { Outlet } from "react-router-dom";
 
 import { type RouteItem } from "@/routes";
 import { EmployeeProvider } from "./pages/employee/EmployeeContext";
 import { DepartmentProvider } from "./pages/department/DepartmentContext";
+import { LeaveApplicationProvider } from "./pages/leave-application/LeaveApplicationContext";
 import EmployeePage from "./pages/employee";
 import { UpdateRequestProvider } from "./pages/update-request/UpdateRequestContext";
 import UpdateRequestPage from "./pages/update-request";
@@ -19,10 +19,13 @@ import MeetingPage from "./pages/meeting";
 import CreateMeetingPage from "./pages/meeting/create";
 import MeetingDetailPage from "./pages/meeting/detail";
 import DepartmentPage from "./pages/department";
+import LeaveApplicationPage from "./pages/leave-application";
 import VideoCall from "./pages/video-call";
 import MainLayout from "@/layout/MainLayout";
 import EmployeeDetailPage from "./pages/employee_detail";
 import { EmployeeDetailProvider } from "./pages/employee_detail/EmployeeDetailContex";
+import DepartmentDetailPage from "./pages/department_detail";
+import { DepartmentDetailProvider } from "./pages/department_detail/DepartmentDetailContext";
 
 import PerformancePage from "@/pages/employee/pages/performance";
 import PerformanceDetailPage from "@/pages/employee/pages/performanceDetail";
@@ -142,21 +145,32 @@ const route: RouteItem = {
       ),
     },
     {
+      path: "leave-applications",
+      name: "Đơn nghỉ phép",
+      element: (
+        <LeaveApplicationProvider>
+          <LeaveApplicationPage />
+        </LeaveApplicationProvider>
+      ),
+      path: "departments/:id",
+      name: "Chi tiết phòng ban",
+      element: (
+        <DepartmentDetailProvider>
+          <DepartmentDetailPage />
+        </DepartmentDetailProvider>
+      ),
+      hideInMenu: true,
+    },
+    {
       path: "performance",
-      name: "Performance",
-      element: <Outlet />,
-      children: [
-        {
-          index: true,
-          name: "Performance",
-          element: <PerformancePage />,
-        },
-        {
-          path: ":id",
-          name: "Performance Detail",
-          element: <PerformanceDetailPage />,
-        },
-      ],
+      name: "Đánh giá",
+      element: <PerformancePage />,
+    },
+    {
+      path: "performance/:id",
+      name: "Đánh giá chi tiết",
+      element: <PerformanceDetailPage />,
+      hideInMenu: true,
     },
     {
       path: "meetings",

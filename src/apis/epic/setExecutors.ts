@@ -7,7 +7,7 @@ const endpoints = {
 
 const setExecutors =
     (url: string) =>
-        async (employeeIds: number[]): Promise<BaseResponse> =>
-            requestApi.put<BaseResponse>(url, { employeeIds });
+        async (employeeIds: number[]): Promise<BaseResponse<void>> =>
+            requestApi.put<BaseResponse<void>>(url, { employeeIds });
 
 export const setEpicExecutors = (epicId: number) => setExecutors(endpoints.setExecutors(epicId));

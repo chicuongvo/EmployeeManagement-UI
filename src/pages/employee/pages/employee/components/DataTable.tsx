@@ -1,7 +1,6 @@
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
-import { Avatar, Button } from "antd";
-import { EditOutlined } from "@ant-design/icons";
+import { Avatar } from "antd";
 
 import useTableStore from "@/stores/tableStore";
 import { useEffect, useMemo } from "react";
@@ -15,7 +14,11 @@ import CopyTextPopover from "@/components/common/shared/CopyTextPopover";
 import { WorkStatus } from "@/components/common/status";
 import { Link } from "react-router-dom";
 
-const DataTable = () => {
+interface DataTableProps {
+  departmentId?: number;
+}
+
+const DataTable = ({ departmentId }: DataTableProps = {}) => {
   const {
     dataResponse,
     isSuccess,
@@ -152,6 +155,16 @@ const DataTable = () => {
       );
     }
   }, [columns, setListEmployeeActiveKey, listEmployeeActiveKey]);
+
+  // Apply department filter when departmentId prop is provided
+  useEffect(() => {
+    if (departmentId) {
+      handleFilterSubmit?.({
+        ...params,
+        departmentId,
+      });
+    }
+  }, [departmentId]);
 
   const paginationConfig = useMemo(
     () => ({
