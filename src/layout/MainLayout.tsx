@@ -3,6 +3,7 @@ import { ConfigProvider } from "antd";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import useGetMenus from "../hooks/useGetMenu";
 import { ROUTER_DASHBOARD } from "../routes";
+import { NotificationBell } from "@/components/common/shared/NotificationBell";
 
 // Auth-related imports (commented out for now)
 // import { Dropdown, Input, Tooltip } from "antd";
@@ -19,7 +20,6 @@ import { ROUTER_DASHBOARD } from "../routes";
 // import { MODULE, OBJECT_TYPE } from "@/constant/slug";
 // import { BsSlashSquare } from "react-icons/bs";
 // import { logoutUser } from "@/apis/auth/logout";
-// import NotificationBell from "@/components/shared/NotificationBell";
 // import { getFlag } from "@/utils/getFlag";
 
 const MainLayout = () => {
@@ -244,8 +244,10 @@ const MainLayout = () => {
               if (_.isMobile) return defaultDom;
               return <>{defaultDom}</>;
             }}
-            // Actions (search, notifications, language) - commented out
-            // actionsRender={(props) => { ... }}
+            // Actions (search, notifications, language)
+            actionsRender={() => {
+              return [<NotificationBell key="notification" />];
+            }}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             menuFooterRender={(props: any) => {
               if (props?.collapsed) return undefined;

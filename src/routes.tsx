@@ -2,6 +2,7 @@ import { Navigate, type RouteObject } from "react-router-dom";
 
 import employee_route from "./pages/employee/route";
 import project_route from "./pages/project/route";
+import notification_route from "./pages/notification/route";
 
 import Login from "./pages/Auth/Login";
 
