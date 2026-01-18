@@ -17,7 +17,7 @@ export const createPosition = async (
   req: CreatePositionRequest
 ): Promise<PositionResponse> => {
   return await requestApi.post<PositionResponse>(urlPosition, req, {
-    hideMessage: true,
+    // hideMessage: true,
   });
 };
 

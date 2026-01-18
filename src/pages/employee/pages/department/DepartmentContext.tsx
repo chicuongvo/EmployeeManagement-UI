@@ -25,12 +25,15 @@ import type {
 import { TABS } from ".";
 import { getListPosition } from "@/apis/position";
 import type { POSITION } from "@/apis/position/model/Position";
+import { getListRole, type GetListRoleRequest, type GetListRoleResponse, type ROLE } from "@/apis/role";
 
 export type ModalMode =
   | "CREATE_DEPARTMENT"
   | "UPDATE_DEPARTMENT"
   | "CREATE_POSITION"
-  | "UPDATE_POSITION";
+  | "UPDATE_POSITION"
+  | "CREATE_ROLE"
+  | "UPDATE_ROLE";
 
 interface DepartmentContextType {
   params: GetListDepartmentRequest;
@@ -40,7 +43,7 @@ interface DepartmentContextType {
   modalMode: ModalMode;
   setModalMode: React.Dispatch<React.SetStateAction<ModalMode>>;
   refetch: () => void;
-  dataResponse?: GetListDepartmentResponse | GetListPositionResponse;
+  dataResponse?: GetListDepartmentResponse | GetListPositionResponse | GetListRoleResponse;
   isLoading: boolean;
   isSuccess: boolean;
   handleFilterSubmit: (
@@ -50,6 +53,8 @@ interface DepartmentContextType {
   selectedDepartment: DEPARTMENT | null;
   setSelectedPosition: (pos: POSITION | null) => void;
   selectedPosition: POSITION | null;
+  setSelectedRole: (role: ROLE | null) => void;
+  selectedRole: ROLE | null;
   openCreateModal: () => void;
   tab?: string;
 }
@@ -70,6 +75,7 @@ export const DepartmentProvider: React.FC<{
   const [selectedPosition, _setSelectedPosition] = useState<POSITION | null>(
     null
   );
+  const [selectedRole, _setSelectedRole] = useState<ROLE | null>(null);
 
   const setSelectedDepartment = (dept: DEPARTMENT | null) => {
     _setSelectedDepartment(dept);
@@ -87,14 +93,25 @@ export const DepartmentProvider: React.FC<{
     }
   };
 
+  const setSelectedRole = (role: ROLE | null) => {
+    _setSelectedRole(role);
+    if (role) {
+      setModalMode("UPDATE_ROLE");
+      setIsModalOpen(true);
+    }
+  };
+
   const openCreateModal = () => {
     if (tab === TABS.DEPARTMENT) {
       setModalMode("CREATE_DEPARTMENT");
-    } else {
+    } else if (tab === TABS.POSITION) {
       setModalMode("CREATE_POSITION");
+    } else {
+      setModalMode("CREATE_ROLE");
     }
     _setSelectedDepartment(null);
     _setSelectedPosition(null);
+    _setSelectedRole(null);
     setIsModalOpen(true);
   };
 
@@ -121,8 +138,10 @@ export const DepartmentProvider: React.FC<{
   const departmentCode = useGetParam<string>("departmentCode", "string");
   const description = useGetParam<string>("description", "string");
   const managerId = useGetParam<number>("managerId", "number");
+  const departmentId = useGetParam<number>("departmentId", "number");
+  const roleId = useGetParam<number>("roleId", "number");
 
-  const params = useMemo((): GetListDepartmentRequest => {
+  const params = useMemo((): GetListDepartmentRequest | GetListPositionRequest | GetListRoleRequest => {
     return {
       name,
       departmentCode,
@@ -132,6 +151,8 @@ export const DepartmentProvider: React.FC<{
       limit,
       sort,
       // Support both naming conventions for backward compatibility
+      departmentId,
+      roleId,
       created_date_from: created_date_from,
       created_date_to: created_date_to,
       updated_date_from: updated_date_from,
@@ -153,6 +174,8 @@ export const DepartmentProvider: React.FC<{
     updated_date_to,
     generalCode,
     generalCodeType,
+    departmentId,
+    roleId
   ]);
 
   const paramsStr = useMemo(() => JSON.stringify(params), [params]);
@@ -160,7 +183,7 @@ export const DepartmentProvider: React.FC<{
   const { isLoading, data, refetch, isSuccess } = useQuery({
     queryKey: ["departments", params, tab],
     queryFn: (): Promise<
-      GetListDepartmentResponse | GetListPositionResponse
+      GetListDepartmentResponse | GetListPositionResponse | GetListRoleResponse
     > => {
       const modifiedParams = {
         ...params,
@@ -171,9 +194,20 @@ export const DepartmentProvider: React.FC<{
 
       modifiedParams.general_code = undefined;
       modifiedParams.general_code_type = undefined;
-      return tab === TABS.DEPARTMENT
-        ? getListDepartment(modifiedParams)
-        : getListPosition(modifiedParams);
+
+      if (tab === TABS.DEPARTMENT) {
+        return getListDepartment(modifiedParams);
+      } else if (tab === TABS.POSITION) {
+        return getListPosition(modifiedParams);
+      } else {
+        const roleParams = {
+          ...modifiedParams,
+          name: Array.isArray(modifiedParams.name)
+            ? modifiedParams.name[0]
+            : modifiedParams.name,
+        };
+        return getListRole(roleParams);
+      }
     },
 
     //   return getListDepartment(modifiedParams);
@@ -196,19 +230,6 @@ export const DepartmentProvider: React.FC<{
       )
     );
   };
-
-  // const { mutate: updateEmployeeMutation } = useUpdateEmployee(0, {
-  //     onSuccess: () => {
-  //         refetch();
-  //     },
-  // });
-
-  // const updateEmployeeStatus = (id: number, isActive: boolean) => {
-  //     updateEmployeeMutation({
-  //         id,
-  //         isActive,
-  //     });
-  // };
 
   useEffect(() => {
     if (!tab) {
@@ -240,6 +261,8 @@ export const DepartmentProvider: React.FC<{
         selectedDepartment,
         setSelectedPosition,
         selectedPosition,
+        setSelectedRole,
+        selectedRole,
         openCreateModal,
         tab,
       }}

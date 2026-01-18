@@ -9,6 +9,8 @@ import SelectListEmployee from "@/components/common/form/SelectListEmployee";
 import dayjs from "dayjs";
 import { TABS } from "..";
 import { convertToDateRange } from "@/utils/convertToDateRange";
+import SelectListDepartment from "@/components/common/form/SelectListDepartment";
+import SelectListRole from "@/components/common/form/SelectListRole";
 
 interface FormFilterProps {
   onSearch?: () => void;
@@ -128,6 +130,24 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
         name: "name",
         component: <Input placeholder="Nhập tên chức vụ" allowClear />,
       },
+      {
+        name: "departmentId",
+        component: <SelectListDepartment placeholder="- Chọn phòng ban -" allowClear />,
+      },
+      {
+        name: "roleId",
+        component: <SelectListRole placeholder="- Chọn cấp bậc -" allowClear />,
+      },
+      ...commonFields,
+    ];
+  }, [commonFields]);
+
+  const roleFields = useMemo(() => {
+    return [
+      {
+        name: "name",
+        component: <Input placeholder="Nhập tên cấp bậc" allowClear />,
+      },
       ...commonFields,
     ];
   }, [commonFields]);
@@ -136,8 +156,11 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
     if (tab == TABS.DEPARTMENT) {
       return [...departmentFields];
     }
-    return [...positionFields];
-  }, [tab, departmentFields, positionFields]);
+    if (tab == TABS.POSITION) {
+      return [...positionFields];
+    }
+    return [...roleFields];
+  }, [tab, departmentFields, positionFields, roleFields]);
 
   return (
     <Card className="mb-3 py-1" size="small">

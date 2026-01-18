@@ -51,6 +51,18 @@ const onResponseError = (error: AxiosError): Promise<AxiosError> => {
     //         useAuthStore.getState().setLogoutSuccess();
     //         break;
     // }
+    const config = error.config as CustomAxiosRequestConfig;
+    const errorData = error.response?.data as any;
+    const errorMessage = errorData?.message || error.message;
+
+    if (!config?.hideMessage && error.response?.status !== HttpStatusCode.NotFound) {
+        showMessage({
+            type: "toast",
+            level: "error",
+            title: errorMessage,
+        });
+    }
+
     return Promise.reject(
         typeof error.response?.data === "object" &&
             error.response.status !== HttpStatusCode.NotFound

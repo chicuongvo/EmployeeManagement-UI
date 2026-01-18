@@ -13,6 +13,7 @@ import ModalCreateUpdateDepartmentPosition from "./components/ModalCreateUpdateD
 export const TABS = {
   DEPARTMENT: "1",
   POSITION: "2",
+  ROLE: "3",
 } as const;
 
 const Index = () => {
@@ -27,6 +28,7 @@ const Index = () => {
   const tabs: TabsProps["items"] = [
     { key: "1", label: "Phòng ban" },
     { key: "2", label: "Chức vụ" },
+    { key: "3", label: "Cấp bậc" },
   ];
 
   const scrollToDataTable = () => {

@@ -106,6 +106,8 @@ const route: RouteItem = {
           <LeaveApplicationPage />
         </LeaveApplicationProvider>
       ),
+    },
+    {
       path: "departments/:id",
       name: "Chi tiết phòng ban",
       element: (

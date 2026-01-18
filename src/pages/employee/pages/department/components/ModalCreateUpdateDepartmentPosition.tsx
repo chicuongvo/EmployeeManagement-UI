@@ -16,6 +16,11 @@ import {
     useUpdatePosition,
 } from "@/apis/position/createUpdatePosition";
 import ActiveStatus from "@/components/common/status/ActiveStatus";
+import SelectListPosition from "@/components/common/form/SelectListPosition";
+import SelectListDepartment from "@/components/common/form/SelectListDepartment";
+import SelectListRole from "@/components/common/form/SelectListRole";
+import { useCreateRole, useUpdateRole } from "@/apis/role";
+import { TABS } from "..";
 
 const FORM_FIELDS = {
     DEPARTMENT_CODE: "departmentCode",
@@ -23,21 +28,32 @@ const FORM_FIELDS = {
     FOUNDED_AT: "foundedAt",
     DESCRIPTION: "description",
     STATUS: "status",
+    ROLE_ID: "roleId",
+    DEPARTMENT_ID: "departmentId",
+    LEVEL: "level"
 } as const;
 
 type FORM_FIELDS = typeof FORM_FIELDS[keyof typeof FORM_FIELDS];
 
-const MODAL_POSITION_INCLUDE_FIELDS = [
+const MODAL_POSITION_INCLUDE_FIELDS: FORM_FIELDS[] = [
     FORM_FIELDS.NAME,
     FORM_FIELDS.STATUS,
+    FORM_FIELDS.ROLE_ID,
+    FORM_FIELDS.DEPARTMENT_ID,
 ];
 
-const MODAL_DEPARTMENT_INCLUDE_FIELDS = [
+const MODAL_DEPARTMENT_INCLUDE_FIELDS: FORM_FIELDS[] = [
     FORM_FIELDS.DEPARTMENT_CODE,
     FORM_FIELDS.NAME,
     FORM_FIELDS.FOUNDED_AT,
     FORM_FIELDS.DESCRIPTION,
     FORM_FIELDS.STATUS,
+];
+
+const MODAL_ROLE_INCLUDE_FIELDS: FORM_FIELDS[] = [
+    FORM_FIELDS.NAME,
+    FORM_FIELDS.STATUS,
+    FORM_FIELDS.LEVEL
 ];
 
 interface FormFieldConfig {
@@ -55,7 +71,9 @@ const ModalCreateUpdateDepartmentPosition = () => {
         modalMode,
         selectedDepartment,
         selectedPosition,
+        selectedRole,
         refetch,
+        tab,
     } = useDepartmentContext();
 
     const [form] = Form.useForm();
@@ -63,12 +81,13 @@ const ModalCreateUpdateDepartmentPosition = () => {
     const isDepartment =
         modalMode === "CREATE_DEPARTMENT" || modalMode === "UPDATE_DEPARTMENT";
     const isUpdate =
-        modalMode === "UPDATE_DEPARTMENT" || modalMode === "UPDATE_POSITION";
+        modalMode === "UPDATE_DEPARTMENT" || modalMode === "UPDATE_POSITION" || modalMode === "UPDATE_ROLE";
 
-    const includeFields = useMemo(
-        () => isDepartment ? MODAL_DEPARTMENT_INCLUDE_FIELDS : MODAL_POSITION_INCLUDE_FIELDS,
-        [isDepartment]
-    );
+    const includeFields = useMemo(() => {
+        if (tab === TABS.DEPARTMENT) return MODAL_DEPARTMENT_INCLUDE_FIELDS;
+        if (tab === TABS.POSITION) return MODAL_POSITION_INCLUDE_FIELDS;
+        return MODAL_ROLE_INCLUDE_FIELDS;
+    }, [tab]);
 
     const currentValues = Form.useWatch([], form);
 
@@ -83,22 +102,39 @@ const ModalCreateUpdateDepartmentPosition = () => {
         {
             key: FORM_FIELDS.NAME,
             name: "name",
-            label: (isDepartment) => isDepartment ? "Tên phòng ban" : "Tên chức vụ",
-            rules: (isDepartment) => [
+            label: () => {
+                if (tab === TABS.DEPARTMENT) return "Tên phòng ban";
+                if (tab === TABS.POSITION) return "Tên chức vụ";
+                return "Tên cấp bậc";
+            },
+            rules: () => [
                 {
                     required: true,
-                    message: isDepartment
+                    message: tab === TABS.DEPARTMENT
                         ? "Vui lòng nhập tên phòng ban"
-                        : "Vui lòng nhập tên chức vụ",
+                        : tab === TABS.POSITION
+                            ? "Vui lòng nhập tên chức vụ"
+                            : "Vui lòng nhập tên cấp bậc",
                 },
             ],
-            render: (_, isDepartment) => (
+            render: () => (
                 <Input
                     placeholder={
-                        isDepartment ? "Nhập tên phòng ban" : "Nhập tên chức vụ"
+                        tab === TABS.DEPARTMENT
+                            ? "Nhập tên phòng ban"
+                            : tab === TABS.POSITION
+                                ? "Nhập tên chức vụ"
+                                : "Nhập tên cấp bậc"
                     }
                 />
             ),
+        },
+        {
+            key: FORM_FIELDS.LEVEL,
+            name: "level",
+            label: () => "Cấp bậc",
+            // rules: () => [{ required: true, message: "Vui lòng nhập cấp bậc" }],
+            render: () => <Input placeholder="Nhập cấp bậc" type="number" />,
         },
         {
             key: FORM_FIELDS.FOUNDED_AT,
@@ -126,14 +162,43 @@ const ModalCreateUpdateDepartmentPosition = () => {
                     editable={isUpdate}
                     onChangeStatus={(status: string) => {
                         form.setFieldValue("status", status);
+                        if (status === "INACTIVE" && tab === TABS.ROLE) {
+                            form.setFieldValue("level", null);
+                        }
                     }}
+                />
+            ),
+        },
+        {
+            key: FORM_FIELDS.ROLE_ID,
+            name: "roleId",
+            label: () => "Cấp bậc",
+            render: () => (
+                <SelectListRole
+                    placeholder="Chọn cấp bậc"
+                    allowClear
+                    showSearch
+                    defaultValue={currentValues?.roleId}
+                />
+            ),
+        },
+        {
+            key: FORM_FIELDS.DEPARTMENT_ID,
+            name: "departmentId",
+            label: () => "Phòng ban",
+            render: () => (
+                <SelectListDepartment
+                    placeholder="Chọn phòng ban"
+                    allowClear
+                    showSearch
+                    defaultValue={currentValues?.departmentId}
                 />
             ),
         },
     ];
 
     const visibleFormFields = useMemo(
-        () => FORM_FIELDS_CONFIG.filter((field) => includeFields.includes(field.key)),
+        () => FORM_FIELDS_CONFIG.filter((field) => (includeFields as any).includes(field.key)),
         [includeFields]
     );
 
@@ -149,13 +214,22 @@ const ModalCreateUpdateDepartmentPosition = () => {
                 managerId: selectedDepartment?.managerId,
                 status: selectedDepartment?.status ?? "ACTIVE",
             };
-        } else {
+        } else if (tab === TABS.POSITION) {
             return {
                 name: selectedPosition?.name,
                 status: selectedPosition?.status ?? "ACTIVE",
+                roleId: selectedPosition?.roleId,
+                departmentId: selectedPosition?.departmentId,
+            };
+        } else if (modalMode === "CREATE_ROLE" || modalMode === "UPDATE_ROLE") {
+            return {
+                name: selectedRole?.name,
+                status: selectedRole?.status ?? "ACTIVE",
+                level: selectedRole?.level,
             };
         }
-    }, [selectedDepartment, selectedPosition, isDepartment]);
+        return {};
+    }, [selectedDepartment, selectedPosition, selectedRole, modalMode, tab, isDepartment]);
 
     useEffect(() => {
         if (isModalOpen) {
@@ -200,9 +274,25 @@ const ModalCreateUpdateDepartmentPosition = () => {
             },
         });
 
+    const { mutate: createRoleMutate, isPending: isLoadingCreateRole } =
+        useCreateRole({
+            onSuccess: () => {
+                refetch();
+                onClose();
+            },
+        });
+
+    const { mutate: updateRoleMutate, isPending: isLoadingUpdateRole } =
+        useUpdateRole(selectedRole?.id ?? 0, {
+            onSuccess: () => {
+                refetch();
+                onClose();
+            },
+        });
+
     const handleSubmit = useCallback(() => {
         form.validateFields().then((values) => {
-            if (isDepartment) {
+            if (tab === TABS.DEPARTMENT) {
                 const params = {
                     ...values,
                     foundedAt: values.foundedAt
@@ -214,15 +304,21 @@ const ModalCreateUpdateDepartmentPosition = () => {
                 } else {
                     createDept(params);
                 }
-            } else {
+            } else if (tab === TABS.POSITION) {
                 if (modalMode === "UPDATE_POSITION") {
                     updatePos(values);
                 } else {
                     createPos(values);
                 }
+            } else {
+                if (modalMode === "UPDATE_ROLE") {
+                    updateRoleMutate(values);
+                } else {
+                    createRoleMutate(values);
+                }
             }
         });
-    }, [form, isDepartment, modalMode, updateDept, createDept, updatePos, createPos]);
+    }, [form, tab, modalMode, updateDept, createDept, updatePos, createPos, updateRoleMutate, createRoleMutate]);
 
     const title = useMemo(() => {
         switch (modalMode) {
@@ -234,6 +330,10 @@ const ModalCreateUpdateDepartmentPosition = () => {
                 return "Thêm mới chức vụ";
             case "UPDATE_POSITION":
                 return "Cập nhật chức vụ";
+            case "CREATE_ROLE":
+                return "Thêm mới cấp bậc";
+            case "UPDATE_ROLE":
+                return "Cập nhật cấp bậc";
             default:
                 return "";
         }
@@ -243,18 +343,18 @@ const ModalCreateUpdateDepartmentPosition = () => {
         isLoadingCreateDept ||
         isLoadingUpdateDept ||
         isLoadingCreatePos ||
-        isLoadingUpdatePos;
+        isLoadingUpdatePos ||
+        isLoadingCreateRole ||
+        isLoadingUpdateRole;
 
     const hasChanges = useMemo(() => {
         if (!initialValues || !currentValues) return false;
 
-        const checkKeys = isDepartment
-            ? MODAL_DEPARTMENT_INCLUDE_FIELDS
-            : MODAL_POSITION_INCLUDE_FIELDS;
+        const checkKeys = includeFields;
 
         return checkKeys.some((key) => {
             const fieldKey = key as keyof typeof initialValues;
-            const initial = initialValues[fieldKey];
+            const initial = (initialValues as any)[fieldKey];
             const current = currentValues[key as string];
 
             if (dayjs.isDayjs(initial)) {
@@ -263,7 +363,7 @@ const ModalCreateUpdateDepartmentPosition = () => {
 
             return initial !== current;
         });
-    }, [initialValues, currentValues, isDepartment]);
+    }, [initialValues, currentValues, includeFields]);
 
     const isAllRequiredFieldsFilled = useMemo(() => {
         return visibleFormFields
