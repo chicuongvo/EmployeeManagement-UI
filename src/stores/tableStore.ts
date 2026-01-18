@@ -7,6 +7,7 @@ interface AuthState {
   listDepartmentActiveKey?: string[];
   listPositionActiveKey?: string[];
   listProjectActiveKey?: string[];
+  listPerformanceDetailActiveKey?: string[];
   listContractActiveKey?: string[];
   listUpdateRequestActiveKey?: string[];
   listMeetingActiveKey?: string[];
@@ -16,6 +17,7 @@ interface AuthState {
   setListDepartmentActiveKey: (listDepartmentActiveKey?: string[]) => void;
   setListPositionActiveKey: (listPositionActiveKey?: string[]) => void;
   setListProjectActiveKey: (listProjectActiveKey?: string[]) => void;
+  setListPerformanceDetailActiveKey: (listPerformanceDetailActiveKey?: string[]) => void;
   setListContractActiveKey: (listContractActiveKey?: string[]) => void;
   setListUpdateRequestActiveKey: (listUpdateRequestActiveKey?: string[]) => void;
   setListMeetingActiveKey: (listMeetingActiveKey?: string[]) => void;
@@ -50,6 +52,11 @@ const useTableStore = create<AuthState>()(
             listProjectActiveKey,
           });
         },
+        setListPerformanceDetailActiveKey: (listPerformanceDetailActiveKey) => {
+          set({
+            listPerformanceDetailActiveKey,
+          });
+        },
         setListContractActiveKey: (listContractActiveKey) => {
           set({
             listContractActiveKey,
@@ -74,6 +81,7 @@ const useTableStore = create<AuthState>()(
           listDepartmentActiveKey,
           listPositionActiveKey,
           listProjectActiveKey,
+          listPerformanceDetailActiveKey
           listContractActiveKey,
           listUpdateRequestActiveKey,
           listMeetingActiveKey,
@@ -83,6 +91,7 @@ const useTableStore = create<AuthState>()(
           listDepartmentActiveKey,
           listPositionActiveKey,
           listProjectActiveKey,
+          listPerformanceDetailActiveKey
           listContractActiveKey,
           listUpdateRequestActiveKey,
           listMeetingActiveKey,

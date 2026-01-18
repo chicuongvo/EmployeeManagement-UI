@@ -68,9 +68,10 @@ const WORK_STATUS_CONFIG: Record<
   },
   // Legacy statuses (for backward compatibility)
   ACTIVE: {
-    label: "Đang làm việc",
+    label: "Hoạt động",
     color: "green",
   },
+
 };
 
 const WorkStatus = ({ status }: WorkStatusProps) => {
