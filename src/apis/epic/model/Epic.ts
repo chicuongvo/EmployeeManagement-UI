@@ -57,9 +57,7 @@ export interface GetListEpicRequest {
     q?: string;
 }
 
-export interface GetListEpicResponse extends BaseResponse {
-    data: Epic[];
-}
+export interface GetListEpicResponse extends BaseResponse<Epic[]> { }
 
 export interface CreateEpicRequest {
     name: string;
@@ -79,6 +77,4 @@ export interface UpdateEpicRequest {
     endDate?: string;
 }
 
-export interface EpicResponse extends BaseResponse {
-    data: Epic;
-}
+export interface EpicResponse extends BaseResponse<Epic> { }

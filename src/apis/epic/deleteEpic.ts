@@ -7,7 +7,7 @@ const endpoints = {
 
 const deleteEpic =
     (url: string) =>
-        async (): Promise<BaseResponse> =>
-            requestApi.delete<BaseResponse>(url);
+        async (): Promise<BaseResponse<void>> =>
+            requestApi.delete<BaseResponse<void>>(url);
 
 export const deleteEpicById = (id: number) => deleteEpic(endpoints.epic(id))();

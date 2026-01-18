@@ -17,6 +17,9 @@ export interface PaginationRequest {
     created_range_picker?: [number, number];
     updated_range_picker?: [number, number];
     q?: string;
+    generalCode?: string;
+    generalCodeType?: string;
+
 }
 
 export interface PaginationMeta {

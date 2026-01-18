@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Tag } from "antd";
-import type { WorkStatus as WorkStatusType } from "@/apis/employee/model/Employee";
 
 interface ActiveStatusProps {
   status: "ACTIVE" | "IN_ACTIVE";

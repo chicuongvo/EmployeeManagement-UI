@@ -32,7 +32,7 @@ export default function PerformanceDetailPage() {
   const [selectedDetail, setSelectedDetail] = useState<PerformanceDetail | null>(null);
   const [criteria, setCriteria] = useState<PerformanceCriteria[]>([]);
 
-  const { setPerformanceDetailActiveKey, performanceDetailActiveKey } = useTableStore(
+  const { setListPerformanceDetailActiveKey, listPerformanceDetailActiveKey } = useTableStore(
     (state) => state
   );
 
@@ -48,13 +48,13 @@ export default function PerformanceDetailPage() {
     try {
       setIsLoading(true);
       const performanceId = parseInt(id!);
-      
+
       // Fetch both performance data and criteria in parallel
       const [performanceData, criteriaData] = await Promise.all([
         performanceService.getById(performanceId),
         performanceCriteriaService.getAll(),
       ]);
-      
+
       setPerformance(performanceData);
       setDetails(performanceData.details || []);
       setCriteria(criteriaData);
@@ -214,14 +214,14 @@ export default function PerformanceDetailPage() {
   }, [baseColumns]);
 
   useEffect(() => {
-    if (!performanceDetailActiveKey) {
-      setPerformanceDetailActiveKey(
+    if (!listPerformanceDetailActiveKey) {
+      setListPerformanceDetailActiveKey(
         columns
           .map((col) => col.key as string)
           .filter((key) => key !== "action")
       );
     }
-  }, [columns, setPerformanceDetailActiveKey, performanceDetailActiveKey]);
+  }, [columns, setListPerformanceDetailActiveKey, listPerformanceDetailActiveKey]);
 
   const paginationConfig = useMemo(
     () => ({
@@ -330,7 +330,7 @@ export default function PerformanceDetailPage() {
       }
     >
       <Toaster position="top-right" />
-      
+
       <Tabs
         type="card"
         activeKey="1"
@@ -353,8 +353,8 @@ export default function PerformanceDetailPage() {
                 dataSource={filteredDetails.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
                 columns={columns}
                 scroll={{ x: true }}
-                activeKeys={performanceDetailActiveKey}
-                setActiveKeys={setPerformanceDetailActiveKey}
+                activeKeys={listPerformanceDetailActiveKey}
+                setActiveKeys={setListPerformanceDetailActiveKey}
                 pagination={paginationConfig}
                 onChange={handleTableChange}
                 editColumnMode={true}

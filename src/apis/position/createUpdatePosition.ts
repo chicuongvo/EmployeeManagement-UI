@@ -9,7 +9,7 @@ import type {
   UpdatePositionRequest,
 } from "./model/Position";
 
-export interface PositionResponse extends BaseResponse, POSITION {}
+export interface PositionResponse extends BaseResponse<POSITION> { }
 
 const urlPosition = "/position";
 
