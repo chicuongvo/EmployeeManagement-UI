@@ -40,6 +40,8 @@ interface DepartmentContextType {
   paramsStr: string;
   isModalOpen: boolean;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isChangeRoleLevelModalOpen: boolean;
+  setIsChangeRoleLevelModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
   modalMode: ModalMode;
   setModalMode: React.Dispatch<React.SetStateAction<ModalMode>>;
   refetch: () => void;
@@ -56,6 +58,7 @@ interface DepartmentContextType {
   setSelectedRole: (role: ROLE | null) => void;
   selectedRole: ROLE | null;
   openCreateModal: () => void;
+  openChangeRoleLevelModal: () => void;
   tab?: string;
 }
 
@@ -69,6 +72,7 @@ export const DepartmentProvider: React.FC<{
   const [, setSearchParams] = useSearchParams();
   //   const { listEmployeeActiveKey } = useTableStore((state) => state);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isChangeRoleLevelModalOpen, setIsChangeRoleLevelModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<ModalMode>("CREATE_DEPARTMENT");
   const [selectedDepartment, _setSelectedDepartment] =
     useState<DEPARTMENT | null>(null);
@@ -113,6 +117,10 @@ export const DepartmentProvider: React.FC<{
     _setSelectedPosition(null);
     _setSelectedRole(null);
     setIsModalOpen(true);
+  };
+
+  const openChangeRoleLevelModal = () => {
+    setIsChangeRoleLevelModalOpen(true);
   };
 
   const generalCode = useGetParam<string>("general_code", "string");
@@ -250,6 +258,8 @@ export const DepartmentProvider: React.FC<{
         paramsStr,
         isModalOpen,
         setIsModalOpen,
+        isChangeRoleLevelModalOpen,
+        setIsChangeRoleLevelModalOpen,
         modalMode,
         setModalMode,
         refetch,
@@ -264,6 +274,7 @@ export const DepartmentProvider: React.FC<{
         setSelectedRole,
         selectedRole,
         openCreateModal,
+        openChangeRoleLevelModal,
         tab,
       }}
     >

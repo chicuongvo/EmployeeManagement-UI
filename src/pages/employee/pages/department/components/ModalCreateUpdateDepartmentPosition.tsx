@@ -30,7 +30,6 @@ const FORM_FIELDS = {
     STATUS: "status",
     ROLE_ID: "roleId",
     DEPARTMENT_ID: "departmentId",
-    LEVEL: "level"
 } as const;
 
 type FORM_FIELDS = typeof FORM_FIELDS[keyof typeof FORM_FIELDS];
@@ -53,7 +52,6 @@ const MODAL_DEPARTMENT_INCLUDE_FIELDS: FORM_FIELDS[] = [
 const MODAL_ROLE_INCLUDE_FIELDS: FORM_FIELDS[] = [
     FORM_FIELDS.NAME,
     FORM_FIELDS.STATUS,
-    FORM_FIELDS.LEVEL
 ];
 
 interface FormFieldConfig {
@@ -129,6 +127,7 @@ const ModalCreateUpdateDepartmentPosition = () => {
                 />
             ),
         },
+
         {
             key: FORM_FIELDS.LEVEL,
             name: "level",
@@ -162,9 +161,6 @@ const ModalCreateUpdateDepartmentPosition = () => {
                     editable={isUpdate}
                     onChangeStatus={(status: string) => {
                         form.setFieldValue("status", status);
-                        if (status === "INACTIVE" && tab === TABS.ROLE) {
-                            form.setFieldValue("level", null);
-                        }
                     }}
                 />
             ),
@@ -225,7 +221,6 @@ const ModalCreateUpdateDepartmentPosition = () => {
             return {
                 name: selectedRole?.name,
                 status: selectedRole?.status ?? "ACTIVE",
-                level: selectedRole?.level,
             };
         }
         return {};

@@ -100,6 +100,14 @@ const DataTable = ({ departmentId }: DataTableProps = {}) => {
         render: (value) => <TooltipTruncatedText value={value} />,
       },
       {
+        title: "Quản lý trực tiếp",
+        dataIndex: ["directManager", "fullName"],
+        key: "directManager",
+        align: "left",
+        width: 200,
+        render: (value) => <TooltipTruncatedText value={value} />,
+      },
+      {
         title: "SĐT",
         dataIndex: "phone",
         key: COLUMN_KEYS.PHONE,
