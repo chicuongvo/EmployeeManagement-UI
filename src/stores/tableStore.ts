@@ -17,9 +17,13 @@ interface AuthState {
   setListDepartmentActiveKey: (listDepartmentActiveKey?: string[]) => void;
   setListPositionActiveKey: (listPositionActiveKey?: string[]) => void;
   setListProjectActiveKey: (listProjectActiveKey?: string[]) => void;
-  setListPerformanceDetailActiveKey: (listPerformanceDetailActiveKey?: string[]) => void;
+  setListPerformanceDetailActiveKey: (
+    listPerformanceDetailActiveKey?: string[],
+  ) => void;
   setListContractActiveKey: (listContractActiveKey?: string[]) => void;
-  setListUpdateRequestActiveKey: (listUpdateRequestActiveKey?: string[]) => void;
+  setListUpdateRequestActiveKey: (
+    listUpdateRequestActiveKey?: string[],
+  ) => void;
   setListMeetingActiveKey: (listMeetingActiveKey?: string[]) => void;
 }
 
@@ -81,7 +85,7 @@ const useTableStore = create<AuthState>()(
           listDepartmentActiveKey,
           listPositionActiveKey,
           listProjectActiveKey,
-          listPerformanceDetailActiveKey
+          listPerformanceDetailActiveKey,
           listContractActiveKey,
           listUpdateRequestActiveKey,
           listMeetingActiveKey,
@@ -91,15 +95,15 @@ const useTableStore = create<AuthState>()(
           listDepartmentActiveKey,
           listPositionActiveKey,
           listProjectActiveKey,
-          listPerformanceDetailActiveKey
+          listPerformanceDetailActiveKey,
           listContractActiveKey,
           listUpdateRequestActiveKey,
           listMeetingActiveKey,
         }),
-      }
+      },
     ),
-    { enabled: import.meta.env.MODE !== "production" }
-  )
+    { enabled: import.meta.env.MODE !== "production" },
+  ),
 );
 
 export default useTableStore;
