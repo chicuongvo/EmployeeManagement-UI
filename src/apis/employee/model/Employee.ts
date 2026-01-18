@@ -8,6 +8,13 @@ export interface Department {
   departmentCode: string;
   managerId?: number;
   createdAt: Date;
+  manager?: {
+    id: number;
+    fullName: string;
+    avatar?: string;
+    email: string;
+    phone: string;
+  };
 }
 
 export interface Position {
@@ -62,6 +69,11 @@ export interface EMPLOYEE {
   gender: Gender;
   birthday: Date;
   citizenId: string;
+  citizenIdFrontImage?: string; // Hình ảnh CCCD mặt trước
+  citizenIdBackImage?: string; // Hình ảnh CCCD mặt sau
+  citizenIdIssueDate?: string; // Ngày cấp CCCD
+  citizenIdIssuePlace?: string; // Nơi cấp CCCD
+  onboardDate?: string; // Ngày nhận việc
   phone: string;
   email: string;
   ethnicity?: string;
@@ -110,12 +122,12 @@ export interface GetListEmployeeRequest extends PaginationRequest {
   employeeCode?: string | string[];
 }
 
-export interface GetListEmployeeResponse extends PaginationResponse<EMPLOYEE> {}
+export interface GetListEmployeeResponse extends PaginationResponse<EMPLOYEE> { }
 
 export interface GetEmployeeRequest {
   id: number;
 }
-export interface GetEmployeeResponse extends BaseResponse<EMPLOYEE> {}
+export interface GetEmployeeResponse extends BaseResponse<EMPLOYEE> { }
 
 export interface CreateEmployeeRequest {
   fullName: string;
@@ -123,6 +135,11 @@ export interface CreateEmployeeRequest {
   gender: Gender;
   birthday: string | Date;
   citizenId: string;
+  citizenIdFrontImage?: string;
+  citizenIdBackImage?: string;
+  citizenIdIssueDate?: string | Date;
+  citizenIdIssuePlace?: string;
+  onboardDate?: string;
   phone: string;
   email: string;
   ethnicity?: string;
@@ -152,6 +169,11 @@ export interface UpdateEmployeeRequest {
   gender?: Gender;
   birthday?: string | Date;
   citizenId?: string;
+  citizenIdFrontImage?: string;
+  citizenIdBackImage?: string;
+  citizenIdIssueDate?: string | Date;
+  citizenIdIssuePlace?: string;
+  onboardDate?: string;
   phone?: string;
   email?: string;
   ethnicity?: string;

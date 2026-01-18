@@ -7,7 +7,7 @@ const endpoints = {
 
 const setAssignments =
     (url: string) =>
-        async (employeeIds: number[]): Promise<BaseResponse> =>
-            requestApi.put<BaseResponse>(url, { employeeIds });
+        async (employeeIds: number[]): Promise<BaseResponse<void>> =>
+            requestApi.put<BaseResponse<void>>(url, { employeeIds });
 
 export const setTaskAssignments = (taskId: number) => setAssignments(endpoints.setAssignments(taskId));

@@ -203,6 +203,7 @@ export const COLUMN_KEYS = {
   END_DATE: "end_date",
   BUDGET: "budget",
   MEMBER_COUNT: "member_count",
+  ONBOARD_DATE: "onboard_date",
 } as const;
 
 export type ColumnKey = (typeof COLUMN_KEYS)[keyof typeof COLUMN_KEYS];
