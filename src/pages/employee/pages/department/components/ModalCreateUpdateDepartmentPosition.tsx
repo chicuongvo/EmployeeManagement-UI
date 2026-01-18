@@ -129,6 +129,13 @@ const ModalCreateUpdateDepartmentPosition = () => {
         },
 
         {
+            key: FORM_FIELDS.LEVEL,
+            name: "level",
+            label: () => "Cấp bậc",
+            // rules: () => [{ required: true, message: "Vui lòng nhập cấp bậc" }],
+            render: () => <Input placeholder="Nhập cấp bậc" type="number" />,
+        },
+        {
             key: FORM_FIELDS.FOUNDED_AT,
             name: "foundedAt",
             label: () => "Ngày thành lập",
@@ -154,7 +161,6 @@ const ModalCreateUpdateDepartmentPosition = () => {
                     editable={isUpdate}
                     onChangeStatus={(status: string) => {
                         form.setFieldValue("status", status);
-
                     }}
                 />
             ),
