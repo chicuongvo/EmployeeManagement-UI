@@ -7,12 +7,24 @@ interface AuthState {
   listDepartmentActiveKey?: string[];
   listPositionActiveKey?: string[];
   listProjectActiveKey?: string[];
+  listPerformanceDetailActiveKey?: string[];
+  listContractActiveKey?: string[];
+  listUpdateRequestActiveKey?: string[];
+  listMeetingActiveKey?: string[];
 
   setListEmployeeManagementKey: (listEmployeeManagementKey?: string[]) => void;
   setListEmployeeActiveKey: (listEmployeeActiveKey?: string[]) => void;
   setListDepartmentActiveKey: (listDepartmentActiveKey?: string[]) => void;
   setListPositionActiveKey: (listPositionActiveKey?: string[]) => void;
   setListProjectActiveKey: (listProjectActiveKey?: string[]) => void;
+  setListPerformanceDetailActiveKey: (
+    listPerformanceDetailActiveKey?: string[],
+  ) => void;
+  setListContractActiveKey: (listContractActiveKey?: string[]) => void;
+  setListUpdateRequestActiveKey: (
+    listUpdateRequestActiveKey?: string[],
+  ) => void;
+  setListMeetingActiveKey: (listMeetingActiveKey?: string[]) => void;
 }
 
 const useTableStore = create<AuthState>()(
@@ -44,6 +56,26 @@ const useTableStore = create<AuthState>()(
             listProjectActiveKey,
           });
         },
+        setListPerformanceDetailActiveKey: (listPerformanceDetailActiveKey) => {
+          set({
+            listPerformanceDetailActiveKey,
+          });
+        },
+        setListContractActiveKey: (listContractActiveKey) => {
+          set({
+            listContractActiveKey,
+          });
+        },
+        setListUpdateRequestActiveKey: (listUpdateRequestActiveKey) => {
+          set({
+            listUpdateRequestActiveKey,
+          });
+        },
+        setListMeetingActiveKey: (listMeetingActiveKey) => {
+          set({
+            listMeetingActiveKey,
+          });
+        },
       }),
       {
         name: "table_keys_store",
@@ -53,17 +85,25 @@ const useTableStore = create<AuthState>()(
           listDepartmentActiveKey,
           listPositionActiveKey,
           listProjectActiveKey,
+          listPerformanceDetailActiveKey,
+          listContractActiveKey,
+          listUpdateRequestActiveKey,
+          listMeetingActiveKey,
         }) => ({
           listEmployeeManagementKey,
           listEmployeeActiveKey,
           listDepartmentActiveKey,
           listPositionActiveKey,
           listProjectActiveKey,
+          listPerformanceDetailActiveKey,
+          listContractActiveKey,
+          listUpdateRequestActiveKey,
+          listMeetingActiveKey,
         }),
-      }
+      },
     ),
-    { enabled: import.meta.env.MODE !== "production" }
-  )
+    { enabled: import.meta.env.MODE !== "production" },
+  ),
 );
 
 export default useTableStore;
