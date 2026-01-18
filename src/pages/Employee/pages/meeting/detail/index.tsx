@@ -2,23 +2,20 @@ import { PageContainer } from "@ant-design/pro-components";
 import { useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Card, Descriptions, Tag, Button, Spin, Empty, Space, Typography, List, Avatar } from "antd";
+import { Card, Descriptions, Tag, Button, Spin, Empty, Space, Typography, List, Avatar, Tooltip, message } from "antd";
 import { 
   PlayCircleOutlined, 
   UserOutlined, 
   CalendarOutlined,
   ArrowLeftOutlined,
   CheckCircleOutlined,
-  CloseCircleOutlined,
-  ClockCircleOutlined
+  CloseCircleOutlined
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { getMeetingById, updateParticipantStatus } from "@/api/meeting.api";
 import PageTitle from "@/components/common/shared/PageTitle";
 import { useUser } from "@/hooks/useUser";
-import type { MeetingResponse } from "@/types/Meeting";
-
-const { Title, Paragraph, Text } = Typography;
+const { Paragraph, Text } = Typography;
 
 const MeetingDetailPage = () => {
   const { id } = useParams<{ id: string }>();

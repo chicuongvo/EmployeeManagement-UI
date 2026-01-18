@@ -3,6 +3,7 @@ import type {
   MeetingResponse,
   CreateMeetingRequest,
   MeetingQueryParams,
+  MeetingStatus,
 } from "../types/Meeting";
 
 interface GetListMeetingResponse {

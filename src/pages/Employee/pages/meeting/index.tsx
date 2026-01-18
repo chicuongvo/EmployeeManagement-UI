@@ -15,7 +15,7 @@ import PrimaryButton from "@/components/common/button/PrimaryButton";
 const MeetingPage = () => {
   const navigate = useNavigate();
   const { userProfile } = useUser();
-  const [loading, setLoading] = useState(false);
+  const [, setLoading] = useState(false);
   
   // Check if user is Host (Sếp) - Manager role or position name contains "Manager"
   const isHost = useMemo(() => {
