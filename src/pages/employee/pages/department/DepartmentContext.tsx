@@ -24,14 +24,21 @@ import type {
 } from "@/apis/position/model/Position";
 import { TABS } from ".";
 import { getListPosition } from "@/apis/position";
-// import { useUpdateEmployee } from "@/apis/employee/createUpdateEmployee";
-// import { getListFile, GetListFileResponse } from "@/apis/files/getListFile";
+import type { POSITION } from "@/apis/position/model/Position";
+
+export type ModalMode =
+  | "CREATE_DEPARTMENT"
+  | "UPDATE_DEPARTMENT"
+  | "CREATE_POSITION"
+  | "UPDATE_POSITION";
 
 interface DepartmentContextType {
   params: GetListDepartmentRequest;
   paramsStr: string;
-  setPopupUpdateEmployee: React.Dispatch<React.SetStateAction<boolean>>;
-  popupUpdateEmployee: boolean;
+  isModalOpen: boolean;
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  modalMode: ModalMode;
+  setModalMode: React.Dispatch<React.SetStateAction<ModalMode>>;
   refetch: () => void;
   dataResponse?: GetListDepartmentResponse | GetListPositionResponse;
   isLoading: boolean;
@@ -39,11 +46,11 @@ interface DepartmentContextType {
   handleFilterSubmit: (
     values: GetListDepartmentRequest | GetListPositionRequest
   ) => void;
-  setSelectedDepartment: React.Dispatch<
-    React.SetStateAction<DEPARTMENT | null>
-  >;
+  setSelectedDepartment: (dept: DEPARTMENT | null) => void;
   selectedDepartment: DEPARTMENT | null;
-  // updateDepartmentStatus: (id: number, isActive: boolean) => void;
+  setSelectedPosition: (pos: POSITION | null) => void;
+  selectedPosition: POSITION | null;
+  openCreateModal: () => void;
   tab?: string;
 }
 
@@ -56,9 +63,40 @@ export const DepartmentProvider: React.FC<{
 }> = ({ children }) => {
   const [, setSearchParams] = useSearchParams();
   //   const { listEmployeeActiveKey } = useTableStore((state) => state);
-  const [popupUpdateEmployee, setPopupUpdateEmployee] = useState(false);
-  const [selectedDepartment, setSelectedDepartment] =
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<ModalMode>("CREATE_DEPARTMENT");
+  const [selectedDepartment, _setSelectedDepartment] =
     useState<DEPARTMENT | null>(null);
+  const [selectedPosition, _setSelectedPosition] = useState<POSITION | null>(
+    null
+  );
+
+  const setSelectedDepartment = (dept: DEPARTMENT | null) => {
+    _setSelectedDepartment(dept);
+    if (dept) {
+      setModalMode("UPDATE_DEPARTMENT");
+      setIsModalOpen(true);
+    }
+  };
+
+  const setSelectedPosition = (pos: POSITION | null) => {
+    _setSelectedPosition(pos);
+    if (pos) {
+      setModalMode("UPDATE_POSITION");
+      setIsModalOpen(true);
+    }
+  };
+
+  const openCreateModal = () => {
+    if (tab === TABS.DEPARTMENT) {
+      setModalMode("CREATE_DEPARTMENT");
+    } else {
+      setModalMode("CREATE_POSITION");
+    }
+    _setSelectedDepartment(null);
+    _setSelectedPosition(null);
+    setIsModalOpen(true);
+  };
 
   const generalCode = useGetParam<string>("general_code", "string");
   const generalCodeType = useGetParam<string>(
@@ -189,8 +227,10 @@ export const DepartmentProvider: React.FC<{
       value={{
         params,
         paramsStr,
-        setPopupUpdateEmployee,
-        popupUpdateEmployee,
+        isModalOpen,
+        setIsModalOpen,
+        modalMode,
+        setModalMode,
         refetch,
         dataResponse: data,
         isLoading: isLoading,
@@ -198,7 +238,9 @@ export const DepartmentProvider: React.FC<{
         handleFilterSubmit,
         setSelectedDepartment,
         selectedDepartment,
-        // updateEmployeeStatus,
+        setSelectedPosition,
+        selectedPosition,
+        openCreateModal,
         tab,
       }}
     >

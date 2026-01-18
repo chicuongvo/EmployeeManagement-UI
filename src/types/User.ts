@@ -1,9 +1,18 @@
 export interface UserResponse {
+  id: number;
+  employeeCode: string;
+  fullName: string;
+  email: string;
+  role: string;
+  avatar?: string;
+  department?: {
     id: number;
-    email: string;
-    fullName?: string;
-    avatar?: string;
-    role?: string;
-    createdAt?: string;
-    updatedAt?: string;
+    name: string;
+    departmentCode: string;
+  };
+  position?: {
+    id: number;
+    name: string;
+  };
 }
+

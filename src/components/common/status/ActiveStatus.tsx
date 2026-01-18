@@ -1,45 +1,80 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Tag } from "antd";
+import { Dropdown, Tag, type MenuProps } from "antd";
+
+export type StatusType = "ACTIVE" | "INACTIVE";
 
 interface ActiveStatusProps {
-  status: "ACTIVE" | "IN_ACTIVE";
+  status: StatusType;
   size?: "small" | "default" | "large";
+  editable?: boolean;
+  onChangeStatus?: (status: StatusType) => void;
 }
 
 const ACTIVE_STATUS_CONFIG: Record<
-  "ACTIVE" | "IN_ACTIVE",
+  StatusType,
   {
     label: string;
     color: string;
   }
 > = {
-  IN_ACTIVE: {
+  INACTIVE: {
     label: "Ngừng hoạt động",
     color: "red",
   },
-
   ACTIVE: {
     label: "Đang hoạt động",
     color: "green",
   },
 };
 
-const ActiveStatus = ({ status }: ActiveStatusProps) => {
+const ActiveStatus = ({
+  status,
+  editable = false,
+  onChangeStatus,
+}: ActiveStatusProps) => {
   const config = ACTIVE_STATUS_CONFIG[status];
 
-  if (!config) {
+  const items: MenuProps["items"] = [
+    {
+      key: "ACTIVE",
+      label: "Đang hoạt động",
+    },
+    {
+      key: "INACTIVE",
+      label: "Ngừng hoạt động",
+    },
+  ];
+
+  const handleMenuClick: MenuProps["onClick"] = (e) => {
+    onChangeStatus?.(e.key as StatusType);
+  };
+
+  const tag = (
+    <Tag
+      color={config?.color ?? "default"}
+      className={`m-0 ${editable && status === "ACTIVE" ? "cursor-pointer" : ""}`}
+    >
+      {config?.label ?? status}
+    </Tag>
+  );
+
+  if (editable && status === "ACTIVE") {
     return (
-      <Tag color="default" className="m-0">
-        {status}
-      </Tag>
+      <Dropdown
+        menu={{
+          items,
+          onClick: handleMenuClick,
+          selectable: true,
+          defaultSelectedKeys: [status],
+        }}
+        trigger={["click"]}
+      >
+        {tag}
+      </Dropdown>
     );
   }
 
-  return (
-    <Tag color={config.color} className="m-0">
-      {config.label}
-    </Tag>
-  );
+  return tag;
 };
 
 export default ActiveStatus;

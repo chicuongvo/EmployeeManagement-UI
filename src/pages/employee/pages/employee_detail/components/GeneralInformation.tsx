@@ -1,4 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
+import React, { useCallback, useMemo } from "react";
 import {
   Card,
   Collapse,
@@ -10,7 +11,7 @@ import {
 } from "antd";
 import type { TextAreaProps } from "antd/es/input";
 import { useEmployeeDetailContext } from "../EmployeeDetailContex";
-import type { EMPLOYEE } from "@/apis/employee/model/Employee";
+import type { EMPLOYEE, WorkStatus as WorkStatusType } from "@/apis/employee/model/Employee";
 import ImageUpload from "@/components/common/form/ImageUpload";
 import FileUpload from "@/components/common/form/FileUpload";
 import SelectListEthnicity from "@/components/common/form/SelectListEthnicity";
@@ -18,9 +19,11 @@ import AutoCompleteReligion from "@/components/common/form/AutoCompleteReligion"
 import AddressInput from "@/components/common/form/AddressInput";
 import type { AddressValue } from "@/apis/address/model/Address";
 import dayjs from "dayjs";
-import Link from "antd/es/typography/Link";
 import SelectListDepartment from "@/components/common/form/SelectListDepartment";
 import SelectListPosition from "@/components/common/form/SelectListPosition";
+import { Link } from "react-router-dom";
+// import ChangeStatus from "@/components/common/status/ChangeStatus";
+import { WorkStatus } from "@/components/common/status";
 
 const { TextArea } = Input;
 
@@ -39,6 +42,10 @@ export const FORM_FIELDS = {
   GENDER: "gender",
   BIRTHDAY: "birthday",
   CITIZEN_ID: "citizenId",
+  CITIZEN_ID_FRONT_IMAGE: "citizenIdFrontImage",
+  CITIZEN_ID_BACK_IMAGE: "citizenIdBackImage",
+  CITIZEN_ID_ISSUE_DATE: "citizenIdIssueDate",
+  CITIZEN_ID_ISSUE_PLACE: "citizenIdIssuePlace",
   ETHNICITY: "ethnicity",
   RELIGION: "religion",
   MARITAL_STATUS: "maritalStatus",
@@ -72,6 +79,7 @@ export const FORM_FIELDS = {
 
   DEPARTMENT_ID: "departmentId",
   POSITION_ID: "positionId",
+  ONBOARD_DATE: "onboardDate",
 } as const;
 
 const SYSTEM_FIELDS = [
@@ -96,41 +104,7 @@ interface Props {
 const GeneralInformation = (_props: Props) => {
   const { isCreate, isEditable } = useEmployeeDetailContext();
 
-  // Helper function to extract "Province, District, Ward" from full address string
-  const extractAddressForDefaultValue = (
-    address: string | AddressValue | undefined
-  ): string | undefined => {
-    if (!address) return undefined;
-
-    // If it's already an AddressValue object, use value prop instead
-    if (typeof address === "object" && "provinceCode" in address) {
-      return undefined;
-    }
-
-    // If it's a string, extract the last 3 parts (Ward, District, Province)
-    // and reorder to "Province, District, Ward" format
-    if (typeof address === "string") {
-      const parts = address
-        .split(",")
-        .map((part) => part.trim())
-        .filter(Boolean);
-      if (parts.length >= 3) {
-        // Vietnamese address format: "specificAddress, Ward, District, Province"
-        // We need: "Province, District, Ward"
-        const [province, district, ward] = [
-          parts[parts.length - 1], // Province (last)
-          parts[parts.length - 2], // District (second last)
-          parts[parts.length - 3], // Ward (third last)
-        ];
-        return `${province}, ${district}, ${ward}`;
-      }
-    }
-
-    return undefined;
-  };
-
-  // Helper function to check if address is AddressValue object
-  const getAddressValue = (
+  const getAddressValue = useCallback((
     address: string | AddressValue | undefined
   ): AddressValue | undefined => {
     if (!address) return undefined;
@@ -138,25 +112,25 @@ const GeneralInformation = (_props: Props) => {
       return address as AddressValue;
     }
     return undefined;
-  };
+  }, []);
 
-  // Gender options
-  const genderOptions = [
+  // Memoize gender options
+  const genderOptions = useMemo(() => [
     { value: "MALE", label: "Nam" },
     { value: "FEMALE", label: "Nữ" },
     { value: "OTHER", label: "Khác" },
-  ];
+  ], []);
 
-  // Marital Status options
-  const maritalStatusOptions = [
+  // Memoize marital status options
+  const maritalStatusOptions = useMemo(() => [
     { value: "SINGLE", label: "Độc thân" },
     { value: "MARRIED", label: "Đã kết hôn" },
     { value: "DIVORCED", label: "Ly dị" },
     { value: "WIDOWED", label: "Góa" },
-  ];
+  ], []);
 
-  // Education options
-  const educationOptions = [
+  // Memoize education options
+  const educationOptions = useMemo(() => [
     { value: "HIGH_SCHOOL", label: "Trung học phổ thông" },
     { value: "ASSOCIATE_DEGREE", label: "Cao đẳng" },
     { value: "BACHELOR_DEGREE", label: "Đại học" },
@@ -165,10 +139,10 @@ const GeneralInformation = (_props: Props) => {
     { value: "POST_DOCTORAL", label: "Sau tiến sĩ" },
     { value: "VOCATIONAL_TRAINING", label: "Dạy nghề" },
     { value: "OTHER", label: "Khác" },
-  ];
+  ], []);
 
   // Helper function to get form field config
-  const getFieldConfig = (
+  const getFieldConfig = useCallback((
     name: string,
     label: string,
     component: React.ReactNode,
@@ -178,9 +152,9 @@ const GeneralInformation = (_props: Props) => {
     label,
     component,
     required,
-  });
+  }), []);
 
-  const renderInput = (
+  const renderInput = useCallback((
     label: string,
     value: string,
     inputType:
@@ -203,7 +177,7 @@ const GeneralInformation = (_props: Props) => {
     inputProps: InputProps | TextAreaProps = {}
   ) => {
     if (!isCreate && !isEditable) {
-      return <div>{value}</div>;
+      return <span>{value || "-"}</span>;
     }
 
     if (inputType === "textarea") {
@@ -222,9 +196,104 @@ const GeneralInformation = (_props: Props) => {
         {...(inputProps as InputProps)}
       />
     );
-  };
+  }, [isCreate, isEditable]);
 
-  const renderDepartmentPositionField = (
+  const renderSelect = useCallback((
+    value: any,
+    options: { value: any; label: string }[],
+    placeholder: string,
+    allowClear = false
+  ) => {
+    if (!isEditable) {
+      const selectedOption = options.find(opt => opt.value === value);
+      return <span>{selectedOption?.label || "-"}</span>;
+    }
+    return (
+      <Select
+        placeholder={placeholder}
+        options={options}
+        allowClear={allowClear}
+      />
+    );
+  }, [isEditable, _props.initialValues]);
+
+  const renderDatePicker = useCallback((
+    value: any,
+    format = "DD/MM/YYYY",
+    placeholder: string
+  ) => {
+    if (!isEditable) {
+      return <span>{value ? dayjs(value).format(format) : "-"}</span>;
+    }
+    return (
+      <DatePicker
+        format={format}
+        placeholder={placeholder}
+        className="w-full"
+      />
+    );
+  }, [isEditable, _props.initialValues]);
+
+  const renderImageUpload = useCallback((
+    urlImage: string | undefined,
+    onChange: (url: string | undefined) => void
+  ) => {
+    if (!isEditable) {
+      return urlImage ? <img src={urlImage} alt="" className="w-[100px]" /> : <span>-</span>;
+    }
+    return <ImageUpload urlImage={urlImage} onChange={(url) => onChange(url ?? undefined)} />;
+  }, [isEditable, _props.initialValues]);
+
+  const renderFileUpload = useCallback((
+    urlFile: string | undefined,
+    placeholder: string,
+    onChange: (url: string | undefined) => void
+  ) => {
+    if (!isEditable) {
+      return <FileUpload urlFile={urlFile} placeholder={placeholder} disabled />;
+    }
+    return (
+      <FileUpload
+        urlFile={urlFile}
+        placeholder={placeholder}
+        onChange={(url) => onChange(url ?? undefined)}
+      />
+    );
+  }, [isEditable, _props.initialValues]);
+
+  const renderSelectListEthnicity = useCallback((
+    value: string | undefined,
+    onChange: (value: string) => void
+  ) => {
+    if (!isEditable) {
+      return <span>{value || "-"}</span>;
+    }
+    return (
+      <SelectListEthnicity
+        placeholder="Chọn dân tộc"
+        value={value}
+        onChange={onChange}
+      />
+    );
+  }, [isEditable, _props.initialValues]);
+
+  const renderAutoCompleteReligion = useCallback((
+    value: string | undefined,
+    onChange: (value: string) => void
+  ) => {
+    if (!isEditable) {
+      return <span>{value || "-"}</span>;
+    }
+    return (
+      <AutoCompleteReligion
+        placeholder="Chọn tôn giáo"
+        value={value}
+        onChange={onChange}
+      />
+    );
+  }, [isEditable, _props.initialValues]);
+
+  const renderDepartmentPositionField = useCallback((
     type: "department" | "position",
     id: number
   ) => {
@@ -253,15 +322,23 @@ const GeneralInformation = (_props: Props) => {
         />
       )
     ) : (
-      <Link href={`/${type}/${id}`}>
-        {(_props.initialValues[
+      (() => {
+        const name = _props.initialValues[
           `${type}Name` as keyof typeof _props.initialValues
-        ] as string) ?? "Chưa cập nhật"}
-      </Link>
-    );
-  };
+        ] as string | undefined;
 
-  const renderAddress = (
+        return name ? (
+          <Link to={`/${type}/${id}`} className="text-green">
+            {name}
+          </Link>
+        ) : (
+          <span>-</span>
+        );
+      })()
+    );
+  }, [isEditable, _props.initialValues]);
+
+  const renderAddress = useCallback((
     address: string | AddressValue | undefined,
     onChange: (value: AddressValue | undefined) => void
   ) => {
@@ -274,25 +351,39 @@ const GeneralInformation = (_props: Props) => {
           specificAddress: "Nhập địa chỉ chi tiết",
         }}
         value={getAddressValue(address)}
-        defaultValue={extractAddressForDefaultValue(address)}
+        // defaultValue={extractAddressForDefaultValue(address)}
         onChange={onChange}
       />
     ) : (
       <span>{typeof address === "string" ? address : ""}</span>
     );
-  };
+  }, [isEditable, getAddressValue, _props.initialValues]);
 
-  const systemFields = [
+  const renderWorkStatus = useCallback((
+    value: WorkStatusType | undefined,
+    onChange: (value: WorkStatusType) => void
+  ) => {
+    if (!value) return <span>-</span>;
+
+    return (
+      <WorkStatus
+        status={value}
+      // enabledDropdown={isEditable}
+      />
+    );
+  }, [isEditable, _props.initialValues]);
+
+  const systemFields = useMemo(() => [
     getFieldConfig(
       FORM_FIELDS.EMPLOYEE_CODE,
       "Mã nhân viên",
-      <span>{_props.initialValues.employeeCode}</span>
+      <span>{_props.initialValues.employeeCode || "-"}</span>
     ),
     getFieldConfig(
       FORM_FIELDS.CREATED_AT,
       "Ngày tạo",
       <span>
-        {dayjs(_props.initialValues.createdAt).format("DD/MM/YYYY HH:mm:ss")}
+        {_props.initialValues.createdAt ? dayjs(_props.initialValues.createdAt).format("DD/MM/YYYY HH:mm:ss") : "-"}
       </span>
     ),
     getFieldConfig(
@@ -312,32 +403,31 @@ const GeneralInformation = (_props: Props) => {
       )
     ),
     getFieldConfig(
-      FORM_FIELDS.IS_ACTIVE,
-      "Trạng thái",
-      <Select
-        placeholder="Chọn trạng thái"
-        options={[
-          { value: true, label: "Đang hoạt động" },
-          { value: false, label: "Đã khóa" },
-        ]}
-      />
-    ),
-    getFieldConfig(
       FORM_FIELDS.WORK_STATUS,
       "Trạng thái làm việc",
-      <Select
-        placeholder="Chọn trạng thái làm việc"
-        options={[
-          { value: "WORKING_ONSITE", label: "Đang làm việc" },
-          { value: "WORK_FROM_HOME", label: "Làm việc từ xa" },
-          { value: "BUSINESS_TRIP", label: "Đi công tác" },
-          { value: "TRAINING", label: "Đang đào tạo" },
-        ]}
-      />
+      renderWorkStatus(
+        _props.initialValues.workStatus,
+        (value: WorkStatusType) => {
+          _props.setChangeInfoValue({
+            ..._props.changeInfoValue,
+            workStatus: value,
+          });
+        }
+      )
     ),
-  ];
+    getFieldConfig(
+      FORM_FIELDS.ONBOARD_DATE,
+      "Ngày nhận việc",
+      renderDatePicker(
+        _props.initialValues.onboardDate,
+        "DD/MM/YYYY",
+        "Chọn ngày nhận việc"
+      ),
+      true
+    ),
+  ], [isEditable, _props.initialValues, renderDepartmentPositionField, renderSelect, renderWorkStatus, renderDatePicker, _props.initialValues]);
 
-  const personalFields = [
+  const personalFields = useMemo(() => [
     getFieldConfig(
       FORM_FIELDS.FULL_NAME,
       "Họ và tên",
@@ -347,17 +437,21 @@ const GeneralInformation = (_props: Props) => {
     getFieldConfig(
       FORM_FIELDS.GENDER,
       "Giới tính",
-      <Select placeholder="Chọn giới tính" options={genderOptions} />,
+      renderSelect(
+        _props.initialValues.gender,
+        genderOptions,
+        "Chọn giới tính"
+      ),
       true
     ),
     getFieldConfig(
       FORM_FIELDS.BIRTHDAY,
       "Ngày sinh",
-      <DatePicker
-        format="DD/MM/YYYY"
-        placeholder="Chọn ngày sinh"
-        className="w-full"
-      />,
+      renderDatePicker(
+        _props.initialValues.birthday,
+        "DD/MM/YYYY",
+        "Chọn ngày sinh"
+      ),
       true
     ),
     getFieldConfig(
@@ -367,60 +461,103 @@ const GeneralInformation = (_props: Props) => {
       true
     ),
     getFieldConfig(
+      FORM_FIELDS.CITIZEN_ID_FRONT_IMAGE,
+      "CCCD mặt trước",
+      renderImageUpload(
+        _props.initialValues.citizenIdFrontImage,
+        (url) => {
+          _props.setChangeInfoValue({
+            ..._props.changeInfoValue,
+            citizenIdFrontImage: url ?? undefined,
+          });
+        }
+      ),
+      true
+    ),
+    getFieldConfig(
+      FORM_FIELDS.CITIZEN_ID_BACK_IMAGE,
+      "CCCD mặt sau",
+      renderImageUpload(
+        _props.initialValues.citizenIdBackImage,
+        (url) => {
+          _props.setChangeInfoValue({
+            ..._props.changeInfoValue,
+            citizenIdBackImage: url ?? undefined,
+          });
+        }
+      ),
+      true
+    ),
+    getFieldConfig(
+      FORM_FIELDS.CITIZEN_ID_ISSUE_DATE,
+      "Ngày cấp",
+      renderDatePicker(
+        _props.initialValues.citizenIdIssueDate,
+        "DD/MM/YYYY",
+        "Chọn ngày cấp"
+      ),
+      true
+    ),
+    getFieldConfig(
+      FORM_FIELDS.CITIZEN_ID_ISSUE_PLACE,
+      "Nơi cấp",
+      renderInput("Nhập nơi cấp", _props.initialValues.citizenIdIssuePlace ?? ""),
+      true
+    ),
+    getFieldConfig(
       FORM_FIELDS.ETHNICITY,
       "Dân tộc",
-      <SelectListEthnicity
-        placeholder="Chọn dân tộc"
-        value={_props.initialValues.ethnicity ?? undefined}
-        onChange={(value: string) => {
+      renderSelectListEthnicity(
+        _props.initialValues.ethnicity ?? undefined,
+        (value: string) => {
           _props.setChangeInfoValue({
             ..._props.changeInfoValue,
             ethnicity: value ?? undefined,
           });
-        }}
-      />
+        }
+      )
     ),
     getFieldConfig(
       FORM_FIELDS.RELIGION,
       "Tôn giáo",
-      <AutoCompleteReligion
-        placeholder="Chọn tôn giáo"
-        value={_props.initialValues.religion ?? undefined}
-        onChange={(value: string) => {
+      renderAutoCompleteReligion(
+        _props.initialValues.religion ?? undefined,
+        (value: string) => {
           _props.setChangeInfoValue({
             ..._props.changeInfoValue,
             religion: value ?? undefined,
           });
-        }}
-      />
+        }
+      )
     ),
     getFieldConfig(
       FORM_FIELDS.MARITAL_STATUS,
       "Tình trạng hôn nhân",
-      <Select
-        placeholder="Chọn tình trạng hôn nhân"
-        options={maritalStatusOptions}
-        allowClear
-      />
+      renderSelect(
+        _props.initialValues.maritalStatus,
+        maritalStatusOptions,
+        "Chọn tình trạng hôn nhân",
+        true
+      )
     ),
     getFieldConfig(
       FORM_FIELDS.AVATAR,
       "Ảnh đại diện",
-      <ImageUpload
-        urlImage={_props.initialValues.avatar}
-        onChange={(url) => {
+      renderImageUpload(
+        _props.initialValues.avatar,
+        (url) => {
           _props.setChangeInfoValue({
             ..._props.changeInfoValue,
             avatar: url ?? undefined,
           });
-        }}
-      />,
+        }
+      ),
       true
     ),
-  ];
+  ], [isEditable, _props, genderOptions, maritalStatusOptions, renderInput, renderSelect, renderDatePicker, renderSelectListEthnicity, renderAutoCompleteReligion, renderImageUpload]);
 
   // Contact Information Fields
-  const contactFields = [
+  const contactFields = useMemo(() => [
     getFieldConfig(
       FORM_FIELDS.PHONE,
       "Số điện thoại",
@@ -461,14 +598,18 @@ const GeneralInformation = (_props: Props) => {
       ),
       true
     ),
-  ];
+  ], [isEditable, _props.initialValues]);
 
   // Education & Skills Fields
-  const educationFields = [
+  const educationFields = useMemo(() => [
     getFieldConfig(
       FORM_FIELDS.EDUCATION,
       "Trình độ học vấn",
-      <Select placeholder="Chọn trình độ học vấn" options={educationOptions} />
+      renderSelect(
+        _props.initialValues.education,
+        educationOptions,
+        "Chọn trình độ học vấn"
+      )
     ),
     getFieldConfig(
       FORM_FIELDS.SCHOOL,
@@ -480,65 +621,34 @@ const GeneralInformation = (_props: Props) => {
       "Chuyên ngành",
       renderInput("Nhập chuyên ngành", _props.initialValues.major ?? "")
     ),
-    // getFieldConfig(
-    //   FORM_FIELDS.STUDY_PERIOD,
-    //   "Thời gian học",
-    //   <DateRangePicker
-    //     format="DD/MM/YYYY"
-    //     placeholder={["Từ ngày", "Đến ngày"]}
-    //     value={
-    //       parsedStudyPeriod[0] && parsedStudyPeriod[1]
-    //         ? parsedStudyPeriod
-    //         : undefined
-    //     }
-    //     onChange={(dates) => {
-    //       if (dates && dates[0] && dates[1]) {
-    //         const startDate = dates[0].format("DD/MM/YYYY");
-    //         const endDate = dates[1].format("DD/MM/YYYY");
-    //         const dateRangeString = `${startDate} - ${endDate}`;
-    //         _props.setChangeInfoValue({
-    //           ..._props.changeInfoValue,
-    //           studyPeriod: dateRangeString,
-    //         });
-    //         setParsedStudyPeriod([dates[0], dates[1]]);
-    //       } else {
-    //         _props.setChangeInfoValue({
-    //           ..._props.changeInfoValue,
-    //           studyPeriod: undefined,
-    //         });
-    //         setParsedStudyPeriod([undefined, undefined]);
-    //       }
-    //     }}
-    //   />
-    // ),
     getFieldConfig(
       FORM_FIELDS.DEGREE_CERTIFICATE,
       "Bằng cấp",
-      <FileUpload
-        urlFile={_props.initialValues.degreeCertificate}
-        placeholder="Tải lên"
-        onChange={(url) => {
+      renderFileUpload(
+        _props.initialValues.degreeCertificate,
+        "Tải lên",
+        (url) => {
           _props.setChangeInfoValue({
             ..._props.changeInfoValue,
             degreeCertificate: url ?? undefined,
           });
-        }}
-      />
+        }
+      )
     ),
     getFieldConfig(
       FORM_FIELDS.FOREIGN_LANGUAGE_LEVEL,
       "Trình độ ngoại ngữ",
-      <Input placeholder="Nhập trình độ ngoại ngữ" />
+      renderInput("Nhập trình độ ngoại ngữ", _props.initialValues.foreignLanguageLevel ?? "")
     ),
     getFieldConfig(
       FORM_FIELDS.IT_SKILL_LEVEL,
       "Trình độ tin học",
-      <Input placeholder="Nhập trình độ tin học" />
+      renderInput("Nhập trình độ tin học", _props.initialValues.itSkillLevel ?? "")
     ),
-  ];
+  ], [isEditable, _props, educationOptions, renderSelect, renderInput, renderFileUpload]);
 
   // Insurance & Finance Fields
-  const insuranceFields = [
+  const insuranceFields = useMemo(() => [
     getFieldConfig(
       FORM_FIELDS.SI_NO,
       "Số thẻ BHXH",
@@ -562,44 +672,44 @@ const GeneralInformation = (_props: Props) => {
       ),
       true
     ),
-  ];
+  ], [isEditable, _props.initialValues]);
 
   // Documents Fields
-  const documentsFields = [
+  const documentsFields = useMemo(() => [
     getFieldConfig(
       FORM_FIELDS.RESUME_LINK,
       "Sơ yếu lí lịch",
-      <FileUpload
-        urlFile={_props.initialValues.resumeLink}
-        placeholder="Tải lên"
-        onChange={(url) => {
+      renderFileUpload(
+        _props.initialValues.resumeLink,
+        "Tải lên",
+        (url) => {
           _props.setChangeInfoValue({
             ..._props.changeInfoValue,
             resumeLink: url ?? undefined,
           });
-        }}
-      />,
+        }
+      ),
       true
     ),
     getFieldConfig(
       FORM_FIELDS.HEALTH_CERTIFICATE,
       "Giấy khám sức khỏe",
-      <FileUpload
-        urlFile={_props.initialValues.healthCertificate}
-        placeholder="Tải lên"
-        onChange={(url) => {
+      renderFileUpload(
+        _props.initialValues.healthCertificate,
+        "Tải lên",
+        (url) => {
           _props.setChangeInfoValue({
             ..._props.changeInfoValue,
             healthCertificate: url ?? undefined,
           });
-        }}
-      />,
+        }
+      ),
       true
     ),
-  ];
+  ], [isEditable, _props, renderFileUpload]);
 
   // Filter fields based on create/update mode
-  const filterFields = (fields: typeof personalFields) => {
+  const filterFields = useCallback((fields: typeof personalFields) => {
     if (isCreate) {
       return fields.filter(
         (field) =>
@@ -614,9 +724,9 @@ const GeneralInformation = (_props: Props) => {
           field.name as (typeof UPDATE_HIDDEN_FIELDS)[number]
         )
     );
-  };
+  }, [isCreate]);
 
-  const renderFormFields = (fields: typeof personalFields) => {
+  const renderFormFields = useCallback((fields: typeof personalFields) => {
     const filteredFields = filterFields(fields);
     return (
       <div className="grid grid-cols-2 gap-x-16 gap-y-4 pb-2">
@@ -632,9 +742,9 @@ const GeneralInformation = (_props: Props) => {
         ))}
       </div>
     );
-  };
+  }, [filterFields, _props.initialValues]);
 
-  const renderCollapse = (
+  const renderCollapse = useCallback((
     key: string,
     label: string,
     fields: typeof personalFields,
@@ -666,9 +776,9 @@ const GeneralInformation = (_props: Props) => {
         ]}
       />
     );
-  };
+  }, [renderFormFields]);
 
-  const collapseList = [
+  const collapseList = useMemo(() => [
     {
       key: "0",
       label: "Thông tin hệ thống",
@@ -700,10 +810,10 @@ const GeneralInformation = (_props: Props) => {
       label: "Tài liệu",
       fields: documentsFields,
     },
-  ];
+  ], [systemFields, personalFields, contactFields, educationFields, insuranceFields, documentsFields]);
 
   return (
-    <div className="my-3 w-full space-y-10 flex flex-col gap-5">
+    <div className="w-full space-y-10 flex flex-col gap-5">
       {collapseList.map((collapse) =>
         renderCollapse(collapse.key, collapse.label, collapse.fields)
       )}
@@ -711,4 +821,4 @@ const GeneralInformation = (_props: Props) => {
   );
 };
 
-export default GeneralInformation;
+export default React.memo(GeneralInformation);

@@ -1,14 +1,23 @@
 import { FaUserGroup } from "react-icons/fa6";
-import { Outlet } from "react-router-dom";
 
 import { type RouteItem } from "@/routes";
 import { EmployeeProvider } from "./pages/employee/EmployeeContext";
 import { DepartmentProvider } from "./pages/department/DepartmentContext";
 import EmployeePage from "./pages/employee";
+import { UpdateRequestProvider } from "./pages/update-request/UpdateRequestContext";
+import UpdateRequestPage from "./pages/update-request";
+import MyRequestsPage from "./pages/update-request/my-requests";
+import { ContractProvider } from "./pages/contract/ContractContext";
+import ContractPage from "./pages/contract";
+import MyContractsPage from "./pages/contract/my-contracts";
+import MeetingPage from "./pages/meeting";
 import DepartmentPage from "./pages/department";
+import VideoCall from "./pages/video-call";
 import MainLayout from "@/layout/MainLayout";
 import EmployeeDetailPage from "./pages/employee_detail";
 import { EmployeeDetailProvider } from "./pages/employee_detail/EmployeeDetailContex";
+import DepartmentDetailPage from "./pages/department_detail";
+import { DepartmentDetailProvider } from "./pages/department_detail/DepartmentDetailContext";
 
 import PerformancePage from "@/pages/employee/pages/performance";
 import PerformanceDetailPage from "@/pages/employee/pages/performanceDetail";
@@ -51,6 +60,34 @@ const route: RouteItem = {
       hideInMenu: true,
     },
     {
+      path: "update-requests",
+      name: "Update Request",
+      element: (
+        <UpdateRequestProvider>
+          <UpdateRequestPage />
+        </UpdateRequestProvider>
+      ),
+    },
+    {
+      path: "my-update-requests",
+      name: "Đơn yêu cầu của tôi",
+      element: <MyRequestsPage />,
+    },
+    {
+      path: "contracts",
+      name: "Hợp đồng",
+      element: (
+        <ContractProvider>
+          <ContractPage />
+        </ContractProvider>
+      ),
+    },
+    {
+      path: "my-contracts",
+      name: "Hợp đồng của tôi",
+      element: <MyContractsPage />,
+    },
+    {
       path: "departments",
       name: "Phòng ban",
       element: (
@@ -60,21 +97,36 @@ const route: RouteItem = {
       ),
     },
     {
+      path: "departments/:id",
+      name: "Chi tiết phòng ban",
+      element: (
+        <DepartmentDetailProvider>
+          <DepartmentDetailPage />
+        </DepartmentDetailProvider>
+      ),
+      hideInMenu: true,
+    },
+    {
       path: "performance",
-      name: "Performance",
-      element: <Outlet />,
-      children: [
-        {
-          index: true,
-          name: "Performance",
-          element: <PerformancePage />,
-        },
-        {
-          path: ":id",
-          name: "Performance Detail",
-          element: <PerformanceDetailPage />,
-        },
-      ],
+      name: "Đánh giá",
+      element: <PerformancePage />,
+    },
+    {
+      path: "performance/:id",
+      name: "Đánh giá chi tiết",
+      element: <PerformanceDetailPage />,
+      hideInMenu: true,
+    },
+    {
+      path: "meetings",
+      name: "Cuộc họp",
+      element: <MeetingPage />,
+    },
+    {
+      path: "video-call",
+      name: "Video Call",
+      hideInMenu: true,
+      element: <VideoCall />,
     },
   ],
 };

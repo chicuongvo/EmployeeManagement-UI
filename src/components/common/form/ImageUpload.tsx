@@ -241,7 +241,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
       <Modal
         open={cropModalOpen}
-        title="Crop image"
+        title="Cắt "
         width={700}
         onCancel={() => {
           setCropModalOpen(false);

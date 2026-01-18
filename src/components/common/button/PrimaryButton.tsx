@@ -69,10 +69,9 @@ const PrimaryButton = ({
       {...props}
       onClick={handleClick}
       className={cn(
-        `relative focus:outline-none group overflow-hidden rounded-md h-[35px] px-4 duration-200 text-white flex items-center justify-center gap-2 ${
-          disabled
-            ? "bg-gray-100 cursor-not-allowed border border-gray-200 text-gray-300"
-            : colorClasses
+        `relative focus:outline-none group overflow-hidden rounded-md h-[35px] px-4 duration-200 text-white flex items-center justify-center gap-2 hover:cursor-pointer ${disabled
+          ? "bg-gray-100 cursor-not-allowed border border-gray-200 text-gray-300"
+          : colorClasses
         }`,
         clicked ? `${disabled ? "" : colorClickedClasses}` : "",
         className

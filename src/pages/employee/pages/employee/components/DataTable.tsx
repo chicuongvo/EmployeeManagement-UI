@@ -1,7 +1,6 @@
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
-import { Avatar, Button } from "antd";
-import { EditOutlined } from "@ant-design/icons";
+import { Avatar } from "antd";
 
 import useTableStore from "@/stores/tableStore";
 import { useEffect, useMemo } from "react";
@@ -13,8 +12,13 @@ import TableComponent from "@/components/common/table/TableComponent";
 import type { EMPLOYEE } from "@/apis/employee/model/Employee";
 import CopyTextPopover from "@/components/common/shared/CopyTextPopover";
 import { WorkStatus } from "@/components/common/status";
+import { Link } from "react-router-dom";
 
-const DataTable = () => {
+interface DataTableProps {
+  departmentId?: number;
+}
+
+const DataTable = ({ departmentId }: DataTableProps = {}) => {
   const {
     dataResponse,
     isSuccess,
@@ -49,7 +53,10 @@ const DataTable = () => {
         align: "center",
         fixed: "left",
         width: 150,
-        render: (value) => <CopyTextPopover text={value} />,
+        render: (value, record) =>
+          <Link to={`/employee/employees/${record.id}`}>
+            <CopyTextPopover text={value} />
+          </Link>,
       },
       {
         title: "Họ và tên",
@@ -57,6 +64,7 @@ const DataTable = () => {
         key: COLUMN_KEYS.FULL_NAME,
         width: 250,
         align: "left",
+        fixed: "left",
         render: (_, record) => (
           <div className="flex items-center gap-2">
             <Avatar
@@ -109,6 +117,14 @@ const DataTable = () => {
         render: (value) => <WorkStatus status={value} />,
       },
       {
+        title: "Ngày nhận việc",
+        dataIndex: "onboardDate",
+        align: "left",
+        key: COLUMN_KEYS.ONBOARD_DATE,
+        width: 150,
+        render: (value) => dayjs(value).format("DD/MM/YYYY HH:mm"),
+      },
+      {
         title: "Ngày tạo",
         dataIndex: "createdAt",
         align: "left",
@@ -116,31 +132,7 @@ const DataTable = () => {
         width: 150,
         render: (value) => dayjs(value).format("DD/MM/YYYY HH:mm"),
       },
-      {
-        title: "Ngày cập nhật",
-        dataIndex: "updatedAt",
-        align: "left",
-        key: COLUMN_KEYS.UPDATED_AT,
-        width: 150,
-        render: (value) => dayjs(value).format("DD/MM/YYYY HH:mm"),
-      },
-      {
-        title: "Hành động",
-        key: COLUMN_KEYS.ACTION,
-        width: 120,
-        fixed: "right",
-        align: "center",
-        render: (_, record) => (
-          <Button
-            type="text"
-            onClick={() => {
-              setSelectedEmployee(record);
-              setPopupUpdateEmployee(true);
-            }}
-            icon={<EditOutlined style={{ color: "#10b981" }} />}
-          />
-        ),
-      },
+
     ],
     [
       dataResponse?.data.pagination.page,
@@ -164,6 +156,16 @@ const DataTable = () => {
     }
   }, [columns, setListEmployeeActiveKey, listEmployeeActiveKey]);
 
+  // Apply department filter when departmentId prop is provided
+  useEffect(() => {
+    if (departmentId) {
+      handleFilterSubmit?.({
+        ...params,
+        departmentId,
+      });
+    }
+  }, [departmentId]);
+
   const paginationConfig = useMemo(
     () => ({
       total: dataResponse?.data.pagination.total || 0,
@@ -182,10 +184,13 @@ const DataTable = () => {
       dataResponse?.data.pagination.total,
       dataResponse?.data.pagination.limit,
       dataResponse?.data.pagination.page,
+
     ]
   );
 
-  console.log("dataResponse", dataResponse?.data.data);
+
+
+  console.log("dataResponse", dataResponse?.data.pagination);
   return (
     <TableComponent
       isSuccess={isSuccess}
@@ -196,13 +201,14 @@ const DataTable = () => {
       activeKeys={listEmployeeActiveKey}
       setActiveKeys={setListEmployeeActiveKey}
       pagination={paginationConfig}
-      onChange={(p) =>
+      onChange={(p) => {
+        console.log("p", p);
         handleFilterSubmit?.({
           ...params,
           page: p.current,
           limit: p.pageSize,
         })
-      }
+      }}
       editColumnMode={true}
     />
   );
