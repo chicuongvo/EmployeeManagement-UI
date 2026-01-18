@@ -20,6 +20,7 @@ import type {
   UpdateRequestResponse,
   RequestStatus,
 } from "@/types/UpdateRequest";
+import { useNavigate } from "react-router-dom";
 
 interface DataTableProps {
   isMyRequests?: boolean;
@@ -31,18 +32,17 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
     isSuccess,
     handleFilterSubmit,
     params,
-    setSelectedUpdateRequest,
-    setPopupUpdateRequest,
   } = useUpdateRequestContext();
+  const navigate = useNavigate();
 
   const { setListUpdateRequestActiveKey, listUpdateRequestActiveKey } =
     useTableStore((state) => state);
 
   const getStatusTag = (status: RequestStatus) => {
     const statusConfig = {
-      PENDING: { color: "warning", text: "Pending" },
-      APPROVED: { color: "success", text: "Approved" },
-      NOT_APPROVED: { color: "error", text: "Not Approved" },
+      PENDING: { color: "warning", text: "Chờ duyệt" },
+      APPROVED: { color: "success", text: "Đã duyệt" },
+      NOT_APPROVED: { color: "error", text: "Từ chối" },
     };
     const config = statusConfig[status] || statusConfig.PENDING;
     return <Tag color={config.color}>{config.text}</Tag>;
@@ -51,7 +51,7 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
   const baseColumns: ColumnsType<UpdateRequestResponse> = useMemo(
     () => [
       {
-        title: "No",
+        title: "STT",
         key: COLUMN_KEYS.NO,
         render: (_, __, index: number) => {
           const currentPage = dataResponse?.pagination.page ?? 1;
@@ -71,7 +71,7 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
         align: "center",
       },
       {
-        title: "Content",
+        title: "Nội dung",
         dataIndex: "content",
         key: "content",
         width: 300,
@@ -80,7 +80,7 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
         ),
       },
       {
-        title: "Status",
+        title: "Trạng thái",
         dataIndex: "status",
         key: "status",
         align: "center",
@@ -91,7 +91,7 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
         ? []
         : [
             {
-              title: "Requested By",
+              title: "Người yêu cầu",
               dataIndex: ["requestedBy", "fullName"],
               key: "requestedBy",
               align: "left",
@@ -109,7 +109,7 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
             } as const,
           ]),
       {
-        title: "Reviewed By",
+        title: "Người duyệt",
         dataIndex: ["reviewedBy", "fullName"],
         key: "reviewedBy",
         align: "left",
@@ -126,8 +126,8 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
         ),
       },
       {
-        title: "Created At",
-        dataIndex: "createdAt",
+        title: "Ngày tạo",
+        dataIndex: "created_at",
         align: "left",
         key: COLUMN_KEYS.CREATED_AT,
         width: 150,
@@ -135,8 +135,8 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
           value ? dayjs(value).format("DD/MM/YYYY HH:mm") : "-",
       },
       {
-        title: "Updated At",
-        dataIndex: "updatedAt",
+        title: "Ngày cập nhật",
+        dataIndex: "updated_at",
         align: "left",
         key: COLUMN_KEYS.UPDATED_AT,
         width: 150,
@@ -144,46 +144,20 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
           value ? dayjs(value).format("DD/MM/YYYY HH:mm") : "-",
       },
       {
-        title: "Action",
+        title: "Thao tác",
         key: COLUMN_KEYS.ACTION,
-        width: isMyRequests ? 100 : 200,
+        width: isMyRequests ? 100 : 120,
         fixed: "right",
         align: "center",
         render: (_, record) => (
           <div className="flex gap-1 justify-center">
-            {isMyRequests ? (
-              <Button
-                type="text"
-                icon={<EyeOutlined />}
-                onClick={() => {
-                  setSelectedUpdateRequest(record);
-                  setPopupUpdateRequest(true);
-                }}
-              />
-            ) : (
-              <>
-                {record.status !== "PENDING" && (
-                  <Button
-                    type="text"
-                    icon={<EyeOutlined />}
-                    onClick={() => {
-                      setSelectedUpdateRequest(record);
-                      setPopupUpdateRequest(true);
-                    }}
-                  />
-                )}
-                {record.status === "PENDING" && (
-                  <Button
-                    type="text"
-                    icon={<EditOutlined style={{ color: "#10b981" }} />}
-                    onClick={() => {
-                      setSelectedUpdateRequest(record);
-                      setPopupUpdateRequest(true);
-                    }}
-                  />
-                )}
-              </>
-            )}
+            <Button
+              type="text"
+              icon={<EyeOutlined />}
+              onClick={() => {
+                navigate(`/employee/update-requests/${record.id}`);
+              }}
+            />
           </div>
         ),
       },
@@ -191,9 +165,8 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
     [
       dataResponse?.pagination.page,
       dataResponse?.pagination.limit,
-      setSelectedUpdateRequest,
-      setPopupUpdateRequest,
       isMyRequests,
+      navigate,
     ]
   );
 
@@ -218,7 +191,7 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
       current: dataResponse?.pagination.page || 1,
       showTotal: (total: number) => (
         <span>
-          <span className="font-bold">Total:</span> {total}
+          <span className="font-bold">Tổng:</span> {total}
         </span>
       ),
       showSizeChanger: true,

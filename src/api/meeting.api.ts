@@ -41,8 +41,17 @@ export const getMeetingById = async (
 export const createMeeting = async (
   data: CreateMeetingRequest
 ): Promise<MeetingResponse> => {
-  const response = await axiosClient.post("/stream/meetings", data);
-  return response.data.data;
+  console.log("Creating meeting with data:", data);
+  console.log("Request URL:", axiosClient.defaults.baseURL + "/stream/meetings");
+  try {
+    const response = await axiosClient.post("/stream/meetings", data);
+    return response.data.data;
+  } catch (error: any) {
+    console.error("Error creating meeting - Status:", error.response?.status);
+    console.error("Error creating meeting - URL:", error.config?.url);
+    console.error("Error creating meeting - Full error:", error);
+    throw error;
+  }
 };
 
 /**
@@ -61,4 +70,19 @@ export const updateMeeting = async (
  */
 export const deleteMeeting = async (id: string): Promise<void> => {
   await axiosClient.delete(`/stream/meetings/${id}`);
+};
+
+/**
+ * Update participant status
+ */
+export const updateParticipantStatus = async (
+  meetingId: string,
+  participantId: number,
+  status: "PENDING" | "ACCEPTED" | "DECLINED"
+): Promise<{ employeeId: number; status: string; employee: any }> => {
+  const response = await axiosClient.put(
+    `/stream/meetings/${meetingId}/participants/${participantId}/status`,
+    { status }
+  );
+  return response.data.data;
 };

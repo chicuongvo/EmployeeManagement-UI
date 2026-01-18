@@ -3,6 +3,8 @@ export type RequestStatus = "PENDING" | "APPROVED" | "NOT_APPROVED";
 export type UpdateRequestResponse = {
   id: number;
   content: string;
+  oldValue?: string | null;
+  newValue?: string | null;
   status: RequestStatus;
   requestedById: number;
   reviewedById?: number | null;

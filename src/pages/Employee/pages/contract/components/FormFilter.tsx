@@ -4,6 +4,7 @@ import { Card, Form, Input, Select } from "antd";
 import BoxFilter from "@/components/common/shared/BoxFiltered";
 import { useContractContext } from "../ContractContext";
 import type { ContractQueryParams } from "@/types/Contract";
+import SelectListEmployee from "@/components/common/form/SelectListEmployee";
 
 interface FormFilterProps {
   onSearch?: () => void;
@@ -70,7 +71,7 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
             </Select>
           </Form.Item>
           <Form.Item name="employeeId" className="mb-0">
-            <Input placeholder="Employee ID" allowClear type="number" />
+            <SelectListEmployee placeholder="- Chọn nhân viên -" allowClear />
           </Form.Item>
           <Form.Item name="signedById" className="mb-0">
             <Input placeholder="Signed By ID" allowClear type="number" />

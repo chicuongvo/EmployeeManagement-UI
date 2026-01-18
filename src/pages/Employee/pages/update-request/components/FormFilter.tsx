@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useMemo } from "react";
-import { Card, Form, Input, Select } from "antd";
+import { Card, Form, Select } from "antd";
 
 import BoxFilter from "@/components/common/shared/BoxFiltered";
 import { useUpdateRequestContext } from "../UpdateRequestContext";
 import type { UpdateRequestQueryParams } from "@/types/UpdateRequest";
+import SelectListEmployee from "@/components/common/form/SelectListEmployee";
 
 interface FormFilterProps {
     onSearch?: () => void;
@@ -49,17 +50,17 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
             >
                 <div className="grid xl:grid-cols-3 2xl:grid-cols-4 gap-4 mb-3">
                     <Form.Item name="status" className="mb-0">
-                        <Select placeholder="Status" allowClear>
-                            <Select.Option value="PENDING">Pending</Select.Option>
-                            <Select.Option value="APPROVED">Approved</Select.Option>
-                            <Select.Option value="NOT_APPROVED">Not Approved</Select.Option>
+                        <Select placeholder="Trạng thái" allowClear>
+                            <Select.Option value="PENDING">Chờ duyệt</Select.Option>
+                            <Select.Option value="APPROVED">Đã duyệt</Select.Option>
+                            <Select.Option value="NOT_APPROVED">Từ chối</Select.Option>
                         </Select>
                     </Form.Item>
                     <Form.Item name="requestedById" className="mb-0">
-                        <Input placeholder="Requested By ID" allowClear type="number" />
+                        <SelectListEmployee placeholder="Chọn người yêu cầu" allowClear />
                     </Form.Item>
                     <Form.Item name="reviewedById" className="mb-0">
-                        <Input placeholder="Reviewed By ID" allowClear type="number" />
+                        <SelectListEmployee placeholder="Chọn người duyệt" allowClear />
                     </Form.Item>
                 </div>
 

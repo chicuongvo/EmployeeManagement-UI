@@ -2,12 +2,11 @@ import { PageContainer } from "@ant-design/pro-components";
 import { useRef } from "react";
 import FormFilter from "./components/FormFilter";
 import DataTable from "./components/DataTable";
-import ModalUpdateRequest from "./components/ModalUpdateRequest";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Tabs, type TabsProps } from "antd";
-import { Button } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import PageTitle from "@/components/common/shared/PageTitle";
+import PrimaryButton from "@/components/common/button/PrimaryButton";
 import {
   useUpdateRequestContext,
   UpdateRequestProvider,
@@ -19,15 +18,14 @@ export const TABS = {
 
 const UpdateRequestPageContent = () => {
   const dataTableRef = useRef<HTMLDivElement>(null);
-  const { refetch, tab, setPopupUpdateRequest, setSelectedUpdateRequest } =
-    useUpdateRequestContext();
-  const [_, setSearchParams] = useSearchParams();
+  const { tab } = useUpdateRequestContext();
+  const [, setSearchParams] = useSearchParams();
 
   const handleChangeTab = (key: string) => {
     setSearchParams({ tab: key });
   };
 
-  const tabs: TabsProps["items"] = [{ key: "1", label: "Update Request List" }];
+  const tabs: TabsProps["items"] = [{ key: "1", label: "Danh sách yêu cầu cập nhật" }];
 
   const scrollToDataTable = () => {
     if (dataTableRef.current) {
@@ -44,15 +42,16 @@ const UpdateRequestPageContent = () => {
         breadcrumb: {
           items: [
             {
-              title: "Master list",
+              title: "Hồ sơ nhân sự",
             },
             {
-              title: "Update Request",
+              title: "Yêu cầu cập nhật",
             },
           ],
         },
       }}
-      title={<PageTitle title="Update Request Management" />}
+      title={<PageTitle title="Quản lý yêu cầu cập nhật" />}
+     
     >
       <Tabs
         type="card"
@@ -67,7 +66,6 @@ const UpdateRequestPageContent = () => {
               <div ref={dataTableRef}>
                 <DataTable />
               </div>
-              <ModalUpdateRequest />
             </>
           ),
           label: tabItem.label,
