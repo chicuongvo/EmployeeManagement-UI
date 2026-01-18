@@ -449,12 +449,12 @@ const Index = () => {
               href: "/employee/employees?limit=10&page=1&tab=1",
             },
             {
-              title: isCreate ? "Thêm mới" : "Chi tiết",
+              title: isCreate ? "Thêm mới nhân viên" : "Chi tiết nhân viên",
             },
           ],
         },
       }}
-      title={<PageTitle title={`${isCreate ? "Thêm mới" : "Chi tiết"}`} />}
+      title={<PageTitle title={`${isCreate ? "Thêm mới nhân viên" : "Chi tiết nhân viên"}`} />}
     >
       <Form
         form={form}

@@ -215,7 +215,7 @@ const GeneralInformation = (_props: Props) => {
         allowClear={allowClear}
       />
     );
-  }, [isEditable]);
+  }, [isEditable, _props.initialValues]);
 
   const renderDatePicker = useCallback((
     value: any,
@@ -232,7 +232,7 @@ const GeneralInformation = (_props: Props) => {
         className="w-full"
       />
     );
-  }, [isEditable]);
+  }, [isEditable, _props.initialValues]);
 
   const renderImageUpload = useCallback((
     urlImage: string | undefined,
@@ -242,7 +242,7 @@ const GeneralInformation = (_props: Props) => {
       return urlImage ? <img src={urlImage} alt="" className="w-[100px]" /> : <span>-</span>;
     }
     return <ImageUpload urlImage={urlImage} onChange={(url) => onChange(url ?? undefined)} />;
-  }, [isEditable]);
+  }, [isEditable, _props.initialValues]);
 
   const renderFileUpload = useCallback((
     urlFile: string | undefined,
@@ -259,7 +259,7 @@ const GeneralInformation = (_props: Props) => {
         onChange={(url) => onChange(url ?? undefined)}
       />
     );
-  }, [isEditable]);
+  }, [isEditable, _props.initialValues]);
 
   const renderSelectListEthnicity = useCallback((
     value: string | undefined,
@@ -275,7 +275,7 @@ const GeneralInformation = (_props: Props) => {
         onChange={onChange}
       />
     );
-  }, [isEditable]);
+  }, [isEditable, _props.initialValues]);
 
   const renderAutoCompleteReligion = useCallback((
     value: string | undefined,
@@ -291,7 +291,7 @@ const GeneralInformation = (_props: Props) => {
         onChange={onChange}
       />
     );
-  }, [isEditable]);
+  }, [isEditable, _props.initialValues]);
 
   const renderDepartmentPositionField = useCallback((
     type: "department" | "position",
@@ -336,7 +336,7 @@ const GeneralInformation = (_props: Props) => {
         );
       })()
     );
-  }, [isEditable, _props]);
+  }, [isEditable, _props.initialValues]);
 
   const renderAddress = useCallback((
     address: string | AddressValue | undefined,
@@ -357,7 +357,7 @@ const GeneralInformation = (_props: Props) => {
     ) : (
       <span>{typeof address === "string" ? address : ""}</span>
     );
-  }, [isEditable, getAddressValue]);
+  }, [isEditable, getAddressValue, _props.initialValues]);
 
   const renderWorkStatus = useCallback((
     value: WorkStatusType | undefined,
@@ -371,23 +371,7 @@ const GeneralInformation = (_props: Props) => {
       // enabledDropdown={isEditable}
       />
     );
-  }, [isEditable]);
-
-  // const renderActiveStatus = useCallback((
-  //   value: boolean | undefined,
-  //   onChange: (value: boolean) => void
-  // ) => {
-  //   if (value === undefined) return <span>-</span>;
-
-  //   return (
-  //     <ChangeStatus
-  //       type="isActive"
-  //       value={value}
-  //       onChangeStatus={(newValue) => onChange(newValue as boolean)}
-  //       enabledDropdown={isEditable}
-  //     />
-  //   );
-  // }, [isEditable]);
+  }, [isEditable, _props.initialValues]);
 
   const systemFields = useMemo(() => [
     getFieldConfig(
@@ -418,19 +402,6 @@ const GeneralInformation = (_props: Props) => {
         _props.initialValues.positionId ?? 0
       )
     ),
-    // getFieldConfig(
-    //   FORM_FIELDS.IS_ACTIVE,
-    //   "Trạng thái",
-    //   renderActiveStatus(
-    //     _props.initialValues.isActive,
-    //     (value: boolean) => {
-    //       _props.setChangeInfoValue({
-    //         ..._props.changeInfoValue,
-    //         isActive: value,
-    //       });
-    //     }
-    //   )
-    // ),
     getFieldConfig(
       FORM_FIELDS.WORK_STATUS,
       "Trạng thái làm việc",
@@ -454,7 +425,7 @@ const GeneralInformation = (_props: Props) => {
       ),
       true
     ),
-  ], [isEditable, _props.initialValues, renderDepartmentPositionField, renderSelect, renderWorkStatus, renderDatePicker]);
+  ], [isEditable, _props.initialValues, renderDepartmentPositionField, renderSelect, renderWorkStatus, renderDatePicker, _props.initialValues]);
 
   const personalFields = useMemo(() => [
     getFieldConfig(
@@ -627,7 +598,7 @@ const GeneralInformation = (_props: Props) => {
       ),
       true
     ),
-  ], [isEditable]);
+  ], [isEditable, _props.initialValues]);
 
   // Education & Skills Fields
   const educationFields = useMemo(() => [
@@ -701,7 +672,7 @@ const GeneralInformation = (_props: Props) => {
       ),
       true
     ),
-  ], [isEditable]);
+  ], [isEditable, _props.initialValues]);
 
   // Documents Fields
   const documentsFields = useMemo(() => [
@@ -771,7 +742,7 @@ const GeneralInformation = (_props: Props) => {
         ))}
       </div>
     );
-  }, [filterFields]);
+  }, [filterFields, _props.initialValues]);
 
   const renderCollapse = useCallback((
     key: string,
