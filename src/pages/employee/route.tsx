@@ -97,20 +97,14 @@ const route: RouteItem = {
     },
     {
       path: "performance",
-      name: "Performance",
-      element: <Outlet />,
-      children: [
-        {
-          index: true,
-          name: "Performance",
-          element: <PerformancePage />,
-        },
-        {
-          path: ":id",
-          name: "Performance Detail",
-          element: <PerformanceDetailPage />,
-        },
-      ],
+      name: "Đánh giá",
+      element: <PerformancePage />,
+    },
+    {
+      path: "performance/:id",
+      name: "Đánh giá chi tiết",
+      element: <PerformanceDetailPage />,
+      hideInMenu: true,
     },
     {
       path: "meetings",
