@@ -1,4 +1,4 @@
-import { Card, Select } from "antd";
+import { Card } from "antd";
 import { useState } from "react";
 import {
     ComposedChart,
@@ -12,6 +12,8 @@ import {
     ResponsiveContainer,
     Area,
 } from "recharts";
+import DateRangePicker from "@/components/common/form/DateRangePicker";
+import type { Dayjs } from "dayjs";
 
 // Mock data for the chart
 const mockChartData = [
@@ -24,30 +26,36 @@ const mockChartData = [
 ];
 
 const DepartmentChartCard = () => {
-    const [timeRange, setTimeRange] = useState("01/2025 - 06/2025");
+    const [dateRange, setDateRange] = useState<[Dayjs, Dayjs] | null>(null);
+
+    const handleDateRangeChange = (dates: [Dayjs | null, Dayjs | null] | null) => {
+        if (dates && dates[0] && dates[1]) {
+            setDateRange([dates[0], dates[1]]);
+            // TODO: Fetch chart data based on selected date range
+            // You can add API call here to fetch data for the selected date range
+        } else {
+            setDateRange(null);
+        }
+    };
 
     return (
         <Card
-            className="rounded-xl shadow-md"
-            style={{ padding: "16px 20px" }}
+            className="rounded-xl h-[400px] pt-5"
         >
-            {/* Header with Time Range Selector */}
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-800">Thống kê hiệu suất</h3>
-                <Select
-                    value={timeRange}
-                    onChange={setTimeRange}
-                    style={{ width: 180 }}
-                    options={[
-                        { value: "01/2025 - 06/2025", label: "01/2025 - 06/2025" },
-                        { value: "07/2024 - 12/2024", label: "07/2024 - 12/2024" },
-                        { value: "01/2024 - 06/2024", label: "01/2024 - 06/2024" },
-                    ]}
+            {/* Header with Date Range Picker */}
+            {/* <div className="flex items-center justify-between mb-4">
+                <h3 className="text-[28px] font-bold">Thống kê hiệu suất</h3>
+                <DateRangePicker
+                    format="DD/MM/YYYY"
+                    placeholder={["Từ ngày", "Đến ngày"]}
+                    value={dateRange}
+                    onChange={handleDateRangeChange}
+                    style={{ width: 280 }}
                 />
-            </div>
+            </div> */}
 
             {/* Chart Area */}
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={350}>
                 <ComposedChart
                     data={mockChartData}
                     margin={{ top: 10, right: 30, left: 0, bottom: 0 }}

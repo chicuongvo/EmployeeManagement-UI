@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { createContext, useContext, useMemo } from "react";
+import React, { createContext, useContext, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import { getDepartment } from "@/apis/department/getDepartment";
@@ -9,6 +9,9 @@ interface DepartmentDetailContextType {
     department: DEPARTMENT | undefined;
     refetchDepartment: () => void;
     isLoadingDepartment: boolean;
+    editMode: boolean;
+    isEditable: boolean;
+    setEditMode: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const DepartmentDetailContext = createContext<
@@ -19,6 +22,7 @@ export const DepartmentDetailProvider: React.FC<{
     children: React.ReactNode;
 }> = ({ children }) => {
     const params = useParams();
+    const [editMode, setEditMode] = useState(false);
 
     const {
         isLoading: isLoadingDepartment,
@@ -32,13 +36,18 @@ export const DepartmentDetailProvider: React.FC<{
         enabled: !!Number(params.id),
     });
 
+    const isEditable = useMemo(() => editMode, [editMode]);
+
     const contextValue = useMemo(
         () => ({
             department: departmentData || undefined,
             refetchDepartment,
             isLoadingDepartment,
+            editMode,
+            isEditable,
+            setEditMode,
         }),
-        [departmentData, refetchDepartment, isLoadingDepartment]
+        [departmentData, refetchDepartment, isLoadingDepartment, editMode, isEditable]
     );
 
     return (
