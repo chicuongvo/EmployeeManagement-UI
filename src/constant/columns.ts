@@ -204,7 +204,8 @@ export const COLUMN_KEYS = {
   BUDGET: "budget",
   MEMBER_COUNT: "member_count",
   ONBOARD_DATE: "onboard_date",
-  ROLE_NAME: "role_name"
+  ROLE_NAME: "role_name",
+  LEVEL: "level"
 } as const;
 
 export type ColumnKey = (typeof COLUMN_KEYS)[keyof typeof COLUMN_KEYS];

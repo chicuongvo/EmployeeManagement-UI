@@ -9,7 +9,7 @@ import type {
   UpdatePositionRequest,
 } from "./model/Position";
 
-export interface PositionResponse extends BaseResponse, POSITION {}
+export interface PositionResponse extends BaseResponse<POSITION> { }
 
 const urlPosition = "/position";
 
@@ -17,7 +17,7 @@ export const createPosition = async (
   req: CreatePositionRequest
 ): Promise<PositionResponse> => {
   return await requestApi.post<PositionResponse>(urlPosition, req, {
-    hideMessage: true,
+    // hideMessage: true,
   });
 };
 

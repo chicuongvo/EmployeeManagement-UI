@@ -23,6 +23,8 @@ const TAB_POSITION_EXCLUDE_COLUMNS = [
   COLUMN_KEYS.CODE,
   COLUMN_KEYS.DESCRIPTION,
   COLUMN_KEYS.FOUNDED_AT,
+  COLUMN_KEYS.LEVEL
+
 ];
 
 const TAB_ROLE_EXCLUDE_COLUMNS = [
@@ -31,11 +33,12 @@ const TAB_ROLE_EXCLUDE_COLUMNS = [
   COLUMN_KEYS.EMPLOYEE_NUMBER,
   COLUMN_KEYS.DESCRIPTION,
   COLUMN_KEYS.FOUNDED_AT,
-  COLUMN_KEYS.ROLE_NAME
+  COLUMN_KEYS.ROLE_NAME,
 ];
 
 const TAB_DEPARTMENT_EXCLUDE_COLUMNS = [
-  COLUMN_KEYS.ROLE_NAME
+  COLUMN_KEYS.ROLE_NAME,
+  COLUMN_KEYS.LEVEL
 ]
 
 const DataTable = () => {
@@ -75,7 +78,7 @@ const DataTable = () => {
         align: "center",
       },
       {
-        title: tab === TABS.DEPARTMENT ? "Mã phòng ban" : tab === TABS.POSITION ? "Mã chức vụ" : "Mã cấp bậc",
+        title: tab === TABS.DEPARTMENT ? "Mã phòng ban" : tab === TABS.POSITION ? "Mã chức vụ" : "Mã Chức danh",
         dataIndex: tab === TABS.DEPARTMENT ? "departmentCode" : "code",
         key: COLUMN_KEYS.CODE,
         align: "center",
@@ -85,7 +88,7 @@ const DataTable = () => {
           <CopyTextPopover text={value} /></Link>,
       },
       {
-        title: tab === TABS.DEPARTMENT ? "Tên phòng ban" : tab === TABS.POSITION ? "Tên chức vụ" : "Tên cấp bậc",
+        title: tab === TABS.DEPARTMENT ? "Tên phòng ban" : tab === TABS.POSITION ? "Tên chức vụ" : "Tên Chức danh",
         dataIndex: "name",
         key: COLUMN_KEYS.NAME,
         width: 200,
@@ -147,7 +150,7 @@ const DataTable = () => {
         render: (value) => value?.length || 0,
       },
       {
-        title: "Cấp bậc",
+        title: "Chức danh",
         dataIndex: ["role", "name"],
         key: COLUMN_KEYS.ROLE_NAME,
         align: "left",
@@ -168,6 +171,13 @@ const DataTable = () => {
         align: "center",
         width: 150,
         render: (value) => dayjs(value).format("DD/MM/YYYY HH:mm"),
+      },
+      {
+        title: "Cấp bậc",
+        dataIndex: "level",
+        key: COLUMN_KEYS.LEVEL,
+        align: "center",
+        width: 150,
       },
       {
         title: "Trạng thái",
