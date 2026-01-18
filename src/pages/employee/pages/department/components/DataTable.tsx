@@ -205,6 +205,7 @@ const DataTable = () => {
               }
             }}
             icon={<EditOutlined style={{ color: "#10b981" }} />}
+            disabled={record.status === "INACTIVE" || record.isDeleted}
           />
         ),
       },

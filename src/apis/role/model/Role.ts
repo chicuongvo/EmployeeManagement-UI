@@ -32,3 +32,7 @@ export interface UpdateRoleRequest {
     level?: number | null;
     status?: RoleStatus;
 }
+
+export interface UpdateRoleLevelsRequest {
+    roleIds: number[];
+}

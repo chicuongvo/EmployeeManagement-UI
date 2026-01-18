@@ -69,3 +69,32 @@ export const useUpdateRole = (
         },
     });
 };
+
+export const updateRoleLevels = async (params: { roleIds: number[] }): Promise<void> => {
+    await requestApi.put("/role/levels/update", params, {
+        hideMessage: true,
+    });
+};
+
+export const useUpdateRoleLevels = (options?: { onSuccess?: () => void }) => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: updateRoleLevels,
+        onSuccess: () => {
+            showMessage({
+                type: "toast",
+                level: "success",
+                title: "Cập nhật thứ tự cấp bậc thành công",
+            });
+            queryClient.invalidateQueries({ queryKey: ["getListRole"] });
+            options?.onSuccess?.();
+        },
+        onError: (error: any) => {
+            showMessage({
+                type: "toast",
+                level: "error",
+                title: error?.message || "Cập nhật thứ tự cấp bậc thất bại",
+            });
+        },
+    });
+};
