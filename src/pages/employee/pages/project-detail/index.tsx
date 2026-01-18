@@ -3,6 +3,8 @@ import { Tabs, type TabsProps } from "antd";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import PageTitle from "@/components/common/shared/PageTitle";
 import EpicKanbanBoard from "./components/epic/EpicKanbanBoard";
+import ProjectMemberPage from "./components/members/ProjectMemberPage";
+import ProjectInfoPage from "./components/info/ProjectInfoPage";
 
 const ProjectDetailPage = () => {
     const { projectId } = useParams<{ projectId: string }>();
@@ -21,14 +23,14 @@ const ProjectDetailPage = () => {
             children: <EpicKanbanBoard />,
         },
         {
-            key: "info",
-            label: "Thông tin chung",
-            children: <div>Thông tin dự án (Coming soon)</div>,
-        },
-        {
             key: "members",
             label: "Thành viên",
-            children: <div>Danh sách thành viên (Coming soon)</div>,
+            children: <ProjectMemberPage />,
+        },
+        {
+            key: "info",
+            label: "Thông tin chung",
+            children: <ProjectInfoPage />,
         },
     ];
 

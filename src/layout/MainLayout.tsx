@@ -3,6 +3,7 @@ import { ConfigProvider } from "antd";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import useGetMenus from "../hooks/useGetMenu";
 import { ROUTER_DASHBOARD } from "../routes";
+import { NotificationBell } from "@/components/common/shared/NotificationBell";
 
 // Auth-related imports (commented out for now)
 // import { Dropdown, Input, Tooltip } from "antd";
@@ -19,7 +20,6 @@ import { ROUTER_DASHBOARD } from "../routes";
 // import { MODULE, OBJECT_TYPE } from "@/constant/slug";
 // import { BsSlashSquare } from "react-icons/bs";
 // import { logoutUser } from "@/apis/auth/logout";
-// import NotificationBell from "@/components/shared/NotificationBell";
 // import { getFlag } from "@/utils/getFlag";
 
 const MainLayout = () => {
@@ -159,17 +159,6 @@ const MainLayout = () => {
             route={{ path: "/", routes: menus }}
             location={location}
             token={{
-              fontFamily:
-                '"Lexend", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-              fontSize: 14,
-              fontSizeHeading1: 24,
-              fontSizeHeading2: 20,
-              fontSizeHeading3: 18,
-              fontSizeHeading4: 16,
-              fontSizeHeading5: 14,
-              fontSizeLG: 16,
-              fontSizeSM: 12,
-              fontSizeXL: 18,
               colorTextAppListIcon: "#ddd",
               colorTextAppListIconHover: "#fff",
               bgLayout: "#f6f7f9",
@@ -255,8 +244,10 @@ const MainLayout = () => {
               if (_.isMobile) return defaultDom;
               return <>{defaultDom}</>;
             }}
-            // Actions (search, notifications, language) - commented out
-            // actionsRender={(props) => { ... }}
+            // Actions (search, notifications, language)
+            actionsRender={() => {
+              return [<NotificationBell key="notification" />];
+            }}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             menuFooterRender={(props: any) => {
               if (props?.collapsed) return undefined;

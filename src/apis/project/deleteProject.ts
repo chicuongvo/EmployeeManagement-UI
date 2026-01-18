@@ -5,5 +5,5 @@ const endpoints = {
     project: "/projects",
 };
 
-export const deleteProject = async (id: number): Promise<BaseResponse> =>
-    requestApi.delete<BaseResponse>(`${endpoints.project}/${id}`);
+export const deleteProject = async (id: number): Promise<BaseResponse<void>> =>
+    requestApi.delete<BaseResponse<void>>(`${endpoints.project}/${id}`);

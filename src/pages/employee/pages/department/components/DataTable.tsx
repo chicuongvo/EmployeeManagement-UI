@@ -93,7 +93,6 @@ const DataTable = () => {
         key: COLUMN_KEYS.NAME,
         width: 200,
         align: "left",
-        render: (value) => <TooltipTruncatedText value={value} />,
       },
       {
         title: tab === TABS.DEPARTMENT ? "Người quản lý" : "Phòng ban",

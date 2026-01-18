@@ -3,6 +3,7 @@ import { FaUserGroup } from "react-icons/fa6";
 import { type RouteItem } from "@/routes";
 import { EmployeeProvider } from "./pages/employee/EmployeeContext";
 import { DepartmentProvider } from "./pages/department/DepartmentContext";
+import { LeaveApplicationProvider } from "./pages/leave-application/LeaveApplicationContext";
 import EmployeePage from "./pages/employee";
 import { UpdateRequestProvider } from "./pages/update-request/UpdateRequestContext";
 import UpdateRequestPage from "./pages/update-request";
@@ -12,6 +13,7 @@ import ContractPage from "./pages/contract";
 import MyContractsPage from "./pages/contract/my-contracts";
 import MeetingPage from "./pages/meeting";
 import DepartmentPage from "./pages/department";
+import LeaveApplicationPage from "./pages/leave-application";
 import VideoCall from "./pages/video-call";
 import MainLayout from "@/layout/MainLayout";
 import EmployeeDetailPage from "./pages/employee_detail";
@@ -94,6 +96,15 @@ const route: RouteItem = {
         <DepartmentProvider>
           <DepartmentPage />
         </DepartmentProvider>
+      ),
+    },
+    {
+      path: "leave-applications",
+      name: "Đơn nghỉ phép",
+      element: (
+        <LeaveApplicationProvider>
+          <LeaveApplicationPage />
+        </LeaveApplicationProvider>
       ),
     },
     {

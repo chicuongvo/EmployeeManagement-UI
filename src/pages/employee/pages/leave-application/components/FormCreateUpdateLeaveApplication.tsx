@@ -1,0 +1,216 @@
+import { Form, Input, DatePicker, Modal, message } from "antd";
+import { useEffect } from "react";
+import dayjs from "dayjs";
+import SelectListEmployee from "@/components/common/form/SelectListEmployee";
+import SelectListLeaveType from "@/components/common/form/SelectListLeaveType";
+import SelectLeaveApplicationStatus from "@/components/common/form/SelectLeaveApplicationStatus";
+import { useLeaveApplicationContext } from "../LeaveApplicationContext";
+import type { LeaveApplication } from "@/apis/leave-application/model/LeaveApplication";
+
+const { TextArea } = Input;
+
+interface FormCreateUpdateLeaveApplicationProps {
+  open: boolean;
+  onCancel: () => void;
+  leaveApplication?: LeaveApplication | null;
+}
+
+const FormCreateUpdateLeaveApplication = ({
+  open,
+  onCancel,
+  leaveApplication,
+}: FormCreateUpdateLeaveApplicationProps) => {
+  const [form] = Form.useForm();
+  const {
+    createLeaveApplicationMutation,
+    updateLeaveApplicationMutation,
+    setSelectedLeaveApplication,
+  } = useLeaveApplicationContext();
+
+  useEffect(() => {
+    if (open && leaveApplication) {
+      form.setFieldsValue({
+        startDate: leaveApplication.startDate
+          ? dayjs(leaveApplication.startDate)
+          : null,
+        endDate: leaveApplication.endDate
+          ? dayjs(leaveApplication.endDate)
+          : null,
+        reason: leaveApplication.reason,
+        employeeId: leaveApplication.employeeId,
+        leaveTypeId: leaveApplication.leaveTypeId,
+        status: leaveApplication.status,
+      });
+    } else if (open) {
+      form.resetFields();
+    }
+  }, [open, leaveApplication, form]);
+
+  const handleSubmit = async () => {
+    try {
+      const values = await form.validateFields();
+
+      if (leaveApplication) {
+        // Update mode
+        const payload = {
+          startDate: values.startDate
+            ? dayjs(values.startDate).format("YYYY-MM-DD")
+            : undefined,
+          endDate: values.endDate
+            ? dayjs(values.endDate).format("YYYY-MM-DD")
+            : undefined,
+          reason: values.reason,
+          employeeId: values.employeeId,
+          leaveTypeId: values.leaveTypeId,
+          status: values.status,
+        };
+
+        updateLeaveApplicationMutation.mutate(
+          { id: leaveApplication.id, data: payload },
+          {
+            onSuccess: () => {
+              message.success("Cập nhật đơn nghỉ phép thành công!");
+              form.resetFields();
+              setSelectedLeaveApplication(null);
+            },
+            onError: () => {
+              message.error("Cập nhật đơn nghỉ phép thất bại!");
+            },
+          }
+        );
+      } else {
+        // Create mode
+        const payload = {
+          startDate: dayjs(values.startDate).format("YYYY-MM-DD"),
+          endDate: dayjs(values.endDate).format("YYYY-MM-DD"),
+          reason: values.reason,
+          employeeId: values.employeeId,
+          leaveTypeId: values.leaveTypeId,
+        };
+
+        createLeaveApplicationMutation.mutate(payload, {
+          onSuccess: () => {
+            message.success("Tạo đơn nghỉ phép thành công!");
+            form.resetFields();
+          },
+          onError: () => {
+            message.error("Tạo đơn nghỉ phép thất bại!");
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Validation failed:", error);
+    }
+  };
+
+  const handleCancel = () => {
+    form.resetFields();
+    setSelectedLeaveApplication(null);
+    onCancel();
+  };
+
+  return (
+    <Modal
+      title={
+        leaveApplication
+          ? "Cập nhật đơn nghỉ phép"
+          : "Tạo đơn nghỉ phép mới"
+      }
+      open={open}
+      onCancel={handleCancel}
+      onOk={handleSubmit}
+      okText={leaveApplication ? "Cập nhật" : "Tạo mới"}
+      cancelText="Hủy"
+      width={700}
+      confirmLoading={
+        createLeaveApplicationMutation.isPending ||
+        updateLeaveApplicationMutation.isPending
+      }
+    >
+      <Form form={form} layout="vertical">
+        <div className="grid grid-cols-2 gap-4">
+          <Form.Item
+            label="Nhân viên"
+            name="employeeId"
+            rules={[
+              { required: true, message: "Vui lòng chọn nhân viên!" },
+            ]}
+          >
+            <SelectListEmployee
+              placeholder="Chọn nhân viên"
+              disabled={!!leaveApplication}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Loại nghỉ phép"
+            name="leaveTypeId"
+            rules={[
+              { required: true, message: "Vui lòng chọn loại nghỉ phép!" },
+            ]}
+          >
+            <SelectListLeaveType placeholder="Chọn loại nghỉ phép" />
+          </Form.Item>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <Form.Item
+            label="Ngày bắt đầu"
+            name="startDate"
+            rules={[
+              { required: true, message: "Vui lòng chọn ngày bắt đầu!" },
+            ]}
+          >
+            <DatePicker
+              format="DD/MM/YYYY"
+              placeholder="Chọn ngày bắt đầu"
+              style={{ width: "100%" }}
+              disabledDate={(current) => current && current < dayjs().startOf("day")}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Ngày kết thúc"
+            name="endDate"
+            rules={[
+              { required: true, message: "Vui lòng chọn ngày kết thúc!" },
+            ]}
+            dependencies={["startDate"]}
+          >
+            <DatePicker
+              format="DD/MM/YYYY"
+              placeholder="Chọn ngày kết thúc"
+              style={{ width: "100%" }}
+              disabledDate={(current) => {
+                const startDate = form.getFieldValue("startDate");
+                if (!startDate) return current && current < dayjs().startOf("day");
+                return current && current < dayjs(startDate).startOf("day");
+              }}
+            />
+          </Form.Item>
+        </div>
+
+        <Form.Item
+          label="Lý do"
+          name="reason"
+          rules={[{ required: true, message: "Vui lòng nhập lý do!" }]}
+        >
+          <TextArea
+            rows={4}
+            placeholder="Nhập lý do nghỉ phép..."
+            maxLength={500}
+            showCount
+          />
+        </Form.Item>
+
+        {leaveApplication && (
+          <Form.Item label="Trạng thái" name="status">
+            <SelectLeaveApplicationStatus placeholder="Chọn trạng thái" />
+          </Form.Item>
+        )}
+      </Form>
+    </Modal>
+  );
+};
+
+export default FormCreateUpdateLeaveApplication;

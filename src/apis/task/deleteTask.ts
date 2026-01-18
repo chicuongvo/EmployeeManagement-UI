@@ -7,7 +7,7 @@ const endpoints = {
 
 const deleteTask =
     (url: string) =>
-        async (): Promise<BaseResponse> =>
-            requestApi.delete<BaseResponse>(url);
+        async (): Promise<BaseResponse<void>> =>
+            requestApi.delete<BaseResponse<void>>(url);
 
 export const deleteTaskById = (id: number) => deleteTask(endpoints.task(id))();
