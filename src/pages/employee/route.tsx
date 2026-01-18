@@ -1,5 +1,4 @@
 import { FaUserGroup } from "react-icons/fa6";
-import { Outlet } from "react-router-dom";
 
 import { type RouteItem } from "@/routes";
 import { EmployeeProvider } from "./pages/employee/EmployeeContext";
@@ -17,6 +16,8 @@ import VideoCall from "./pages/video-call";
 import MainLayout from "@/layout/MainLayout";
 import EmployeeDetailPage from "./pages/employee_detail";
 import { EmployeeDetailProvider } from "./pages/employee_detail/EmployeeDetailContex";
+import DepartmentDetailPage from "./pages/department_detail";
+import { DepartmentDetailProvider } from "./pages/department_detail/DepartmentDetailContext";
 
 import PerformancePage from "@/pages/employee/pages/performance";
 import PerformanceDetailPage from "@/pages/employee/pages/performanceDetail";
@@ -94,6 +95,16 @@ const route: RouteItem = {
           <DepartmentPage />
         </DepartmentProvider>
       ),
+    },
+    {
+      path: "departments/:id",
+      name: "Chi tiết phòng ban",
+      element: (
+        <DepartmentDetailProvider>
+          <DepartmentDetailPage />
+        </DepartmentDetailProvider>
+      ),
+      hideInMenu: true,
     },
     {
       path: "performance",
