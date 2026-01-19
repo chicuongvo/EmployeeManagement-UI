@@ -5,7 +5,7 @@ import type {
 } from "./model/Attendance";
 
 const endpoints = {
-    attendance: "/payroll/attendance",
+    attendance: "/attendance-reports",
 };
 
 const getRatio =
