@@ -1,14 +1,14 @@
-import {useState, useEffect} from "react";
-import {useNavigate} from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { PageContainer } from "@ant-design/pro-components";
 import { Tabs, type TabsProps, Pagination } from "antd";
 import PageTitle from "@/components/common/shared/PageTitle";
 import PerformanceCard from "./components/performanceCard.tsx";
 import FormFilter from "./components/FormFilter.tsx";
 import AddPerformanceDialog from "./components/performanceDialog.tsx";
-import {toast} from "sonner";
-import type {Performance} from "@/apis/performance/model/Performance.ts"
-import {performanceService} from "@/apis/performance/performanceService.ts";
+import { toast } from "sonner";
+import type { Performance } from "@/apis/performance/model/Performance.ts"
+import { performanceService } from "@/apis/performance/performanceService.ts";
 
 export default function PerformancePage() {
     const navigate = useNavigate();
@@ -62,7 +62,7 @@ export default function PerformancePage() {
     // Calculate pagination
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    
+
     // Sort performances by year and month (newest first)
     const sortedPerformances = [...filteredPerformances].sort((a, b) => {
         if (b.year !== a.year) {
@@ -70,7 +70,7 @@ export default function PerformancePage() {
         }
         return b.month - a.month;
     });
-    
+
     const currentPerformances = sortedPerformances.slice(startIndex, endIndex);
 
     const handleAddPerformance = async (month: number, year: number) => {
@@ -85,7 +85,7 @@ export default function PerformancePage() {
     };
 
     const handleCardClick = (performance: Performance) => {
-        navigate(`/employee/performance/${performance.id}`);
+        navigate(`/evaluation/performance/${performance.id}`);
     };
 
     const handleFilterSearch = (values: any) => {
@@ -106,10 +106,10 @@ export default function PerformancePage() {
                 breadcrumb: {
                     items: [
                         {
-                            title: "Master list",
+                            title: "Đánh giá",
                         },
                         {
-                            title: "Performance",
+                            title: "Đánh giá hiệu suất",
                         },
                     ],
                 },

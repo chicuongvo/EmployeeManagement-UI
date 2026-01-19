@@ -21,8 +21,9 @@ import { EmployeeDetailProvider } from "./pages/employee_detail/EmployeeDetailCo
 import DepartmentDetailPage from "./pages/department_detail";
 import { DepartmentDetailProvider } from "./pages/department_detail/DepartmentDetailContext";
 
-import PerformancePage from "@/pages/employee/pages/performance";
-import PerformanceDetailPage from "@/pages/employee/pages/performanceDetail";
+// import PerformancePage from "@/pages/employee/pages/performance";
+// import PerformanceDetailPage from "@/pages/employee/pages/performanceDetail";
+// import AttendanceRoute from "@/pages/employee/pages/attendance/route";
 
 const route: RouteItem = {
   path: "/employee",
@@ -117,17 +118,22 @@ const route: RouteItem = {
       ),
       hideInMenu: true,
     },
-    {
-      path: "performance",
-      name: "Đánh giá",
-      element: <PerformancePage />,
-    },
-    {
-      path: "performance/:id",
-      name: "Đánh giá chi tiết",
-      element: <PerformanceDetailPage />,
-      hideInMenu: true,
-    },
+    // {
+    //   path: "performance",
+    //   name: "Đánh giá",
+    //   element: <PerformancePage />,
+    // },
+    // {
+    //   path: "performance/:id",
+    //   name: "Đánh giá chi tiết",
+    //   element: <PerformanceDetailPage />,
+    //   hideInMenu: true,
+    // },
+    // {
+    //   path: "attendance",
+    //   name: "Chấm công",
+    //   element: <AttendanceRoute />,
+    // },
     {
       path: "meetings",
       name: "Cuộc họp",
