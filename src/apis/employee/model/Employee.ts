@@ -95,6 +95,7 @@ export interface EMPLOYEE {
   healthCertificate?: string; // Giấy khám sức khỏe (link pdf)
   departmentId: number;
   positionId: number;
+  directManagerId?: number | null; // Direct manager reference
   workStatus: WorkStatus;
   isActive: boolean;
   createdAt: Date;
@@ -104,6 +105,8 @@ export interface EMPLOYEE {
   department?: Department;
   position?: Position;
   managedDepartment?: Department;
+  directManager?: EMPLOYEE;
+  subordinates?: EMPLOYEE[];
   workHistory?: WorkHistory[];
 }
 
@@ -161,6 +164,7 @@ export interface CreateEmployeeRequest {
   healthCertificate?: string;
   departmentId?: number;
   positionId: number;
+  directManagerId?: number | null;
 }
 
 export interface UpdateEmployeeRequest {
@@ -195,5 +199,6 @@ export interface UpdateEmployeeRequest {
   healthCertificate?: string;
   departmentId?: number;
   positionId?: number;
+  directManagerId?: number | null;
   workStatus?: WorkStatus;
 }

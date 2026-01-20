@@ -70,6 +70,7 @@ const Index = () => {
         healthCertificate: employee.healthCertificate,
         positionId: employee.positionId,
         departmentId: employee.departmentId,
+        directManagerId: employee.directManagerId,
         citizenIdFrontImage: employee.citizenIdFrontImage,
         citizenIdBackImage: employee.citizenIdBackImage,
         onboardDate: employee.onboardDate ? dayjs(employee.onboardDate) : undefined,
@@ -110,6 +111,8 @@ const Index = () => {
       healthCertificate: employee.healthCertificate,
       positionId: employee.positionId,
       departmentId: employee.departmentId,
+      directManagerId: employee.directManagerId,
+      directManager: employee.directManager,
       positionName: employee.position?.name,
       departmentName: employee.department?.name,
       workStatus: employee.workStatus,
@@ -235,6 +238,8 @@ const Index = () => {
         departmentId:
           formValues.departmentId || employee?.departmentId || undefined,
         positionId: formValues.positionId || employee?.positionId || 0,
+        directManagerId:
+          formValues.directManagerId || employee?.directManagerId || undefined,
         citizenIdFrontImage: changeInfoValue.citizenIdFrontImage,
         citizenIdBackImage: changeInfoValue.citizenIdBackImage,
         onboardDate: onboardDateString,
@@ -330,6 +335,9 @@ const Index = () => {
       }
       if (formValues.positionId !== undefined) {
         updatePayload.positionId = formValues.positionId;
+      }
+      if (formValues.directManagerId !== undefined) {
+        updatePayload.directManagerId = formValues.directManagerId;
       }
       if (formValues.workStatus !== undefined) {
         updatePayload.workStatus = formValues.workStatus;

@@ -4,6 +4,7 @@ import { useDepartmentDetailContext } from "./DepartmentDetailContext";
 import DepartmentInfoCard from "./components/DepartmentInfoCard";
 import DepartmentChartCard from "./components/DepartmentChartCard";
 import DepartmentEmployeeList from "./components/DepartmentEmployeeList";
+import DepartmentOrgChart from "./components/DepartmentOrgChart";
 import { Collapse, Form } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { MdEditSquare, MdSaveAs } from "react-icons/md";
@@ -194,6 +195,30 @@ const Index = () => {
                             },
                         ]}
                     />
+                    <div className=""></div>
+
+                    {/* Collapse: Org Chart */}
+                    <Collapse
+                        defaultActiveKey={["org-chart"]}
+                        bordered={false}
+                        className="custom-collapse w-full mt-10"
+                        items={[
+                            {
+                                key: "org-chart",
+                                label: (
+                                    <div className="relative">
+                                        <b>Sơ đồ tổ chức</b>
+                                    </div>
+                                ),
+                                children: (
+                                    <div className="p-4">
+                                        <DepartmentOrgChart departmentId={Number(department?.id)} />
+                                    </div>
+                                ),
+                            },
+                        ]}
+                    />
+
                     <div className=""></div>
 
                     {/* Collapse: Employee List */}

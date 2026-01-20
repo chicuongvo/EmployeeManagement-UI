@@ -38,9 +38,9 @@ const BoxFilter: React.FC<BoxFilterProps> = ({
           {prependActions}
           <PrimaryButton
             onClick={() => {
-                onReset ? onReset() : setSearchParams();
+              onReset ? onReset() : setSearchParams();
             }}
-            className="bg-transparent border text-primary-100 border-primary-100 hover:bg-transparent"
+            className="bg-transparent border text-green border-green hover:bg-transparent"
             disabled={loading}
             loading={loading}
             icon={<SyncOutlined className="icon-hover-effect" />}

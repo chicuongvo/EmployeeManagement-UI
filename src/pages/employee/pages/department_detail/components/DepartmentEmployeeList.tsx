@@ -19,7 +19,7 @@ const EmployeeSearchToolbar = ({ departmentId }: { departmentId?: number }) => {
             departmentId,
             page: 1,
         });
-    }, [debouncedSearchValue]);
+    }, [debouncedSearchValue, departmentId]);
 
     return (
         <Search
