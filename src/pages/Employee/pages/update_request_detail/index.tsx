@@ -1,6 +1,6 @@
 import { PageContainer } from "@ant-design/pro-components";
-import { useCallback, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useState, useMemo } from "react";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import PageTitle from "@/components/common/shared/PageTitle";
 import { useUpdateRequestDetailContext } from "./UpdateRequestDetailContext";
@@ -10,6 +10,7 @@ import type { CreateUpdateRequestRequest, UpdateUpdateRequestRequest } from "@/t
 import { MdEditSquare, MdSaveAs } from "react-icons/md";
 import { IoMdCloseCircle } from "react-icons/io";
 import CircleButton from "@/components/common/button/CircleButton";
+import { useUser } from "@/hooks/useUser";
 
 const Index = () => {
   const {
@@ -22,6 +23,13 @@ const Index = () => {
     isLoadingUpdateRequest,
   } = useUpdateRequestDetailContext();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const from = searchParams.get("from");
+  const location = useLocation();
+  const pathname = location.pathname;
+  const isFromMyRequests =
+    from === "my" || pathname.includes("my-update-requests");
+  const { userProfile } = useUser();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<{
     content: string;
@@ -31,15 +39,34 @@ const Index = () => {
     requestedById: updateRequest?.requestedById || 0,
   });
 
+  // Nếu tạo từ trang "Đơn yêu cầu của tôi" thì mặc định người yêu cầu là user hiện tại
+  useEffect(() => {
+    if (isCreate && isFromMyRequests && userProfile?.id) {
+      setFormData(prev => ({
+        ...prev,
+        requestedById: userProfile.id,
+      }));
+    }
+  }, [isCreate, isFromMyRequests, userProfile?.id]);
+
   const handleCreate = async (
     data: CreateUpdateRequestRequest | UpdateUpdateRequestRequest
   ) => {
     try {
       setIsLoading(true);
-      const result = await createUpdateRequest(data as CreateUpdateRequestRequest);
+      const result = await createUpdateRequest(
+        data as CreateUpdateRequestRequest
+      );
       toast.success("Tạo yêu cầu cập nhật thành công!");
-      navigate(`/employee/update-requests/${result.id}`);
-      refetchUpdateRequest();
+
+      if (isFromMyRequests) {
+        // Nếu tạo từ trang "Đơn yêu cầu của tôi" thì quay lại danh sách của tôi
+        navigate("/employee/my-update-requests");
+      } else {
+        // Ngữ cảnh quản trị: đi tới trang chi tiết
+        navigate(`/employee/update-requests/${result.id}`);
+        refetchUpdateRequest();
+      }
     } catch (error: any) {
       console.error("Error creating update request:", error);
       toast.error(
@@ -74,13 +101,16 @@ const Index = () => {
 
   const handleCancel = useCallback(() => {
     if (isCreate) {
-      navigate("/employee/update-requests");
+      navigate(isFromMyRequests ? "/employee/my-update-requests" : "/employee/update-requests");
       return;
     }
     if (editMode) {
       setEditMode(false);
+      return;
     }
-  }, [isCreate, navigate, editMode, setEditMode]);
+    // Đang ở màn chi tiết (không edit): quay lại danh sách tương ứng
+    navigate(isFromMyRequests ? "/employee/my-update-requests" : "/employee/update-requests");
+  }, [isCreate, navigate, editMode, setEditMode, isFromMyRequests]);
 
   const handleFormDataChange = useCallback((data: typeof formData) => {
     setFormData(data);
@@ -95,6 +125,9 @@ const Index = () => {
     return false;
   }, [formData, isCreate]);
 
+  // Ở module "Đơn yêu cầu của tôi" thì chỉ cho xem, không cho sửa
+  const allowEdit = useMemo(() => !isFromMyRequests, [isFromMyRequests]);
+
   const handleCreateUpdateRequest = useCallback(() => {
     // Trigger form submit - UpdateRequestForm will handle the submit logic internally
     const form = document.getElementById("update-request-form") as HTMLFormElement;
@@ -104,11 +137,29 @@ const Index = () => {
   }, []);
 
   const canEdit = useMemo(() => {
+    if (!allowEdit) return false;
     if (isCreate) return true;
     return updateRequest?.status === "PENDING";
-  }, [isCreate, updateRequest?.status]);
+  }, [allowEdit, isCreate, updateRequest?.status]);
 
   const renderActionButton = useCallback(() => {
+    // Nếu là trang "Đơn yêu cầu của tôi" ở chế độ xem chi tiết, chỉ có nút Đóng
+    if (!isCreate && isFromMyRequests) {
+      return (
+        <div className="w-fit mx-auto min-h-14 px-8 rounded-full bg-gray-300/20 backdrop-blur-md flex gap-2 justify-center items-center shadow-lg">
+          <CircleButton
+            onClick={handleCancel}
+            icon={<IoMdCloseCircle size={32} className="icon-hover-effect" />}
+            key="close"
+            type="button"
+            color="red"
+          >
+            Đóng
+          </CircleButton>
+        </div>
+      );
+    }
+
     if (isEditable) {
       return (
         <div className="w-fit mx-auto min-h-14 px-8 rounded-full bg-gray-300/20 backdrop-blur-md flex gap-2 justify-center items-center shadow-lg">
@@ -154,7 +205,7 @@ const Index = () => {
         </CircleButton>
       </div>
     );
-  }, [isEditable, isCreate, isLoading, disableSubmit, handleCancel, setEditMode, handleCreateUpdateRequest, canEdit]);
+  }, [isEditable, isCreate, isFromMyRequests, isLoading, disableSubmit, handleCancel, setEditMode, handleCreateUpdateRequest, canEdit]);
 
   if (isLoadingUpdateRequest) {
     return (
@@ -173,8 +224,10 @@ const Index = () => {
               title: "Hồ sơ nhân sự",
             },
             {
-              title: "Yêu cầu cập nhật",
-              href: "/employee/update-requests?limit=10&page=1&tab=1",
+              title: isFromMyRequests ? "Đơn yêu cầu của tôi" : "Yêu cầu cập nhật",
+              href: isFromMyRequests
+                ? "/employee/my-update-requests?tab=1"
+                : "/employee/update-requests?limit=10&page=1&tab=1",
             },
             {
               title: isCreate ? "Thêm mới" : "Chi tiết",
@@ -191,9 +244,19 @@ const Index = () => {
           onCancel={handleCancel}
           isLoading={isLoading}
           mode={isCreate ? "create" : "edit"}
-          isEditable={isEditable}
+          isEditable={isEditable && allowEdit}
           hideSubmitButton={true}
           onFormDataChange={handleFormDataChange}
+          lockRequestedBy={isCreate && isFromMyRequests}
+          requestedByDisplay={
+            isCreate && isFromMyRequests && userProfile?.id
+              ? {
+                  id: userProfile.id,
+                  fullName: userProfile.fullName,
+                  email: userProfile.email,
+                }
+              : null
+          }
         />
       </div>
       <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">

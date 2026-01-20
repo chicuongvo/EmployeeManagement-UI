@@ -87,6 +87,26 @@ const route: RouteItem = {
       hideInMenu: true,
     },
     {
+      path: "my-update-requests/add-new",
+      name: "Thêm mới",
+      element: (
+        <UpdateRequestDetailProvider>
+          <UpdateRequestDetailPage />
+        </UpdateRequestDetailProvider>
+      ),
+      hideInMenu: true,
+    },
+    {
+      path: "my-update-requests/:id",
+      name: "Chi tiết",
+      element: (
+        <UpdateRequestDetailProvider>
+          <UpdateRequestDetailPage />
+        </UpdateRequestDetailProvider>
+      ),
+      hideInMenu: true,
+    },
+    {
       path: "update-requests/:id",
       name: "Chi tiết",
       element: (
@@ -134,6 +154,16 @@ const route: RouteItem = {
       path: "my-contracts",
       name: "Hợp đồng của tôi",
       element: <MyContractsPage />,
+    },
+    {
+      path: "my-contracts/:id",
+      name: "Chi tiết hợp đồng của tôi",
+      element: (
+        <ContractDetailProvider>
+          <ContractDetailPage />
+        </ContractDetailProvider>
+      ),
+      hideInMenu: true,
     },
     {
       path: "departments",

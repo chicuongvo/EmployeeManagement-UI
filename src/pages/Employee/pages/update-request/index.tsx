@@ -2,11 +2,9 @@ import { PageContainer } from "@ant-design/pro-components";
 import { useRef } from "react";
 import FormFilter from "./components/FormFilter";
 import DataTable from "./components/DataTable";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { Tabs, type TabsProps } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
 import PageTitle from "@/components/common/shared/PageTitle";
-import PrimaryButton from "@/components/common/button/PrimaryButton";
 import {
   useUpdateRequestContext,
   UpdateRequestProvider,
@@ -25,7 +23,9 @@ const UpdateRequestPageContent = () => {
     setSearchParams({ tab: key });
   };
 
-  const tabs: TabsProps["items"] = [{ key: "1", label: "Danh sách yêu cầu cập nhật" }];
+  const tabs: TabsProps["items"] = [
+    { key: TABS.UPDATE_REQUEST, label: "Danh sách yêu cầu cập nhật" },
+  ];
 
   const scrollToDataTable = () => {
     if (dataTableRef.current) {
@@ -51,14 +51,13 @@ const UpdateRequestPageContent = () => {
         },
       }}
       title={<PageTitle title="Quản lý yêu cầu cập nhật" />}
-     
     >
       <Tabs
         type="card"
-        activeKey={`${tab ?? "1"}`}
+        activeKey={`${tab ?? TABS.UPDATE_REQUEST}`}
         className="tag-ticket-list report-tab"
         onChange={handleChangeTab}
-        items={tabs.map((tabItem) => ({
+        items={tabs.map(tabItem => ({
           key: tabItem.key,
           children: (
             <>

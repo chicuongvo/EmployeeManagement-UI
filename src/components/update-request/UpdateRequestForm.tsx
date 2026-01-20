@@ -19,6 +19,8 @@ interface UpdateRequestFormProps {
   isEditable?: boolean;
   hideSubmitButton?: boolean;
   onFormDataChange?: (formData: { content: string; requestedById: number }) => void;
+  lockRequestedBy?: boolean;
+  requestedByDisplay?: { id: number; fullName?: string; email?: string } | null;
 }
 
 export function UpdateRequestForm({
@@ -30,6 +32,8 @@ export function UpdateRequestForm({
   isEditable = true,
   hideSubmitButton = false,
   onFormDataChange,
+  lockRequestedBy = false,
+  requestedByDisplay = null,
 }: UpdateRequestFormProps) {
   const [formData, setFormData] = React.useState({
     content: initialData?.content || "",
@@ -40,6 +44,21 @@ export function UpdateRequestForm({
   React.useEffect(() => {
     onFormDataChange?.(formData);
   }, [formData, onFormDataChange]);
+
+  // Khi form ở chế độ tạo từ "Đơn yêu cầu của tôi", tự set requestedById = user hiện tại
+  React.useEffect(() => {
+    if (
+      mode === "create" &&
+      lockRequestedBy &&
+      requestedByDisplay?.id &&
+      formData.requestedById === 0
+    ) {
+      setFormData(prev => ({
+        ...prev,
+        requestedById: requestedByDisplay.id,
+      }));
+    }
+  }, [mode, lockRequestedBy, requestedByDisplay?.id, formData.requestedById]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,19 +93,41 @@ export function UpdateRequestForm({
       {mode === "create" ? (
         <div className="space-y-2">
           <Label htmlFor="requestedById">Người yêu cầu *</Label>
-          <SelectListEmployee
-            placeholder="Chọn người yêu cầu"
-            value={formData.requestedById || undefined}
-            onChange={(value) =>
-              setFormData({
-                ...formData,
-                requestedById: value || 0,
-              })
-            }
-            allowClear={false}
-            disabled={isLoading || !isEditable}
-            defaultValue={initialData?.requestedById ? [{ id: initialData.requestedById, name: initialData.requestedBy?.fullName || "" }] : []}
-          />
+          {lockRequestedBy && requestedByDisplay?.id ? (
+            <div className="px-3 py-2 border rounded-md bg-gray-50">
+              <div className="font-medium">
+                {requestedByDisplay.fullName || "Bạn"}
+              </div>
+              {requestedByDisplay.email && (
+                <div className="text-sm text-gray-500">
+                  {requestedByDisplay.email}
+                </div>
+              )}
+            </div>
+          ) : (
+            <SelectListEmployee
+              placeholder="Chọn người yêu cầu"
+              value={formData.requestedById || undefined}
+              onChange={(value) =>
+                setFormData({
+                  ...formData,
+                  requestedById: value || 0,
+                })
+              }
+              allowClear={false}
+              disabled={isLoading || !isEditable}
+              defaultValue={
+                initialData?.requestedById
+                  ? [
+                      {
+                        id: initialData.requestedById,
+                        name: initialData.requestedBy?.fullName || "",
+                      },
+                    ]
+                  : []
+              }
+            />
+          )}
         </div>
       ) : (
         <div className="space-y-2">

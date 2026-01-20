@@ -219,7 +219,7 @@ const DataTable = ({ isMyContracts = false }: DataTableProps = {}) => {
       {
         title: "Action",
         key: COLUMN_KEYS.ACTION,
-        width: 120,
+        width: isMyContracts ? 80 : 120,
         fixed: "right",
         align: "center",
         render: (_, record) => (
@@ -229,19 +229,25 @@ const DataTable = ({ isMyContracts = false }: DataTableProps = {}) => {
                 type="text"
                 icon={<EyeOutlined />}
                 onClick={() => {
-                  navigate(`/employee/contracts/${record.id}`);
+                  if (isMyContracts) {
+                    navigate(`/employee/my-contracts/${record.id}`);
+                  } else {
+                    navigate(`/employee/contracts/${record.id}`);
+                  }
                 }}
               />
             </Tooltip>
-            <Tooltip title="Chỉnh sửa">
-              <Button
-                type="text"
-                icon={<EditOutlined />}
-                onClick={() => {
-                  navigate(`/employee/contracts/${record.id}`);
-                }}
-              />
-            </Tooltip>
+            {!isMyContracts && (
+              <Tooltip title="Chỉnh sửa">
+                <Button
+                  type="text"
+                  icon={<EditOutlined />}
+                  onClick={() => {
+                    navigate(`/employee/contracts/${record.id}`);
+                  }}
+                />
+              </Tooltip>
+            )}
           </div>
         ),
       },

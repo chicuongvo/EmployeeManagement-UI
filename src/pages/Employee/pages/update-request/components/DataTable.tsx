@@ -155,7 +155,11 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
               type="text"
               icon={<EyeOutlined />}
               onClick={() => {
-                navigate(`/employee/update-requests/${record.id}`);
+                if (isMyRequests) {
+                  navigate(`/employee/my-update-requests/${record.id}`);
+                } else {
+                  navigate(`/employee/update-requests/${record.id}`);
+                }
               }}
             />
           </div>

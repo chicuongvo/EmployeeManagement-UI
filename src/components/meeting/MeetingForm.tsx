@@ -86,6 +86,7 @@ export function MeetingForm({
           placeholder="Nhập tên cuộc họp"
           required
           disabled={isLoading}
+          className="text-base"
         />
       </div>
 
@@ -99,6 +100,7 @@ export function MeetingForm({
           onChange={(date) => setFormData({ ...formData, scheduledAt: date })}
           placeholder="Chọn thời gian bắt đầu"
           style={{ width: "100%" }}
+          className="h-10 text-base"
           disabled={isLoading}
           disabledDate={(current) => current && current < dayjs().startOf("day")}
         />
@@ -118,14 +120,14 @@ export function MeetingForm({
           }
           allowClear
           disabled={isLoading}
-          className="w-full"
+          className="w-full text-base"
           //style={{ minHeight: '48px' }}
           // size="large"
           // maxTagCount="responsive"
 
         />
         <p className="text-sm text-muted-foreground">
-          Chọn các nhân viên được phép tham gia cuộc họp. Để trống nếu cho phép tất cả.
+          Chọn các nhân viên được phép tham gia cuộc họp.
         </p>
       </div>
 

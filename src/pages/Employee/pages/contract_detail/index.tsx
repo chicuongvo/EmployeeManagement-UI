@@ -1,6 +1,6 @@
 import { PageContainer } from "@ant-design/pro-components";
 import { useCallback, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import PageTitle from "@/components/common/shared/PageTitle";
 import { useContractDetailContext } from "./ContractDetailContext";
@@ -23,6 +23,9 @@ const Index = () => {
     isLoadingContract,
   } = useContractDetailContext();
   const navigate = useNavigate();
+  const location = useLocation();
+  const pathname = location.pathname;
+  const isFromMyContracts = pathname.includes("my-contracts");
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<{
     contractCode: string;
@@ -55,10 +58,18 @@ const Index = () => {
   ) => {
     try {
       setIsLoading(true);
-      const result = await createContract(data as CreateContractRequest | FormData);
+      const result = await createContract(
+        data as CreateContractRequest | FormData
+      );
       toast.success("Tạo hợp đồng thành công!");
-      navigate(`/employee/contracts/${result.id}`);
-      refetchContract();
+
+      if (isFromMyContracts) {
+        // Nếu tạo trong ngữ cảnh "Hợp đồng của tôi" (sau này nếu có), quay về danh sách của tôi
+        navigate("/employee/my-contracts");
+      } else {
+        navigate(`/employee/contracts/${result.id}`);
+        refetchContract();
+      }
     } catch (error: any) {
       console.error("Error creating contract:", error);
       toast.error(
@@ -76,7 +87,10 @@ const Index = () => {
     if (!contract?.id) return;
     try {
       setIsLoading(true);
-      await updateContract(contract.id, data as UpdateContractRequest | FormData);
+      await updateContract(
+        contract.id,
+        data as UpdateContractRequest | FormData
+      );
       toast.success("Cập nhật hợp đồng thành công!");
       setEditMode(false);
       refetchContract();
@@ -93,13 +107,16 @@ const Index = () => {
 
   const handleCancel = useCallback(() => {
     if (isCreate) {
-      navigate("/employee/contracts");
+      navigate(isFromMyContracts ? "/employee/my-contracts" : "/employee/contracts");
       return;
     }
     if (editMode) {
       setEditMode(false);
+      return;
     }
-  }, [isCreate, navigate, editMode, setEditMode]);
+    // Đang ở màn chi tiết (không edit): quay lại danh sách tương ứng
+    navigate(isFromMyContracts ? "/employee/my-contracts" : "/employee/contracts");
+  }, [isCreate, navigate, editMode, setEditMode, isFromMyContracts]);
 
   const handleFormDataChange = useCallback((data: typeof formData) => {
     setFormData(data);
@@ -129,6 +146,23 @@ const Index = () => {
   }, []);
 
   const renderActionButton = useCallback(() => {
+    // Trang "Hợp đồng của tôi": chỉ xem, không cho sửa
+    if (!isCreate && isFromMyContracts) {
+      return (
+        <div className="w-fit mx-auto min-h-14 px-8 rounded-full bg-gray-300/20 backdrop-blur-md flex gap-2 justify-center items-center shadow-lg">
+          <CircleButton
+            onClick={handleCancel}
+            icon={<IoMdCloseCircle size={32} className="icon-hover-effect" />}
+            key="close"
+            type="button"
+            color="red"
+          >
+            Đóng
+          </CircleButton>
+        </div>
+      );
+    }
+
     if (isEditable) {
       return (
         <div className="w-fit mx-auto min-h-14 px-8 rounded-full bg-gray-300/20 backdrop-blur-md flex gap-2 justify-center items-center shadow-lg">
@@ -170,7 +204,16 @@ const Index = () => {
         </CircleButton>
       </div>
     );
-  }, [isEditable, isCreate, isLoading, disableSubmit, handleCancel, setEditMode, handleCreateUpdateContract]);
+  }, [
+    isEditable,
+    isCreate,
+    isFromMyContracts,
+    isLoading,
+    disableSubmit,
+    handleCancel,
+    setEditMode,
+    handleCreateUpdateContract,
+  ]);
 
   if (isLoadingContract) {
     return (
@@ -189,8 +232,10 @@ const Index = () => {
               title: "Hồ sơ nhân sự",
             },
             {
-              title: "Hợp đồng",
-              href: "/employee/contracts?limit=10&page=1&tab=1",
+              title: isFromMyContracts ? "Hợp đồng của tôi" : "Hợp đồng",
+              href: isFromMyContracts
+                ? "/employee/my-contracts?tab=1"
+                : "/employee/contracts?limit=10&page=1&tab=1",
             },
             {
               title: isCreate ? "Thêm mới" : "Chi tiết",
