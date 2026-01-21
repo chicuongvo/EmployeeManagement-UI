@@ -1,8 +1,10 @@
-import { Modal, Radio, Space, Avatar, Form } from "antd";
+import { Modal, Radio, Space, Avatar, Form, Divider } from "antd";
 import { useState, useEffect } from "react";
 import type { DepartmentManager } from "@/apis/department/model/Department";
 import SelectListPosition from "@/components/common/form/SelectListPosition";
 import SelectListDepartment from "@/components/common/form/SelectListDepartment";
+import PrimaryButton from "@/components/common/button/PrimaryButton";
+import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
 
 interface ModalChangeManagerProps {
     open: boolean;
@@ -13,6 +15,8 @@ interface ModalChangeManagerProps {
 }
 
 type ManagerAction = "CHANGE_POSITION" | "REMOVE_POSITION" | "CANCEL";
+
+const DEFAULT_AVATAR = "https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg";
 
 const ModalChangeManager = ({
     open,
@@ -66,11 +70,13 @@ const ModalChangeManager = ({
         <Modal
             title="Thay đổi Trưởng phòng"
             open={open}
-            onOk={handleOk}
+            // onOk={handleOk}
             onCancel={handleCancel}
-            okText="Xác nhận"
-            cancelText="Đóng"
+            // okText="Xác nhận"
+            // cancelText="Đóng"
             width={550}
+            footer={null}
+
         >
             <div className="py-4">
                 {/* Current Manager Info */}
@@ -81,7 +87,7 @@ const ModalChangeManager = ({
                     {currentManager && (
                         <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                             <Avatar
-                                src={currentManager.avatar}
+                                src={currentManager.avatar || DEFAULT_AVATAR}
                                 size={40}
                             >
                                 {currentManager.fullName.charAt(0)}
@@ -113,8 +119,8 @@ const ModalChangeManager = ({
 
                             {/* Position and Department Selectors - Only show when CHANGE_POSITION is selected */}
                             {selectedAction === "CHANGE_POSITION" && (
-                                <div className="ml-6 p-3 bg-gray-50 rounded-lg space-y-3">
-                                    <Form form={form} layout="vertical">
+                                <div className="px-5 py-3 bg-gray-50 rounded-lg space-y-3 ">
+                                    <Form form={form} layout="vertical" >
                                         <Form.Item
                                             label={<span className="text-xs font-medium">Phòng ban mới</span>}
                                             name="newDepartmentId"
@@ -128,13 +134,13 @@ const ModalChangeManager = ({
                                             />
                                         </Form.Item>
                                         <Form.Item
-                                            label={<span className="text-xs font-medium">Position mới</span>}
+                                            label={<span className="text-xs font-medium">Vị trí mới</span>}
                                             name="newPositionId"
-                                            rules={[{ required: true, message: "Vui lòng chọn position" }]}
+                                            rules={[{ required: true, message: "Vui lòng chọn vị trí" }]}
                                             className="mb-0"
                                         >
                                             <SelectListPosition
-                                                placeholder="Chọn position"
+                                                placeholder="Chọn vị trí"
                                                 onChange={(value) => setNewPositionId(value as number)}
                                                 allowClear
                                             />
@@ -144,7 +150,7 @@ const ModalChangeManager = ({
                             )}
 
                             <Radio value="REMOVE_POSITION" className="w-full">
-                                <span className="text-sm">Để <span className="font-medium">{currentManager?.fullName}</span> tạm thời không giữ position</span>
+                                <span className="text-sm">Để <span className="font-medium">{currentManager?.fullName}</span> tạm thời không giữ vị trí nào </span>
                             </Radio>
                             <Radio value="CANCEL" className="w-full">
                                 <span className="text-sm">Huỷ thao tác</span>
@@ -156,9 +162,30 @@ const ModalChangeManager = ({
                 {/* Info Note */}
                 <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                     <p className="text-xs text-blue-800">
-                        <span className="font-semibold">Lưu ý:</span> Người quản lý mới sẽ tự động được chuyển sang position "{departmentName} Manager"
+                        <span className="font-semibold">Lưu ý:</span> Người quản lý mới sẽ tự động được chuyển sang vị trí "{departmentName} Manager"
                     </p>
                 </div>
+            </div>
+
+            <Divider className=" mt-2" />
+            <div className="flex justify-end -mt-2 gap-2">
+                <PrimaryButton
+                    icon={<SaveOutlined />}
+                    onClick={handleOk}
+                    color="green"
+                // loading={isLoading}
+                // disabled={isDisableSubmit}
+                >
+                    Xác nhận
+                </PrimaryButton>
+                <PrimaryButton
+                    className="bg-transparent border text-green border-green hover:bg-transparent"
+                    onClick={handleCancel}
+                    icon={<CloseOutlined />}
+                >
+                    Hủy
+                </PrimaryButton>
+
             </div>
         </Modal>
     );
