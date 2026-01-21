@@ -3,6 +3,7 @@ import { Navigate, type RouteObject } from "react-router-dom";
 import employee_route from "./pages/employee/route";
 import project_route from "./pages/project/route";
 import attendance_route from "./pages/attendance/route";
+import holiday_route from "./pages/holiday/route";
 
 import Login from "./pages/Auth/Login";
 
@@ -34,6 +35,7 @@ const routes: RouteItem[] = [
   employee_route,
   project_route,
   attendance_route,
+  holiday_route,
 ];
 
 const getRoute = ({
@@ -47,14 +49,14 @@ const getRoute = ({
     element: element,
     ...(children
       ? {
-        children: children.map(child => getRoute(child)),
-      }
+          children: children.map((child) => getRoute(child)),
+        }
       : { index }),
   };
 };
 
 export const getRoutes = () => {
-  return routes.map(route => getRoute(route));
+  return routes.map((route) => getRoute(route));
 };
 
 export default routes;
