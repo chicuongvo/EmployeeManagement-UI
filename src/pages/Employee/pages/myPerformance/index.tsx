@@ -83,8 +83,8 @@ export default function MyPerformancePage() {
         }
     };
 
-    const formatScore = (score: number | null) => {
-        return score !== null ? score.toFixed(1) : "-";
+    const formatScore = (score: number | null | undefined) => {
+        return score != null ? score.toFixed(1) : "-";
     };
 
     const getScoreByCriteriaId = (
@@ -160,7 +160,7 @@ export default function MyPerformancePage() {
                 render: (_, record) => {
                     const score = record.averageScore;
                     let color = "default";
-                    if (score !== null) {
+                    if (score != null) {
                         if (score >= 1.1) color = "green";
                         else if (score >= 1.0) color = "blue";
                         else if (score >= 0.8) color = "orange";
@@ -168,7 +168,7 @@ export default function MyPerformancePage() {
                     }
                     return (
                         <Tag color={color}>
-                            {score !== null ? score.toFixed(2) : "-"}
+                            {score != null ? score.toFixed(2) : "-"}
                         </Tag>
                     );
                 },
