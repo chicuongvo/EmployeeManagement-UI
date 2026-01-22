@@ -1,22 +1,24 @@
 import { PageContainer } from "@ant-design/pro-components";
 import { useRef } from "react";
-import FormFilter from "../../../Employee/pages/update-request/components/FormFilter";
-import DataTable from "./components/DataTable";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import { Tabs, type TabsProps } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import PageTitle from "@/components/common/shared/PageTitle";
 import {
-  useUpdateRequestContext,
-  UpdateRequestProvider,
-} from "../../../Employee/pages/update-request/UpdateRequestContext";
+  useContractContext,
+  ContractProvider,
+} from "../../../Employee/pages/contract/ContractContext";
+import FormFilter from "../../../Employee/pages/contract/components/FormFilter";
+import DataTable from "./components/DataTable";
+import PrimaryButton from "@/components/common/button/PrimaryButton";
 
 export const TABS = {
-  UPDATE_REQUEST: "1",
+  CONTRACT: "1",
 } as const;
 
-const UpdateRequestPageContent = () => {
+const ContractPageContent = () => {
   const dataTableRef = useRef<HTMLDivElement>(null);
-  const { tab } = useUpdateRequestContext();
+  const { tab } = useContractContext();
   const [, setSearchParams] = useSearchParams();
 
   const handleChangeTab = (key: string) => {
@@ -24,7 +26,7 @@ const UpdateRequestPageContent = () => {
   };
 
   const tabs: TabsProps["items"] = [
-    { key: TABS.UPDATE_REQUEST, label: "Danh sách yêu cầu cập nhật" },
+    { key: TABS.CONTRACT, label: "Danh sách hợp đồng" },
   ];
 
   const scrollToDataTable = () => {
@@ -42,19 +44,31 @@ const UpdateRequestPageContent = () => {
         breadcrumb: {
           items: [
             {
-              title: "Hồ sơ nhân sự",
+              title: "Quản lý nhân sự",
             },
             {
-              title: "Yêu cầu cập nhật",
+              title: "Hợp đồng",
             },
           ],
         },
       }}
-      title={<PageTitle title="Yêu cầu cập nhật" />}
+      title={<PageTitle title="Quản lý hợp đồng" />}
+      extra={[
+        <Link to="/management/contracts/add-new" key="create-contract">
+          <PrimaryButton
+            icon={<PlusOutlined className="icon-hover-effect" />}
+            key="new-contract"
+            color="green"
+            className="font-primary"
+          >
+            Thêm mới
+          </PrimaryButton>
+        </Link>,
+      ]}
     >
       <Tabs
         type="card"
-        activeKey={`${tab ?? TABS.UPDATE_REQUEST}`}
+        activeKey={`${tab ?? TABS.CONTRACT}`}
         className="tag-ticket-list report-tab"
         onChange={handleChangeTab}
         items={tabs.map((tabItem) => ({
@@ -76,9 +90,9 @@ const UpdateRequestPageContent = () => {
 
 const Index = () => {
   return (
-    <UpdateRequestProvider>
-      <UpdateRequestPageContent />
-    </UpdateRequestProvider>
+    <ContractProvider>
+      <ContractPageContent />
+    </ContractProvider>
   );
 };
 

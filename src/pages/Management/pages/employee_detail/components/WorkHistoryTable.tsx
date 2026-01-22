@@ -34,7 +34,7 @@ const WorkHistoryTable = () => {
                 render: (department) => (
                     <div className="flex flex-col">
                         <Link
-                            to={`/employee/departments/${department.id}`}
+                            to={`/management/departments/${department.id}`}
                             className="text-blue-600 hover:text-blue-800"
                         >
                             <CopyTextPopover text={department.departmentCode} />

@@ -120,7 +120,7 @@ function SelectListGeneric<T = any, R = any>({
             createOptions().length > 0 && (
               <div
                 style={{
-                  padding: "8px 12px",
+                  padding: "4px 8px",
                   borderBottom: "1px solid #e5e7eb",
                   backgroundColor: "#f9fafb",
                   display: "flex",

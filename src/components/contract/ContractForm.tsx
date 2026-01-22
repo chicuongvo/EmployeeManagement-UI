@@ -232,12 +232,12 @@ export function ContractForm({
     // Validate
     if (mode === "create") {
       if (!formData.employeeId) {
-        message.error("Vui lòng chọn nhân viên");
+        message.error("Vui lòng chọn bên A");
         return;
       }
     }
     if (!formData.signedById) {
-      message.error("Vui lòng chọn người ký");
+      message.error("Vui lòng chọn bên B");
       return;
     }
 
@@ -322,6 +322,7 @@ export function ContractForm({
             }
             required
             disabled={isLoading || !isEditable}
+            className="bg-white"
           />
         </div>
 
@@ -336,6 +337,7 @@ export function ContractForm({
             }
             required
             disabled={isLoading || !isEditable}
+            className="bg-white"
           />
         </div>
 
@@ -350,6 +352,7 @@ export function ContractForm({
             }
             required
             disabled={isLoading || !isEditable}
+            className="bg-white"
           />
         </div>
       </div>
@@ -357,12 +360,13 @@ export function ContractForm({
       <div className="grid grid-cols-2 gap-4">
         {mode === "create" ? (
           <div className="space-y-2">
-            <Label htmlFor="employeeId">Nhân viên *</Label>
+            <Label htmlFor="employeeId">Bên A *</Label>
             <SelectListEmployee
-              placeholder="Chọn nhân viên"
+              placeholder="Chọn bên A"
               value={
                 formData.employeeId ? Number(formData.employeeId) : undefined
               }
+              className="w-full"
               onChange={(value) =>
                 setFormData({
                   ...formData,
@@ -425,12 +429,13 @@ export function ContractForm({
         )}
 
         <div className="space-y-2">
-          <Label htmlFor="signedById">Người ký *</Label>
+          <Label htmlFor="signedById">Bên B *</Label>
           <SelectListEmployee
-            placeholder="Chọn người ký"
+            placeholder="Chọn Bên B"
             value={
               formData.signedById ? Number(formData.signedById) : undefined
             }
+            className="w-full"
             onChange={(value) =>
               setFormData({
                 ...formData,
@@ -479,6 +484,7 @@ export function ContractForm({
         <SelectListContractStatus
           placeholder="Chọn trạng thái"
           value={formData.status}
+          className="w-full"
           onChange={(value) =>
             setFormData({
               ...formData,
@@ -499,6 +505,7 @@ export function ContractForm({
           placeholder="Ghi chú về hợp đồng..."
           rows={3}
           disabled={isLoading || !isEditable}
+          className="bg-white"
         />
       </div>
 

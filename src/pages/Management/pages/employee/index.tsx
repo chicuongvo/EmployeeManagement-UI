@@ -49,7 +49,7 @@ const Index = () => {
       }}
       title={<PageTitle title="Hồ sơ nhân viên" />}
       extra={[
-        <Link to={`/employee/employees/add-new`} key="create-employee">
+        <Link to={`/management/employees/add-new`} key="create-employee">
           <PrimaryButton
             icon={<PlusOutlined className="icon-hover-effect" />}
             key="new-employee"

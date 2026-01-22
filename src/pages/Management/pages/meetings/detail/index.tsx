@@ -287,35 +287,12 @@ const ManagementMeetingDetailPage = () => {
           </Card>
         )}
 
-        {/* Actions */}
-        <Card title="Thao tác">
-          <Space direction="vertical" size="middle" className="w-full">
-            <Tooltip
-              title={
-                !hasTimeArrived && meeting.scheduledAt
-                  ? `Cuộc họp chưa đến giờ. Thời gian bắt đầu: ${dayjs(meeting.scheduledAt).format("HH:mm DD/MM/YYYY")}`
-                  : undefined
-              }
-            >
-              <Button
-                type="primary"
-                icon={<PlayCircleOutlined />}
-                size="large"
-                onClick={handleJoinMeeting}
-                block
-                disabled={!canJoin}
-              >
-                Bắt đầu cuộc họp
-              </Button>
-            </Tooltip>
-            <Button
-              icon={<ArrowLeftOutlined />}
-              onClick={() => navigate("/management/meetings/past")}
-            >
-              Quay lại danh sách
-            </Button>
-          </Space>
-        </Card>
+        <Button
+          icon={<ArrowLeftOutlined />}
+          onClick={() => navigate("/management/meetings/past")}
+        >
+          Quay lại danh sách
+        </Button>
       </div>
     </PageContainer>
   );

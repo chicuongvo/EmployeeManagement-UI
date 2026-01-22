@@ -1,13 +1,11 @@
-import { FaUserGroup } from "react-icons/fa6";
+import { FaClipboardUser } from "react-icons/fa6";
 import { VideoCameraOutlined } from "@ant-design/icons";
 
 import { type RouteItem } from "@/routes";
-import { EmployeeProvider } from "./pages/employee/EmployeeContext";
+// import { ROLE_LEVELS } from "@/constants/roleLevel";
 import { DepartmentProvider } from "./pages/department/DepartmentContext";
 import { LeaveApplicationProvider } from "./pages/leave-application/LeaveApplicationContext";
-import EmployeePage from "./pages/employee";
 import MyRequestsPage from "./pages/update-request/my-requests";
-import MyContractsPage from "./pages/contract/my-contracts";
 import ContractDetailPage from "./pages/contract_detail";
 import { ContractDetailProvider } from "./pages/contract_detail/ContractDetailContext";
 import UpdateRequestDetailPage from "./pages/update_request_detail";
@@ -17,14 +15,21 @@ import DepartmentPage from "./pages/department";
 import LeaveApplicationPage from "./pages/leave-application";
 import VideoCall from "./pages/video-call";
 import MainLayout from "@/layout/MainLayout";
-import EmployeeDetailPage from "./pages/employee_detail";
-import { EmployeeDetailProvider } from "./pages/employee_detail/EmployeeDetailContex";
+
 import DepartmentDetailPage from "./pages/department_detail";
 import { DepartmentDetailProvider } from "./pages/department_detail/DepartmentDetailContext";
+import EmployeeDetailPage from "@/pages/Management/pages/employee_detail";
+import { EmployeeDetailProvider } from "@/pages/Management/pages/employee_detail/EmployeeDetailContex";
+
+// import PerformancePage from "@/pages/Employee/pages/performance";
+// import { PerformanceProvider } from "./pages/performance/PerformanceContext";
+// import PerformanceDetailPage from "@/pages/Employee/pages/performanceDetail";
+// import PerformanceByEmployeePage from "@/pages/Employee/pages/performanceByEmployee";
+// import PerformanceByDepartmentPage from "@/pages/Employee/pages/performanceByDepartment";
 import MyPerformancePage from "@/pages/Employee/pages/myPerformance";
 import MyLeaveApplicationPage from "./pages/my-leave-applications";
-
-
+import PerformanceCriteriaPage from "@/pages/Employee/pages/performanceCriteria";
+import MyProjectsPage from "@/pages/Employee/pages/my-projects";
 
 const route: RouteItem = {
   path: "/employee",
@@ -32,36 +37,16 @@ const route: RouteItem = {
     <span className="font-primary">Thông tin cá nhân</span>
   ) as unknown as string,
   element: <MainLayout />,
-  icon: <FaUserGroup className="text-base font-primary" />,
+  icon: <FaClipboardUser className="text-base font-primary" />,
   children: [
     {
-      path: "employees",
-      name: "Hồ sơ nhân sự",
-      element: (
-        <EmployeeProvider>
-          <EmployeePage />
-        </EmployeeProvider>
-      ),
-    },
-    {
-      path: "employees/add-new",
-      name: "Thêm mới",
+      path: "me",
+      name: "Sơ yếu lí lịch",
       element: (
         <EmployeeDetailProvider>
           <EmployeeDetailPage />
         </EmployeeDetailProvider>
       ),
-      hideInMenu: true,
-    },
-    {
-      path: "employees/:id",
-      name: "Chi tiết",
-      element: (
-        <EmployeeDetailProvider>
-          <EmployeeDetailPage />
-        </EmployeeDetailProvider>
-      ),
-      hideInMenu: true,
     },
     {
       path: "update-requests/add-new",
@@ -109,11 +94,6 @@ const route: RouteItem = {
       element: <MyRequestsPage />,
     },
     {
-      path: "my-contracts",
-      name: "Hợp đồng của tôi",
-      element: <MyContractsPage />,
-    },
-    {
       path: "my-contracts/:id",
       name: "Chi tiết hợp đồng của tôi",
       element: (
@@ -124,13 +104,9 @@ const route: RouteItem = {
       hideInMenu: true,
     },
     {
-      path: "departments",
-      name: "Phòng ban",
-      element: (
-        <DepartmentProvider>
-          <DepartmentPage />
-        </DepartmentProvider>
-      ),
+      path: "my-projects",
+      name: "Dự án của tôi",
+      element: <MyProjectsPage />,
     },
     {
       path: "my-performance",
@@ -143,14 +119,13 @@ const route: RouteItem = {
       element: <MyLeaveApplicationPage />,
     },
     {
-      path: "departments/:id",
-      name: "Chi tiết phòng ban",
+      path: "departments/me",
+      name: "Phòng ban của tôi",
       element: (
         <DepartmentDetailProvider>
           <DepartmentDetailPage />
         </DepartmentDetailProvider>
       ),
-      hideInMenu: true,
     },
     {
       path: "meetings",
