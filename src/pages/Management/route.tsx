@@ -25,10 +25,14 @@ import { ProjectDetailProvider } from "../employee/pages/project-detail/ProjectD
 import { EpicTaskProvider } from "../employee/pages/epic-tasks/EpicTaskContext";
 import ProjectPage from "../employee/pages/project";
 import ProjectDetailPage from "../employee/pages/project-detail";
+import EmployeePage from "./pages/employee";
 import EpicTaskPage from "../employee/pages/epic-tasks";
 import AttendanceManagementPage from "../attendance/AttendanceManagementPage";
 import { lazy } from "react";
-
+import { FaUserGroup } from "react-icons/fa6";
+import { EmployeeProvider } from "./pages/employee/EmployeeContext";
+import { EmployeeDetailProvider } from "./pages/employee_detail/EmployeeDetailContex";
+import EmployeeDetailPage from "./pages/employee_detail";
 const HolidayManagementPage = lazy(
   () => import("../holiday/HolidayManagementPage"),
 );
@@ -37,9 +41,38 @@ const management_route: RouteItem = {
   path: "/management",
   name: "Quản lý nhân sự",
   element: <MainLayout />,
-  icon: "",
+  icon: <FaUserGroup className="text-base font-primary" />,
   minRoleLevel: ROLE_LEVELS.SIDEBAR_MIN_LEVEL_MANAGEMENT,
   children: [
+    {
+      path: "employees",
+      name: "Hồ sơ nhân sự",
+      element: (
+        <EmployeeProvider>
+          <EmployeePage />
+        </EmployeeProvider>
+      ),
+    },
+    {
+      path: "employees/add-new",
+      name: "Thêm mới",
+      element: (
+        <EmployeeDetailProvider>
+          <EmployeeDetailPage />
+        </EmployeeDetailProvider>
+      ),
+      hideInMenu: true,
+    },
+    {
+      path: "employees/:id",
+      name: "Chi tiết",
+      element: (
+        <EmployeeDetailProvider>
+          <EmployeeDetailPage />
+        </EmployeeDetailProvider>
+      ),
+      hideInMenu: true,
+    },
     {
       path: "update-requests",
       name: "Quản lí yêu cầu cập nhật",

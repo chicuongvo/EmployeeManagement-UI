@@ -13,7 +13,7 @@ import {
 import { useEpicTask } from "../EpicTaskContext";
 import SelectTaskStatus from "@/components/common/form/SelectTaskStatus";
 import SelectTaskPriority from "@/components/common/form/SelectTaskPriority";
-import SelectListEmployee from "@/components/common/form/SelectListEmployee";
+import SelectProjectMembers from "@/components/common/form/SelectProjectMembers";
 
 const { TextArea } = Input;
 
@@ -33,6 +33,8 @@ const FormCreateTask = ({ open, onCancel, task }: FormCreateTaskProps) => {
     tasks,
     parentTaskId,
     setParentTaskId,
+    members,
+    isLoadingMembers,
   } = useEpicTask();
   const queryClient = useQueryClient();
 
@@ -277,9 +279,10 @@ const FormCreateTask = ({ open, onCancel, task }: FormCreateTaskProps) => {
         )}
 
         <Form.Item name="employeeIds" label="Người thực hiện">
-          <SelectListEmployee
+          <SelectProjectMembers
             mode="multiple"
-            placeholder="Tìm kiếm người thực hiện..."
+            members={members}
+            loading={isLoadingMembers}
             allowClear
           />
         </Form.Item>

@@ -40,8 +40,11 @@ const EmployeeMeetingsPage = () => {
         console.warn("Employee - invalid response structure:", response);
         return [];
       } catch (error: unknown) {
-        if (error.response?.status === 404) {
-          return [];
+        if (error instanceof Error && "response" in error) {
+          const err = error as Error & { response?: { status: number } };
+          if (err.response?.status === 404) {
+            return [];
+          }
         }
         console.error("Error fetching meetings:", error);
         return [];
@@ -91,7 +94,7 @@ const EmployeeMeetingsPage = () => {
         navigate(
           `/employee/video-call?callId=${callId}&meetingId=${meetingId}`,
         );
-      } catch (error: unknown) {
+      } catch {
         message.error("Không thể tham gia cuộc họp. Vui lòng thử lại.");
       } finally {
         setLoading(false);

@@ -16,22 +16,25 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const redirectUrl = searchParams.get("redirect_url") || "/employee/employees";
+  const redirectUrl =
+    searchParams.get("redirect_url") || "/management/employees";
 
   const onFinish = async (values: SignInRequest) => {
     setLoading(true);
     setError(null);
 
     try {
-      await signIn(values);
+      const data = await signIn(values);
       message.success("Đăng nhập thành công!");
 
+      console.log("data", data);
       // Small delay to ensure cookie is set before fetching profile
       await new Promise((resolve) => setTimeout(resolve, 100));
 
       // Trigger user profile refresh
-
       setUserChanged(true);
+
+      //   setUser(data);
 
       // Redirect to original page or dashboard
       navigate(redirectUrl, { replace: true });

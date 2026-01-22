@@ -11,9 +11,13 @@ import {
   useCall,
   useCallStateHooks,
   type User,
+  type Call,
 } from "@stream-io/video-react-sdk";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
-import { generateStreamToken, getDepartmentCallId } from "../../../../api/stream.api";
+import {
+  generateStreamToken,
+  getDepartmentCallId,
+} from "../../../../api/stream.api";
 import { updateMeeting, getMeetingById } from "../../../../api/meeting.api";
 import { useUser } from "../../../../hooks/useUser";
 import { toast } from "react-toastify";
@@ -22,9 +26,9 @@ import { Loader2 } from "lucide-react";
 export default function VideoCall() {
   const { userProfile } = useUser();
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+
   const [client, setClient] = useState<StreamVideoClient | null>(null);
-  const [call, setCall] = useState<any>(null);
+  const [call, setCall] = useState<Call | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [callInfo, setCallInfo] = useState<{
@@ -32,10 +36,9 @@ export default function VideoCall() {
     departmentName: string | null;
   } | null>(null);
   const meetingId = searchParams.get("meetingId");
-  const callRef = useRef<any>(null);
+  const callRef = useRef<Call | null>(null);
   const clientRef = useRef<StreamVideoClient | null>(null);
   const isHostRef = useRef<boolean>(false);
-  const hasNavigatedRef = useRef<boolean>(false);
 
   useEffect(() => {
     let mounted = true;
@@ -112,14 +115,16 @@ export default function VideoCall() {
         });
 
         setIsLoading(false);
-      } catch (err: any) {
-        console.error("Error initializing call:", err);
+      } catch (err) {
+        const error = err instanceof Error ? err : new Error(String(err));
+        console.error("Error initializing call:", error);
         if (mounted) {
-          setError(
-            err.response?.data?.message ||
-              err.message ||
-              "Không thể khởi tạo cuộc gọi. Vui lòng thử lại."
-          );
+          const errorMessage =
+            (err as { response?: { data?: { message?: string } } })?.response
+              ?.data?.message ||
+            error.message ||
+            "Không thể khởi tạo cuộc gọi. Vui lòng thử lại.";
+          setError(errorMessage);
           setIsLoading(false);
           toast.error("Không thể khởi tạo cuộc gọi");
         }
@@ -138,7 +143,7 @@ export default function VideoCall() {
           const currentCall = callRef.current;
           const currentClient = clientRef.current;
           const isHost = isHostRef.current;
-          
+
           if (currentCall) {
             if (isHost && meetingId) {
               // If host leaves, end the call for all participants
@@ -226,8 +231,8 @@ export default function VideoCall() {
     <div className="h-screen w-full bg-gray-900">
       <StreamVideo client={client}>
         <StreamCall call={call}>
-          <VideoCallUI 
-            callInfo={callInfo} 
+          <VideoCallUI
+            callInfo={callInfo}
             meetingId={meetingId}
             onCallEnd={handleCallEnd}
           />
@@ -244,7 +249,7 @@ function VideoCallUI({
 }: {
   callInfo: { callId: string; departmentName: string | null } | null;
   meetingId: string | null;
-  onCallEnd?: () => void;
+  onCallEnd?: () => Promise<void>;
 }) {
   const call = useCall();
   const navigate = useNavigate();
@@ -264,9 +269,7 @@ function VideoCallUI({
     // If state changed from JOINED to LEFT or IDLE, call ended
     if (
       prevCallingStateRef.current === CallingState.JOINED &&
-      (callingState === CallingState.LEFT ||
-        callingState === CallingState.IDLE ||
-        callingState === CallingState.ENDED)
+      (callingState === CallingState.LEFT || callingState === CallingState.IDLE)
     ) {
       if (hasNavigatedRef.current) return;
       hasNavigatedRef.current = true;
@@ -310,11 +313,9 @@ function VideoCallUI({
 
     // Listen to call ended events - these fire when call actually ends
     call.on("call.ended", handleCallEnded);
-    call.on("call.left", handleCallEnded);
 
     return () => {
       call.off("call.ended", handleCallEnded);
-      call.off("call.left", handleCallEnded);
     };
   }, [call, meetingId, navigate, onCallEnd]);
 

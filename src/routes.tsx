@@ -3,8 +3,12 @@ import { Navigate, type RouteObject } from "react-router-dom";
 import employee_route from "./pages/Employee/route";
 import management_route from "./pages/Management/route";
 import admin_route from "./pages/Admin/route";
+import performance_route from "./pages/performance/route";
 import Login from "./pages/Auth/Login";
-
+import ChangePassword from "./pages/Auth/ChangePassword";
+// import project_route from "./pages/project/route";
+// import attendance_route from "./pages/attendance/route";
+// import holiday_route from "./pages/holiday/route";
 export type RouteItem = Omit<RouteObject, "children"> & {
   name?: string;
   hideInMenu?: boolean;
@@ -15,10 +19,10 @@ export type RouteItem = Omit<RouteObject, "children"> & {
   minRoleLevel?: number; // Minimum role level required to access this route
 };
 
-export const ROUTER_DASHBOARD = "/employee/employees";
+export const ROUTER_DASHBOARD = "/management/employees";
 export const ROUTER_LOGIN = "/auth/login";
 
-export const DEFAULT_ROUTE = "/employee/employees";
+export const DEFAULT_ROUTE = "/management/employees";
 
 const routes: RouteItem[] = [
   {
@@ -31,7 +35,16 @@ const routes: RouteItem[] = [
     hideInMenu: true,
     element: <Login />,
   } as RouteItem,
+  {
+    path: "/auth/change-password",
+    hideInMenu: true,
+    element: <ChangePassword />,
+  } as RouteItem,
   employee_route,
+  // project_route,
+  // attendance_route,
+  // holiday_route,
+  performance_route,
   management_route,
   admin_route,
 ];
