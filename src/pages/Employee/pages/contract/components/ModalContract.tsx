@@ -7,11 +7,7 @@ import {
   FileOutlined,
 } from "@ant-design/icons";
 import { useContractContext } from "../ContractContext";
-import type {
-  ContractResponse,
-  ContractStatus,
-  ContractType,
-} from "@/types/Contract";
+import type { ContractStatus, ContractType } from "@/types/Contract";
 import dayjs from "dayjs";
 
 const ModalContract = () => {
