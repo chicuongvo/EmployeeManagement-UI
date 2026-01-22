@@ -18,14 +18,50 @@ import {
   HistoryOutlined,
   FileTextOutlined,
 } from "@ant-design/icons";
+import { FaUserGroup } from "react-icons/fa6";
+
+import { EmployeeProvider } from "./pages/employee/EmployeeContext";
+import EmployeePage from "./pages/employee";
+
+import EmployeeDetailPage from "./pages/employee_detail";
+import { EmployeeDetailProvider } from "./pages/employee_detail/EmployeeDetailContex";
 
 const management_route: RouteItem = {
   path: "/management",
   name: "Quản lý nhân sự",
   element: <MainLayout />,
-  icon: "",
+  icon: <FaUserGroup className="text-base font-primary" />,
   minRoleLevel: ROLE_LEVELS.SIDEBAR_MIN_LEVEL_MANAGEMENT,
   children: [
+    {
+      path: "employees",
+      name: "Hồ sơ nhân sự",
+      element: (
+        <EmployeeProvider>
+          <EmployeePage />
+        </EmployeeProvider>
+      ),
+    },
+    {
+      path: "employees/add-new",
+      name: "Thêm mới",
+      element: (
+        <EmployeeDetailProvider>
+          <EmployeeDetailPage />
+        </EmployeeDetailProvider>
+      ),
+      hideInMenu: true,
+    },
+    {
+      path: "employees/:id",
+      name: "Chi tiết",
+      element: (
+        <EmployeeDetailProvider>
+          <EmployeeDetailPage />
+        </EmployeeDetailProvider>
+      ),
+      hideInMenu: true,
+    },
     {
       path: "update-requests",
       name: "Quản lí yêu cầu cập nhật",

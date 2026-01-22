@@ -2,7 +2,6 @@ import { Form, Tabs, type TabsProps } from "antd";
 import { MdEditSquare, MdSaveAs } from "react-icons/md";
 import { IoMdCloseCircle } from "react-icons/io";
 
-
 import PageTitle from "@/components/common/shared/PageTitle";
 import { PageContainer } from "@ant-design/pro-components";
 import GeneralInformation from "./components/GeneralInformation";
@@ -22,7 +21,7 @@ import BasicInformation from "./components/BasicInformation";
 import CircleButton from "@/components/common/button/CircleButton";
 import { useCreateEmployee } from "@/apis/employee/createUpdateEmployee";
 import { useUpdateEmployee } from "@/apis/employee/createUpdateEmployee";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import PerformanceSection from "./components/PerformanceSection";
 import WorkHistoryTable from "./components/WorkHistoryTable";
 import ContractTable from "./components/ContractTable";
@@ -43,6 +42,9 @@ const Index = () => {
     editMode,
   } = useEmployeeDetailContext();
   const navigate = useNavigate();
+  const location = useLocation();
+  const pathname = location.pathname;
+  const isMeRoute = pathname.includes("/me");
   const [form] = Form.useForm();
   const [searchParams, setSearchParams] = useSearchParams();
   const tab = searchParams.get("tab") || TABS.GENERAL_INFO;
@@ -57,7 +59,9 @@ const Index = () => {
         gender: employee.gender,
         birthday: employee.birthday ? dayjs(employee.birthday) : undefined,
         citizenId: employee.citizenId,
-        citizenIdIssueDate: employee.citizenIdIssueDate ? dayjs(employee.citizenIdIssueDate) : undefined,
+        citizenIdIssueDate: employee.citizenIdIssueDate
+          ? dayjs(employee.citizenIdIssueDate)
+          : undefined,
         citizenIdIssuePlace: employee.citizenIdIssuePlace,
         ethnicity: employee.ethnicity,
         religion: employee.religion,
@@ -83,7 +87,9 @@ const Index = () => {
         directManagerId: employee.directManagerId,
         citizenIdFrontImage: employee.citizenIdFrontImage,
         citizenIdBackImage: employee.citizenIdBackImage,
-        onboardDate: employee.onboardDate ? dayjs(employee.onboardDate) : undefined,
+        onboardDate: employee.onboardDate
+          ? dayjs(employee.onboardDate)
+          : undefined,
       });
     }
   }, [employee, form]);
@@ -98,7 +104,9 @@ const Index = () => {
       gender: employee.gender,
       birthday: employee.birthday ? dayjs(employee.birthday) : undefined,
       citizenId: employee.citizenId,
-      citizenIdIssueDate: employee.citizenIdIssueDate ? dayjs(employee.citizenIdIssueDate) : undefined,
+      citizenIdIssueDate: employee.citizenIdIssueDate
+        ? dayjs(employee.citizenIdIssueDate)
+        : undefined,
       citizenIdIssuePlace: employee.citizenIdIssuePlace,
       ethnicity: employee.ethnicity,
       religion: employee.religion,
@@ -130,7 +138,9 @@ const Index = () => {
       createdAt: employee.createdAt,
       citizenIdFrontImage: employee.citizenIdFrontImage,
       citizenIdBackImage: employee.citizenIdBackImage,
-      onboardDate: employee.onboardDate ? dayjs(employee.onboardDate) : undefined,
+      onboardDate: employee.onboardDate
+        ? dayjs(employee.onboardDate)
+        : undefined,
     };
   }, [employee]);
 
@@ -138,7 +148,7 @@ const Index = () => {
     useCreateEmployee({
       onSuccess: (res: any) => {
         refetchEmployee();
-        navigate(`/employee/employees/${res.data.id}`);
+        navigate(`/management/employees/${res.data.id}`);
       },
     });
 
@@ -152,7 +162,7 @@ const Index = () => {
 
   const handleReset = useCallback(() => {
     if (isCreate) {
-      navigate("/employee/employees");
+      navigate("/management/employees");
       return;
     }
     if (editMode) {
@@ -174,7 +184,7 @@ const Index = () => {
         ...allFields,
       });
     },
-    [setChangeInfoValue]
+    [setChangeInfoValue],
   );
 
   console.log("changeInfoValue", changeInfoValue);
@@ -197,7 +207,7 @@ const Index = () => {
       : undefined;
 
     const convertAddressToString = (
-      address: string | AddressValue | undefined
+      address: string | AddressValue | undefined,
     ): string | undefined => {
       if (!address) return undefined;
       if (typeof address === "string") return address;
@@ -208,10 +218,10 @@ const Index = () => {
     };
 
     const permanentAddressString = convertAddressToString(
-      changeInfoValue.permanentAddress
+      changeInfoValue.permanentAddress,
     );
     const currentAddressString = convertAddressToString(
-      changeInfoValue.currentAddress
+      changeInfoValue.currentAddress,
     );
 
     if (isCreate) {
@@ -523,26 +533,47 @@ const Index = () => {
     setEditMode,
   ]);
 
+  const breadcrumbItems = useMemo(() => {
+    if (isMeRoute) {
+      return [
+        {
+          title: "Thông tin cá nhân",
+        },
+        {
+          title: "Hồ sơ cá nhân",
+        },
+      ];
+    }
+    return [
+      {
+        title: "Hồ sơ nhân viên",
+      },
+      {
+        title: "Chi tiết nhân viên",
+        href: "/management/employees?limit=10&page=1&tab=1",
+      },
+      {
+        title: isCreate ? "Thêm mới nhân viên" : "Chi tiết nhân viên",
+      },
+    ];
+  }, [isMeRoute, isCreate]);
+
+  const pageTitle = useMemo(() => {
+    if (isMeRoute) {
+      return "Hồ sơ cá nhân";
+    }
+    return isCreate ? "Thêm mới nhân viên" : "Chi tiết nhân viên";
+  }, [isMeRoute, isCreate]);
+
   return (
     <PageContainer
       //   loading={isLoadingPOM || isLoadingMeasurement}
       header={{
         breadcrumb: {
-          items: [
-            {
-              title: "Hồ sơ nhân viên",
-            },
-            {
-              title: "Chi tiết nhân viên",
-              href: "/employee/employees?limit=10&page=1&tab=1",
-            },
-            {
-              title: isCreate ? "Thêm mới nhân viên" : "Chi tiết nhân viên",
-            },
-          ],
+          items: breadcrumbItems,
         },
       }}
-      title={<PageTitle title={`${isCreate ? "Thêm mới nhân viên" : "Chi tiết nhân viên"}`} />}
+      title={<PageTitle title={pageTitle} />}
     >
       <Tabs
         type="card"
