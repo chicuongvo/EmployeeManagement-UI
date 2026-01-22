@@ -47,11 +47,12 @@ const SelectListEmployee = ({
       styles={{
         popup: {
           root: {
-            maxHeight: 270,
+            maxHeight: 400,
             overflowY: "auto",
           },
         },
       }}
+      optionLabelProp="title"
       fetcher={(search) =>
         getListEmployee({
           q: search,
@@ -63,16 +64,16 @@ const SelectListEmployee = ({
           data?.data.data?.map((d) => ({
             value: d.id,
             label: (
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "4px 0" }}>
                 <Avatar
                   src={
                     d.avatar ??
                     "https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg"
                   }
-                  size="small"
+                  size="large"
                   style={{ flexShrink: 0 }}
                 ></Avatar>
-                <span>{`${d.fullName} - #${d.employeeCode}`}</span>
+                <span style={{ fontSize: "15px", fontWeight: 500 }}>{`${d.fullName} - #${d.employeeCode}`}</span>
               </div>
             ),
             title: `${d.fullName} - #${d.employeeCode}`, // For search/filter
@@ -85,11 +86,11 @@ const SelectListEmployee = ({
         const defaultOptions = defaultValue.map((item) => ({
           value: item.id,
           label: (
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <Avatar size="small" style={{ flexShrink: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "4px 0" }}>
+              <Avatar size="large" style={{ flexShrink: 0 }}>
                 {item.name?.charAt(0)?.toUpperCase() || "?"}
               </Avatar>
-              <span>{item.name}</span>
+              <span style={{ fontSize: "15px", fontWeight: 500 }}>{item.name}</span>
             </div>
           ),
           title: item.name, // For search/filter

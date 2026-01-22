@@ -52,21 +52,21 @@ interface UpdateRequestContextType {
   >;
   selectedUpdateRequest: UpdateRequestResponse | null;
   handleCreate: (
-    data: Parameters<typeof createUpdateRequest>[0]
+    data: Parameters<typeof createUpdateRequest>[0],
   ) => Promise<void>;
   handleUpdate: (
     id: number,
-    data: Parameters<typeof updateUpdateRequest>[1]
+    data: Parameters<typeof updateUpdateRequest>[1],
   ) => Promise<void>;
   handleDelete: (id: number) => Promise<void>;
   handleReview: (
     id: number,
-    status: "APPROVED" | "NOT_APPROVED"
+    status: "APPROVED" | "NOT_APPROVED",
   ) => Promise<void>;
   tab?: string;
 }
 
-const UpdateRequestContext = createContext<
+export const UpdateRequestContext = createContext<
   UpdateRequestContextType | undefined
 >(undefined);
 
@@ -146,13 +146,13 @@ export const UpdateRequestProvider: React.FC<{
           ...values,
           tab: tab ?? 1,
         },
-        { arrayFormat: "comma" }
-      )
+        { arrayFormat: "comma" },
+      ),
     );
   };
 
   const handleCreate = async (
-    data: Parameters<typeof createUpdateRequest>[0]
+    data: Parameters<typeof createUpdateRequest>[0],
   ) => {
     try {
       await createUpdateRequest(data);
@@ -167,7 +167,7 @@ export const UpdateRequestProvider: React.FC<{
 
   const handleUpdate = async (
     id: number,
-    data: Parameters<typeof updateUpdateRequest>[1]
+    data: Parameters<typeof updateUpdateRequest>[1],
   ) => {
     try {
       await updateUpdateRequest(id, data);
@@ -194,12 +194,12 @@ export const UpdateRequestProvider: React.FC<{
 
   const handleReview = async (
     id: number,
-    status: "APPROVED" | "NOT_APPROVED"
+    status: "APPROVED" | "NOT_APPROVED",
   ) => {
     try {
       await reviewRequest(id, { status });
       toast.success(
-        `Yêu cầu đã được ${status === "APPROVED" ? "phê duyệt" : "từ chối"}`
+        `Yêu cầu đã được ${status === "APPROVED" ? "phê duyệt" : "từ chối"}`,
       );
       refetch();
     } catch (error) {
@@ -216,7 +216,7 @@ export const UpdateRequestProvider: React.FC<{
           tab: 1,
           page: 1,
           limit: 10,
-        })
+        }),
       );
     }
   }, [setSearchParams, tab]);
@@ -253,7 +253,7 @@ export const useUpdateRequestContext = () => {
   const context = useContext(UpdateRequestContext);
   if (!context) {
     throw new Error(
-      "useUpdateRequestContext must be used within an UpdateRequestProvider"
+      "useUpdateRequestContext must be used within an UpdateRequestProvider",
     );
   }
   return context;

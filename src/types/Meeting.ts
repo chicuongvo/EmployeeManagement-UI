@@ -1,5 +1,18 @@
 export type MeetingStatus = "SCHEDULED" | "ONGOING" | "COMPLETED" | "CANCELLED";
 
+export type ParticipantStatus = "PENDING" | "ACCEPTED" | "DECLINED";
+
+export type MeetingParticipant = {
+  employeeId: number;
+  status: ParticipantStatus;
+  employee: {
+    id: number;
+    fullName: string;
+    email: string;
+    employeeCode: string;
+  };
+};
+
 export type MeetingResponse = {
   id: string;
   callId: string;
@@ -11,6 +24,10 @@ export type MeetingResponse = {
   createdById: number;
   departmentId?: number | null;
   departmentName?: string | null;
+  participantIds?: number[];
+  participantsCount?: number;
+  totalParticipants?: number;
+  participants?: MeetingParticipant[];
   createdBy?: {
     id: number;
     fullName: string;
@@ -25,6 +42,7 @@ export type CreateMeetingRequest = {
   scheduledAt?: string;
   departmentId?: number;
   status?: MeetingStatus;
+  participantIds?: number[]; // IDs of employees allowed to join the meeting
 };
 
 export type UpdateMeetingRequest = Partial<CreateMeetingRequest> & {

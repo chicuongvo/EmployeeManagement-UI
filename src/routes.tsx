@@ -4,7 +4,7 @@ import employee_route from "./pages/employee/route";
 import project_route from "./pages/project/route";
 import attendance_route from "./pages/attendance/route";
 import holiday_route from "./pages/holiday/route";
-
+import management_route from "./pages/Management/route";
 import Login from "./pages/Auth/Login";
 
 export type RouteItem = Omit<RouteObject, "children"> & {
@@ -14,6 +14,7 @@ export type RouteItem = Omit<RouteObject, "children"> & {
   icon?: React.ReactNode;
   children?: RouteItem[];
   permissions?: string | string[];
+  minRoleLevel?: number; // Minimum role level required to access this route
 };
 
 export const ROUTER_DASHBOARD = "/employee/employees";
@@ -36,6 +37,7 @@ const routes: RouteItem[] = [
   project_route,
   attendance_route,
   holiday_route,
+  management_route,
 ];
 
 const getRoute = ({

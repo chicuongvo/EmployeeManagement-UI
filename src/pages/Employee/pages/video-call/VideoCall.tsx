@@ -14,7 +14,7 @@ import {
 } from "@stream-io/video-react-sdk";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { generateStreamToken, getDepartmentCallId } from "../../api/stream.api";
-import { updateMeeting, getMeetingById } from "../../api/meeting.api";
+import { updateMeeting, getMeetingById, updateParticipantStatus } from "../../api/meeting.api";
 import { useUser } from "../../hooks/useUser";
 import { toast } from "react-toastify";
 import { Loader2 } from "lucide-react";
@@ -99,6 +99,40 @@ export default function VideoCall() {
         await streamCall.join({ create: true });
 
         if (!mounted) return;
+
+        // Update participant status to ACCEPTED when joining meeting
+        console.log("VideoCall - Checking participant status update:", { 
+          meetingId, 
+          userId: userProfile?.id, 
+          hasMeetingId: !!meetingId,
+          hasUserId: !!userProfile?.id 
+        });
+        
+        if (meetingId && userProfile?.id) {
+          try {
+            console.log("VideoCall - Calling updateParticipantStatus API:", { 
+              meetingId, 
+              participantId: userProfile.id, 
+              status: "ACCEPTED" 
+            });
+            const result = await updateParticipantStatus(meetingId, userProfile.id, "ACCEPTED");
+            console.log("VideoCall - Participant status updated successfully:", result);
+          } catch (error: any) {
+            // Log error but don't block joining
+            console.error("VideoCall - Could not update participant status:", error);
+            console.error("VideoCall - Error details:", {
+              message: error.message,
+              response: error.response?.data,
+              status: error.response?.status,
+              url: error.config?.url,
+            });
+          }
+        } else {
+          console.warn("VideoCall - Skipping participant status update - missing meetingId or userId:", {
+            meetingId,
+            userId: userProfile?.id,
+          });
+        }
 
         setClient(streamClient);
         setCall(streamCall);
