@@ -5,7 +5,6 @@ import DepartmentInfoCard from "./components/DepartmentInfoCard";
 import DepartmentChartCard from "./components/DepartmentChartCard";
 import DepartmentEmployeeList from "./components/DepartmentEmployeeList";
 import DepartmentOrgChart from "./components/DepartmentOrgChart";
-import ModalChangeManager from "./components/ModalChangeManager";
 import { Collapse, Form } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { MdEditSquare, MdSaveAs } from "react-icons/md";
@@ -26,8 +25,6 @@ const Index = () => {
 
     const [form] = Form.useForm();
     const [changeInfoValue, setChangeInfoValue] = useState<Partial<DEPARTMENT>>({});
-    const [showManagerModal, setShowManagerModal] = useState(false);
-    const [pendingManagerId, setPendingManagerId] = useState<number | undefined>();
 
     // Initialize form with department data
     useEffect(() => {
@@ -63,50 +60,19 @@ const Index = () => {
         }
     );
 
-    const handleUpdate = useCallback((previousManagerAction?: "CHANGE_POSITION" | "REMOVE_POSITION", newPositionId?: number, newDepartmentId?: number) => {
+    const handleUpdate = useCallback(() => {
         const formValues = form.getFieldsValue();
 
         const updateData: UpdateDepartmentRequest = {
             name: formValues.name || changeInfoValue.name || department?.name || "",
             departmentCode: formValues.departmentCode || changeInfoValue.departmentCode,
             description: formValues.description || changeInfoValue.description,
-            managerId: pendingManagerId !== undefined ? pendingManagerId : (formValues.managerId || changeInfoValue.managerId),
+            managerId: formValues.managerId || changeInfoValue.managerId,
             foundedAt: formValues.foundedAt ? dayjs(formValues.foundedAt).toISOString() : (changeInfoValue.foundedAt ? dayjs(changeInfoValue.foundedAt).toISOString() : department?.foundedAt),
-            previousManagerAction,
-            oldManagerNewPositionId: newPositionId,
-            oldManagerNewDepartmentId: newDepartmentId,
         };
 
         updateDepartment(updateData);
-        setPendingManagerId(undefined);
-        setShowManagerModal(false);
-    }, [form, changeInfoValue, department, updateDepartment, pendingManagerId]);
-
-    const handleSaveClick = useCallback(() => {
-        const formValues = form.getFieldsValue();
-        const newManagerId = formValues.managerId || changeInfoValue.managerId;
-
-        // Check if manager is changing and department has existing manager
-        if (newManagerId && department?.managerId && newManagerId !== department.managerId) {
-            // Show modal for confirmation
-            setPendingManagerId(newManagerId);
-            setShowManagerModal(true);
-        } else {
-            // No manager change or no existing manager, proceed directly
-            handleUpdate();
-        }
-    }, [form, changeInfoValue, department, handleUpdate]);
-
-    const handleModalConfirm = useCallback((action: "CHANGE_POSITION" | "REMOVE_POSITION", newPositionId?: number, newDepartmentId?: number) => {
-        handleUpdate(action, newPositionId, newDepartmentId);
-    }, [handleUpdate]);
-
-    const handleModalCancel = useCallback(() => {
-        setShowManagerModal(false);
-        setPendingManagerId(undefined);
-        // Reset form to original manager
-        form.setFieldValue("managerId", department?.managerId);
-    }, [form, department]);
+    }, [form, changeInfoValue, department, updateDepartment]);
 
     const handleReset = useCallback(() => {
         form.resetFields();
@@ -149,7 +115,7 @@ const Index = () => {
                     icon={<MdSaveAs size={32} className="icon-hover-effect" />}
                     key="save"
                     color="green"
-                    onClick={handleSaveClick}
+                    onClick={handleUpdate}
                     disabled={disableSubmit}
                     loading={isLoadingUpdate}
                 >
@@ -274,15 +240,6 @@ const Index = () => {
                     />
                 </div>
             </Form>
-
-            {/* Manager Change Modal */}
-            <ModalChangeManager
-                open={showManagerModal}
-                onCancel={handleModalCancel}
-                onConfirm={handleModalConfirm}
-                currentManager={department?.manager || null}
-                departmentName={department?.name || ""}
-            />
 
             <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
                 {renderActionButton()}

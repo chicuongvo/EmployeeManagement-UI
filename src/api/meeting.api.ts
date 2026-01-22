@@ -1,4 +1,5 @@
 import { axiosClient } from "../lib/axios";
+import { AxiosError } from "axios";
 import type {
   MeetingResponse,
   CreateMeetingRequest,
@@ -20,7 +21,7 @@ interface GetListMeetingResponse {
  * Get all meetings
  */
 export const getAllMeetings = async (
-  params?: MeetingQueryParams
+  params?: MeetingQueryParams,
 ): Promise<GetListMeetingResponse> => {
   const response = await axiosClient.get("/stream/meetings", { params });
   return response.data.data;
@@ -29,9 +30,7 @@ export const getAllMeetings = async (
 /**
  * Get meeting by ID
  */
-export const getMeetingById = async (
-  id: string
-): Promise<MeetingResponse> => {
+export const getMeetingById = async (id: string): Promise<MeetingResponse> => {
   const response = await axiosClient.get(`/stream/meetings/${id}`);
   return response.data.data;
 };
@@ -40,16 +39,23 @@ export const getMeetingById = async (
  * Create a new meeting
  */
 export const createMeeting = async (
-  data: CreateMeetingRequest
+  data: CreateMeetingRequest,
 ): Promise<MeetingResponse> => {
   console.log("Creating meeting with data:", data);
-  console.log("Request URL:", axiosClient.defaults.baseURL + "/stream/meetings");
+  console.log(
+    "Request URL:",
+    axiosClient.defaults.baseURL + "/stream/meetings",
+  );
   try {
     const response = await axiosClient.post("/stream/meetings", data);
     return response.data.data;
-  } catch (error: any) {
-    console.error("Error creating meeting - Status:", error.response?.status);
-    console.error("Error creating meeting - URL:", error.config?.url);
+  } catch (error: unknown) {
+    const axiosError = error as AxiosError;
+    console.error(
+      "Error creating meeting - Status:",
+      axiosError.response?.status,
+    );
+    console.error("Error creating meeting - URL:", axiosError.config?.url);
     console.error("Error creating meeting - Full error:", error);
     throw error;
   }
@@ -60,7 +66,7 @@ export const createMeeting = async (
  */
 export const updateMeeting = async (
   id: string,
-  data: Partial<CreateMeetingRequest> & { status?: MeetingStatus }
+  data: Partial<CreateMeetingRequest> & { status?: MeetingStatus },
 ): Promise<MeetingResponse> => {
   const response = await axiosClient.put(`/stream/meetings/${id}`, data);
   return response.data.data;
@@ -79,11 +85,15 @@ export const deleteMeeting = async (id: string): Promise<void> => {
 export const updateParticipantStatus = async (
   meetingId: string,
   participantId: number,
-  status: "PENDING" | "ACCEPTED" | "DECLINED"
-): Promise<{ employeeId: number; status: string; employee: any }> => {
+  status: "PENDING" | "ACCEPTED" | "DECLINED",
+): Promise<{
+  employeeId: number;
+  status: string;
+  employee: Record<string, unknown>;
+}> => {
   const response = await axiosClient.put(
     `/stream/meetings/${meetingId}/participants/${participantId}/status`,
-    { status }
+    { status },
   );
   return response.data.data;
 };

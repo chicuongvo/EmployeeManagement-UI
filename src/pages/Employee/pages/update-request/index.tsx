@@ -57,7 +57,7 @@ const UpdateRequestPageContent = () => {
         activeKey={`${tab ?? TABS.UPDATE_REQUEST}`}
         className="tag-ticket-list report-tab"
         onChange={handleChangeTab}
-        items={tabs.map(tabItem => ({
+        items={tabs.map((tabItem) => ({
           key: tabItem.key,
           children: (
             <>

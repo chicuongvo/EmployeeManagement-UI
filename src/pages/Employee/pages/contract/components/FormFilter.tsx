@@ -26,7 +26,7 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
         setTimeout(() => onSearch(), 100);
       }
     },
-    [handleFilterSubmit, onSearch]
+    [handleFilterSubmit, onSearch],
   );
 
   const handleReset = useCallback(() => {
