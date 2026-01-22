@@ -62,6 +62,15 @@ export const useHRLevel = () => {
   });
 };
 
+// Hook to get Admin level
+export const useAdminLevel = () => {
+  return useQuery({
+    queryKey: ["system-settings", "admin-level"],
+    queryFn: () => systemSettingService.getAdminLevel(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
+
 // Hook to check if user has required level for sidebar access
 export const useSidebarAccess = (userLevel: number) => {
   const { data: sidebarSettings } = useSidebarSettings();
@@ -69,6 +78,12 @@ export const useSidebarAccess = (userLevel: number) => {
   return {
     canAccessManagement: userLevel >= (sidebarSettings?.MANAGEMENT_LEVEL || 2),
     canAccessHR: userLevel >= (sidebarSettings?.HR_LEVEL || 3),
+    canAccessAdmin: userLevel >= (sidebarSettings?.ADMIN_LEVEL || 4),
+    managementLevel: sidebarSettings?.MANAGEMENT_LEVEL || 2,
+    hrLevel: sidebarSettings?.HR_LEVEL || 3,
+    adminLevel: sidebarSettings?.ADMIN_LEVEL || 4,
+  };
+};
     managementLevel: sidebarSettings?.MANAGEMENT_LEVEL || 2,
     hrLevel: sidebarSettings?.HR_LEVEL || 3,
   };

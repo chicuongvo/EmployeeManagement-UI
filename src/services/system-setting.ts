@@ -75,6 +75,11 @@ export const getHRLevel = async (): Promise<number> => {
   return parseInt(value) || 3;
 };
 
+export const getAdminLevel = async (): Promise<number> => {
+  const value = await getSystemSettingValue("ADMIN_LEVEL", "4");
+  return parseInt(value) || 4;
+};
+
 export const getMaxFileUploadSize = async (): Promise<number> => {
   const value = await getSystemSettingValue("MAX_FILE_UPLOAD_SIZE", "10485760");
   return parseInt(value) || 10485760; // 10MB default
