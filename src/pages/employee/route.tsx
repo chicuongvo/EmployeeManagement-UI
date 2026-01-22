@@ -30,6 +30,7 @@ import PerformanceByEmployeePage from "@/pages/Employee/pages/performanceByEmplo
 import PerformanceByDepartmentPage from "@/pages/Employee/pages/performanceByDepartment";
 import MyPerformancePage from "@/pages/Employee/pages/myPerformance";
 import PerformanceCriteriaPage from "@/pages/Employee/pages/performanceCriteria";
+import MyProjectsPage from "@/pages/Employee/pages/my-projects";
 
 const route: RouteItem = {
   path: "/employee",
@@ -127,6 +128,11 @@ const route: RouteItem = {
         </ContractDetailProvider>
       ),
       hideInMenu: true,
+    },
+    {
+      path: "my-projects",
+      name: "Dự án của tôi",
+      element: <MyProjectsPage />,
     },
     {
       path: "departments",

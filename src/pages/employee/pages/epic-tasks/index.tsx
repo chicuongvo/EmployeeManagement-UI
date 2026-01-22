@@ -41,14 +41,14 @@ const EpicTaskPage = () => {
             },
             {
               title: `Dự án #${projectId}`,
-              path: `/projects/${projectId}`,
+              path: `/management/projects/${projectId}`,
             },
             {
               title: `Epic #${epicId}`,
             },
           ],
         },
-        onBack: () => navigate(`/projects/${projectId}`),
+        onBack: () => navigate(`/management/projects/${projectId}`),
         extra: [
           <Button
             key="create"

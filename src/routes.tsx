@@ -1,9 +1,6 @@
 import { Navigate, type RouteObject } from "react-router-dom";
 
 import employee_route from "./pages/Employee/route";
-import project_route from "./pages/project/route";
-import attendance_route from "./pages/attendance/route";
-import holiday_route from "./pages/holiday/route";
 import management_route from "./pages/Management/route";
 import admin_route from "./pages/Admin/route";
 import Login from "./pages/Auth/Login";
@@ -35,9 +32,6 @@ const routes: RouteItem[] = [
     element: <Login />,
   } as RouteItem,
   employee_route,
-  project_route,
-  attendance_route,
-  holiday_route,
   management_route,
   admin_route,
 ];
