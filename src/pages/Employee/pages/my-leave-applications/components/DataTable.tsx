@@ -1,34 +1,36 @@
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
-import { Button, Popconfirm, Space, Tag } from "antd";
+import { Button, Popconfirm, Space } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
 import { useEffect, useMemo, useState } from "react";
 import { COLUMN_KEYS } from "@/constant/columns";
 
-import { useNotificationContext } from "../../../NotificationContext";
+import { useMyLeaveApplicationContext } from "../MyLeaveApplicationContext";
 import TooltipTruncatedText from "@/components/common/shared/TooltipTruncatedText";
 import TableComponent from "@/components/common/table/TableComponent";
-import type { Notification } from "@/apis/notification/model/Notification";
+import type { LeaveApplication } from "@/apis/leave-application/model/LeaveApplication";
+import { LeaveApplicationStatus } from "@/components/common/status";
 import showMessage from "@/utils/showMessage";
+
+import { LEAVE_OPTION_MAP } from "@/components/common/form/SelectListLeaveOption";
 
 const DataTable = () => {
   const {
     dataResponse,
-    isLoading,
     isSuccess,
     handleFilterSubmit,
     params,
-    setSelectedNotification,
-    setPopupUpdateNotification,
-    deleteNotificationMutation,
-  } = useNotificationContext();
+    setSelectedLeaveApplication,
+    setPopupUpdateLeaveApplication,
+    deleteLeaveApplicationMutation,
+  } = useMyLeaveApplicationContext();
 
   // Using a generic key for now - can be added to store later if needed
-  const [listNotificationActiveKey, setListNotificationActiveKey] =
+  const [listLeaveApplicationActiveKey, setListLeaveApplicationActiveKey] =
     useState<string[] | undefined>(undefined);
 
-  const baseColumns: ColumnsType<Notification> = useMemo(
+  const baseColumns: ColumnsType<LeaveApplication> = useMemo(
     () => [
       {
         title: "STT",
@@ -38,45 +40,76 @@ const DataTable = () => {
           const pageSize = dataResponse?.data.pagination.limit ?? 10;
           return (currentPage - 1) * pageSize + index + 1;
         },
-        width: 60,
+        width: 80,
         fixed: "left",
         align: "center",
       },
       {
-        title: "Tiêu đề",
-        dataIndex: "title",
-        key: "title",
-        render: (value: string) => <TooltipTruncatedText value={value} />,
-        width: 200,
+        title: "Loại nghỉ phép",
+        dataIndex: ["leaveType", "name"],
+        key: "leave_type",
+        align: "left",
+        width: 180,
+        render: (value) => <TooltipTruncatedText value={value} />,
       },
       {
-        title: "Nội dung",
-        dataIndex: "content",
-        key: "content",
-        render: (value: string) => <TooltipTruncatedText value={value} />,
-        width: 300,
-      },
-      
-      {
-        title: "Ngày công bố",
-        dataIndex: "publishedAt",
-        key: "publishedAt",
-        render: (date: string) =>
-          date ? dayjs(date).format("DD/MM/YYYY HH:mm") : "-",
-        width: 150,
+        title: "Ngày nghỉ",
+        dataIndex: "leaveDate",
+        key: "leave_date",
         align: "center",
+        width: 150,
+        render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
+      },
+      {
+        title: "Ngày bắt đầu",
+        dataIndex: "startDate",
+        key: "start_date",
+        align: "center",
+        width: 150,
+        render: (value) => dayjs(value).format("DD/MM/YYYY"),
+      },
+      {
+        title: "Ngày kết thúc",
+        dataIndex: "endDate",
+        key: "end_date",
+        align: "center",
+        width: 150,
+        render: (value) => dayjs(value).format("DD/MM/YYYY"),
+      },
+      {
+        title: "Buổi nghỉ",
+        dataIndex: "leaveOption",
+        key: "leave_option",
+        align: "center",
+        width: 150,
+        render: (value) => {
+          if (!value) return "-";
+          return LEAVE_OPTION_MAP[value as keyof typeof LEAVE_OPTION_MAP] || value;
+        },
+      },
+      {
+        title: "Lý do",
+        dataIndex: "reason",
+        key: "reason",
+        align: "left",
+        width: 250,
+        render: (value) => <TooltipTruncatedText value={value} />,
       },
       {
         title: "Trạng thái",
-        dataIndex: "isRead",
-        key: "isRead",
-        render: (isRead: boolean) => (
-          <Tag color={isRead ? "green" : "orange"}>
-            {isRead ? "Đã đọc" : "Chưa đọc"}
-          </Tag>
-        ),
-        width: 100,
+        dataIndex: "status",
+        key: "status",
         align: "center",
+        width: 150,
+        render: (value) => <LeaveApplicationStatus status={value} />,
+      },
+      {
+        title: "Ngày tạo",
+        dataIndex: "createdAt",
+        align: "left",
+        key: COLUMN_KEYS.CREATED_AT,
+        width: 150,
+        render: (value) => dayjs(value).format("DD/MM/YYYY HH:mm"),
       },
       {
         title: "Hành động",
@@ -84,31 +117,31 @@ const DataTable = () => {
         width: 150,
         fixed: "right",
         align: "center",
-        render: (_, record: Notification) => (
+        render: (_, record) => (
           <Space>
             <Button
               type="text"
               onClick={() => {
-                setSelectedNotification(record);
-                setPopupUpdateNotification(true);
+                setSelectedLeaveApplication(record);
+                setPopupUpdateLeaveApplication(true);
               }}
               icon={<EditOutlined style={{ color: "#10b981" }} />}
             />
             <Popconfirm
-              title="Xóa thông báo"
-              description="Bạn có chắc chắn muốn xóa thông báo này?"
+              title="Xóa đơn nghỉ phép"
+              description="Bạn có chắc chắn muốn xóa đơn nghỉ phép này?"
               onConfirm={() => {
-                deleteNotificationMutation.mutate(record.id, {
+                deleteLeaveApplicationMutation.mutate(record.id, {
                   onSuccess: () => {
                     showMessage({
                       level: "success",
-                      title: "Xóa thông báo thành công",
+                      title: "Xóa đơn nghỉ phép thành công",
                     });
                   },
                   onError: () => {
                     showMessage({
                       level: "error",
-                      title: "Xóa thông báo thất bại",
+                      title: "Xóa đơn nghỉ phép thất bại",
                     });
                   },
                 });
@@ -129,10 +162,10 @@ const DataTable = () => {
     [
       dataResponse?.data.pagination.page,
       dataResponse?.data.pagination.limit,
-      deleteNotificationMutation,
-      setPopupUpdateNotification,
-      setSelectedNotification,
-    ],
+      setSelectedLeaveApplication,
+      setPopupUpdateLeaveApplication,
+      deleteLeaveApplicationMutation,
+    ]
   );
 
   const columns = useMemo(() => {
@@ -140,14 +173,14 @@ const DataTable = () => {
   }, [baseColumns]);
 
   useEffect(() => {
-    if (!listNotificationActiveKey) {
-      setListNotificationActiveKey(
+    if (!listLeaveApplicationActiveKey) {
+      setListLeaveApplicationActiveKey(
         columns
           .map((col) => col.key as string)
           .filter((key) => key !== COLUMN_KEYS.ACTION)
       );
     }
-  }, [columns, setListNotificationActiveKey, listNotificationActiveKey]);
+  }, [columns, setListLeaveApplicationActiveKey, listLeaveApplicationActiveKey]);
 
   const paginationConfig = useMemo(
     () => ({
@@ -170,17 +203,15 @@ const DataTable = () => {
     ]
   );
 
-  const notifications = dataResponse?.data.notifications || [];
-
   return (
     <TableComponent
       isSuccess={isSuccess}
       rowKey={(record) => record.id.toString()}
-      dataSource={notifications}
+      dataSource={dataResponse?.data.data}
       columns={columns}
       scroll={{ x: true }}
-      activeKeys={listNotificationActiveKey}
-      setActiveKeys={setListNotificationActiveKey}
+      activeKeys={listLeaveApplicationActiveKey}
+      setActiveKeys={setListLeaveApplicationActiveKey}
       pagination={paginationConfig}
       onChange={(p) =>
         handleFilterSubmit?.({

@@ -1,10 +1,11 @@
 import { Modal, Radio, Space, Avatar, Form, Divider } from "antd";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { DepartmentManager } from "@/apis/department/model/Department";
 import SelectListPosition from "@/components/common/form/SelectListPosition";
 import SelectListDepartment from "@/components/common/form/SelectListDepartment";
 import PrimaryButton from "@/components/common/button/PrimaryButton";
 import { SaveOutlined, CloseOutlined } from "@ant-design/icons";
+import { getPosition } from "@/apis/position";
 
 interface ModalChangeManagerProps {
     open: boolean;
@@ -27,32 +28,78 @@ const ModalChangeManager = ({
 }: ModalChangeManagerProps) => {
     const [form] = Form.useForm();
     const [selectedAction, setSelectedAction] = useState<ManagerAction>("CHANGE_POSITION");
-    const [newPositionId, setNewPositionId] = useState<number | undefined>();
-    const [newDepartmentId, setNewDepartmentId] = useState<number | undefined>();
+    // Ref to track if department is being set from position selection
+    const isSettingDepartmentFromPosition = useRef(false);
+    // Ref to track previous departmentId value
+    const prevDepartmentIdRef = useRef<number | undefined>(undefined);
+
+    // Watch departmentId and positionId changes from form
+    const newDepartmentId = Form.useWatch("newDepartmentId", form);
+    const newPositionId = Form.useWatch("newPositionId", form);
 
     // Reset form when modal opens/closes
     useEffect(() => {
         if (open) {
             setSelectedAction("CHANGE_POSITION");
-            setNewPositionId(undefined);
-            setNewDepartmentId(undefined);
             form.resetFields();
+            prevDepartmentIdRef.current = undefined;
+            isSettingDepartmentFromPosition.current = false;
         }
     }, [open, form]);
 
-    const handleOk = () => {
+    // Clear position when department changes (except when set from position)
+    useEffect(() => {
+        const currentDepartmentId = newDepartmentId ?? undefined;
+        const prevDepartmentId = prevDepartmentIdRef.current;
+
+        // Skip if department is being set from position selection
+        if (isSettingDepartmentFromPosition.current) {
+            isSettingDepartmentFromPosition.current = false;
+            prevDepartmentIdRef.current = currentDepartmentId;
+            return;
+        }
+
+        // Skip on initial mount (when both are undefined or same)
+        if (prevDepartmentId === undefined && currentDepartmentId === undefined) {
+            prevDepartmentIdRef.current = currentDepartmentId;
+            return;
+        }
+
+        // If department changed (including cleared), clear position
+        if (currentDepartmentId !== prevDepartmentId) {
+            form.setFieldsValue({
+                newPositionId: undefined,
+            });
+        }
+
+        // Update ref for next comparison
+        prevDepartmentIdRef.current = currentDepartmentId;
+    }, [newDepartmentId, form]);
+
+    const handleOk = async () => {
         if (selectedAction === "CANCEL") {
             onCancel();
             return;
         }
 
         if (selectedAction === "CHANGE_POSITION") {
-            // Validate that position and department are selected
-            if (!newPositionId || !newDepartmentId) {
-                form.validateFields();
+            // Validate form fields
+            try {
+                await form.validateFields(["newDepartmentId", "newPositionId"]);
+            } catch {
                 return;
             }
-            onConfirm(selectedAction, newPositionId, newDepartmentId);
+
+            // Get values from form
+            const formValues = form.getFieldsValue();
+            const departmentId = formValues.newDepartmentId;
+            const positionId = formValues.newPositionId;
+
+            if (!positionId || !departmentId) {
+                return;
+            }
+
+            onConfirm(selectedAction, positionId, departmentId);
         } else {
             onConfirm(selectedAction);
         }
@@ -60,9 +107,9 @@ const ModalChangeManager = ({
 
     const handleCancel = () => {
         setSelectedAction("CHANGE_POSITION");
-        setNewPositionId(undefined);
-        setNewDepartmentId(undefined);
         form.resetFields();
+        prevDepartmentIdRef.current = undefined;
+        isSettingDepartmentFromPosition.current = false;
         onCancel();
     };
 
@@ -129,7 +176,15 @@ const ModalChangeManager = ({
                                         >
                                             <SelectListDepartment
                                                 placeholder="Chọn phòng ban"
-                                                onChange={(value) => setNewDepartmentId(value as number)}
+                                                value={newDepartmentId ?? undefined}
+                                                onChange={async (value: number | null | undefined) => {
+                                                    const departmentId = value ?? undefined;
+                                                    
+                                                    // Update form field - useEffect will handle clearing position
+                                                    form.setFieldsValue({
+                                                        newDepartmentId: departmentId,
+                                                    });
+                                                }}
                                                 allowClear
                                             />
                                         </Form.Item>
@@ -141,7 +196,33 @@ const ModalChangeManager = ({
                                         >
                                             <SelectListPosition
                                                 placeholder="Chọn vị trí"
-                                                onChange={(value) => setNewPositionId(value as number)}
+                                                value={newPositionId ?? undefined}
+                                                departmentId={newDepartmentId ?? undefined}
+                                                onChange={async (value: number | null | undefined) => {
+                                                    const positionId = value ?? undefined;
+                                                    
+                                                    // Update form field
+                                                    form.setFieldsValue({
+                                                        newPositionId: positionId,
+                                                    });
+                                                    
+                                                    // If position is selected, fetch it to get departmentId and auto-set department
+                                                    if (positionId) {
+                                                        try {
+                                                            const position = await getPosition(positionId);
+                                                            if (position?.departmentId) {
+                                                                // Set flag to indicate department is being set from position
+                                                                isSettingDepartmentFromPosition.current = true;
+                                                                form.setFieldsValue({
+                                                                    newDepartmentId: position.departmentId,
+                                                                });
+                                                            }
+                                                        } catch (error) {
+                                                            console.error("Failed to fetch position:", error);
+                                                        }
+                                                    }
+                                                    // If position is cleared, don't clear department (as per requirement)
+                                                }}
                                                 allowClear
                                             />
                                         </Form.Item>

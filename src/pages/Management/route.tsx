@@ -19,6 +19,8 @@ import {
   FileTextOutlined,
   CalendarOutlined,
 } from "@ant-design/icons";
+import { LeaveApplicationProvider } from "../employee/pages/leave-application/LeaveApplicationContext";
+import MyLeaveApplicationPage from "../Employee/pages/my-leave-applications";
 import { FaProjectDiagram } from "react-icons/fa";
 import { ProjectProvider } from "../employee/pages/project/ProjectContext";
 import { ProjectDetailProvider } from "../employee/pages/project-detail/ProjectDetailContext";
@@ -34,6 +36,12 @@ import { EmployeeProvider } from "./pages/employee/EmployeeContext";
 import { EmployeeDetailProvider } from "./pages/employee_detail/EmployeeDetailContex";
 import EmployeeDetailPage from "./pages/employee_detail";
 import ManagementAttendanceCorrectionPage from "./pages/attendance-correction";
+import { DepartmentProvider } from "../Employee/pages/department/DepartmentContext";
+import DepartmentDetailPage from "../Employee/pages/department_detail";
+import DepartmentPage from "../Employee/pages/department";
+import { DepartmentDetailProvider } from "../Employee/pages/department_detail/DepartmentDetailContext";
+import performance_route from "../performance/route";
+
 const HolidayManagementPage = lazy(
   () => import("../holiday/HolidayManagementPage"),
 );
@@ -45,6 +53,15 @@ const management_route: RouteItem = {
   icon: <FaUserGroup className="text-base font-primary" />,
   minRoleLevel: ROLE_LEVELS.SIDEBAR_MIN_LEVEL_MANAGEMENT,
   children: [
+    {
+      path: "leave-applications",
+      name: "Đơn nghỉ phép",
+      element: (
+        <LeaveApplicationProvider>
+          <MyLeaveApplicationPage />
+        </LeaveApplicationProvider>
+      ),
+    },
     {
       path: "employees",
       name: "Hồ sơ nhân sự",
@@ -75,8 +92,27 @@ const management_route: RouteItem = {
       hideInMenu: true,
     },
     {
+      path: "departments",
+      name: "Phòng ban",
+      element: (
+        <DepartmentProvider>
+          <DepartmentPage />
+        </DepartmentProvider>
+      ),
+    },
+    {
+      path: "departments/:id",
+      name: "Chi tiết phòng ban",
+      element: (
+        <DepartmentDetailProvider>
+          <DepartmentDetailPage />
+        </DepartmentDetailProvider>
+      ),
+      hideInMenu: true,
+    },
+    {
       path: "update-requests",
-      name: "Quản lí yêu cầu cập nhật",
+      name: "Yêu cầu cập nhật",
       element: <UpdateRequestPage />,
       minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
     },
@@ -139,7 +175,7 @@ const management_route: RouteItem = {
         },
         {
           path: "past",
-          name: "Cuộc họp đã kết thúc",
+          name: "Lịch sử cuộc họp",
           element: <ManagementPastMeetingsPage />,
           icon: <HistoryOutlined />,
           minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
@@ -226,8 +262,17 @@ const management_route: RouteItem = {
           minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
         },
       ],
+      element: <AttendanceManagementPage />,
+    },
+    {
+      path: "holiday/management",
+      name: "Quản lý nghỉ lễ",
+
+      element: <HolidayManagementPage />,
+      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
     },
   ],
+  ...[performance_route],
 };
 
 export default management_route;

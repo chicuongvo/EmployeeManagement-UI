@@ -31,6 +31,7 @@ import PerformanceCriteriaPage from "@/pages/employee/pages/performanceCriteria"
 import MyProjectsPage from "@/pages/employee/pages/my-projects";
 import AttendanceCorrectionPage from "@/pages/employee/pages/attendance-correction";
 import MyAttendancePage from "@/pages/employee/pages/my-attendance";
+import MyLeaveApplicationPage from "./pages/my-leave-applications";
 
 const route: RouteItem = {
   path: "/employee",
@@ -143,14 +144,18 @@ const route: RouteItem = {
       element: <MyPerformancePage />,
     },
     {
-      path: "departments/:id",
-      name: "Chi tiết phòng ban",
+      path: "my-leave-applications",
+      name: "Đơn nghỉ phép của tôi",
+      element: <MyLeaveApplicationPage />,
+    },
+    {
+      path: "departments/me",
+      name: "Phòng ban của tôi",
       element: (
         <DepartmentDetailProvider>
           <DepartmentDetailPage />
         </DepartmentDetailProvider>
       ),
-      hideInMenu: true,
     },
     {
       path: "meetings",

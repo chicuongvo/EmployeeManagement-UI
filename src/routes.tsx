@@ -4,6 +4,7 @@ import employee_route from "./pages/Employee/route";
 import management_route from "./pages/Management/route";
 import admin_route from "./pages/Admin/route";
 import performance_route from "./pages/performance/route";
+import notification_route from "./pages/notification/route";
 import Login from "./pages/Auth/Login";
 import ChangePassword from "./pages/Auth/ChangePassword";
 // import project_route from "./pages/project/route";
@@ -44,9 +45,9 @@ const routes: RouteItem[] = [
   // project_route,
   // attendance_route,
   // holiday_route,
-  performance_route,
   management_route,
   admin_route,
+  notification_route,
 ];
 
 const getRoute = ({

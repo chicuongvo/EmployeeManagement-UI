@@ -128,17 +128,17 @@ const ManagementPastMeetingsPage = () => {
               title: "Quản lý nhân sự",
             },
             {
-              title: "Cuộc họp đã kết thúc",
+              title: "Lịch sử cuộc họp",
             },
           ],
         },
       }}
-      title={<PageTitle title="Cuộc họp đã kết thúc" />}
+      title={<PageTitle title="Lịch sử cuộc họp" />}
     >
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {pastMeetings.length === 0 ? (
           <div className="col-span-full">
-            <Empty description="Chưa có cuộc họp đã kết thúc" />
+            <Empty description="Chưa có Lịch sử cuộc họp" />
           </div>
         ) : (
           pastMeetings.map((meeting) => (

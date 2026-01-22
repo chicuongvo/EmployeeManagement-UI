@@ -13,6 +13,8 @@ import type {
 import { MdEditSquare, MdSaveAs } from "react-icons/md";
 import { IoMdCloseCircle } from "react-icons/io";
 import CircleButton from "@/components/common/button/CircleButton";
+import { Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import BasicInformation from "./components/BasicInformation";
 import GeneralInformation from "./components/GeneralInformation";
 import AttachmentSection from "./components/AttachmentSection";
@@ -399,11 +401,10 @@ const Index = () => {
 
   if (isLoadingContract) {
     return (
-      <PageContainer>
-        <div className="flex justify-center items-center py-8">
-          <div className="text-gray-500">Đang tải thông tin hợp đồng...</div>
-        </div>
-      </PageContainer>
+      <Spin
+          indicator={<LoadingOutlined className="text-primary-100" spin />}
+          size="small"
+        />  
     );
   }
 
