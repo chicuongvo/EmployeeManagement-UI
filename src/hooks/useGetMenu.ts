@@ -2,20 +2,22 @@ import type { MenuDataItem } from "@ant-design/pro-components";
 import { useContext } from "react";
 import routes, { type RouteItem } from "../routes";
 import { UserContext } from "../contexts/user/userContext";
+import { useRoleLevelSettings } from "./useRoleLevelSettings";
 
 const useGetMenus = (): MenuDataItem[] => {
   const userContext = useContext(UserContext);
   const roleLevel = userContext?.roleLevel ?? null;
+  const { isReady } = useRoleLevelSettings();
 
   const hasAccess = (menu: RouteItem): boolean => {
-    // If no minRoleLevel is specified, allow access
-    if (menu.minRoleLevel === undefined) {
-      return true;
-    }
-
     // If user has no role level, deny access
     if (roleLevel === null) {
       return false;
+    }
+
+    // If no minRoleLevel is specified, allow access
+    if (menu.minRoleLevel === undefined) {
+      return true;
     }
 
     // Check if user's role level is >= required level
@@ -41,10 +43,18 @@ const useGetMenus = (): MenuDataItem[] => {
       hideChildrenInMenu: menu.hideChildrenInMenu,
       name: menu.name || "",
       icon: menu.icon,
-      children: accessibleChildren && accessibleChildren.length > 0 ? accessibleChildren : undefined,
+      children:
+        accessibleChildren && accessibleChildren.length > 0
+          ? accessibleChildren
+          : undefined,
       permissions: menu.permissions,
     };
   };
+
+  // Return empty array while settings are loading to prevent showing routes with wrong levels
+  if (!isReady) {
+    return [];
+  }
 
   return routes
     .map((route) => getMenu(route))

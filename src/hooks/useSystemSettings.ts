@@ -1,10 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import * as systemSettingService from "../services/system-setting";
-import type {
-  SystemSetting,
-  SidebarSettings,
-  UploadSettings,
-} from "../types/SystemSetting";
 
 // Hook to get all settings
 export const useSystemSettings = () => {
@@ -82,9 +77,5 @@ export const useSidebarAccess = (userLevel: number) => {
     managementLevel: sidebarSettings?.MANAGEMENT_LEVEL || 2,
     hrLevel: sidebarSettings?.HR_LEVEL || 3,
     adminLevel: sidebarSettings?.ADMIN_LEVEL || 4,
-  };
-};
-    managementLevel: sidebarSettings?.MANAGEMENT_LEVEL || 2,
-    hrLevel: sidebarSettings?.HR_LEVEL || 3,
   };
 };
