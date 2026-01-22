@@ -1,13 +1,11 @@
-import { FaUserGroup } from "react-icons/fa6";
+import { FaClipboardUser } from "react-icons/fa6";
 import { VideoCameraOutlined } from "@ant-design/icons";
 
 import { type RouteItem } from "@/routes";
-import { EmployeeProvider } from "./pages/employee/EmployeeContext";
+// import { ROLE_LEVELS } from "@/constants/roleLevel";
 import { DepartmentProvider } from "./pages/department/DepartmentContext";
 import { LeaveApplicationProvider } from "./pages/leave-application/LeaveApplicationContext";
-import EmployeePage from "./pages/employee";
 import MyRequestsPage from "./pages/update-request/my-requests";
-import MyContractsPage from "./pages/contract/my-contracts";
 import ContractDetailPage from "./pages/contract_detail";
 import { ContractDetailProvider } from "./pages/contract_detail/ContractDetailContext";
 import UpdateRequestDetailPage from "./pages/update_request_detail";
@@ -17,10 +15,17 @@ import DepartmentPage from "./pages/department";
 import LeaveApplicationPage from "./pages/leave-application";
 import VideoCall from "./pages/video-call";
 import MainLayout from "@/layout/MainLayout";
-import EmployeeDetailPage from "./pages/employee_detail";
-import { EmployeeDetailProvider } from "./pages/employee_detail/EmployeeDetailContex";
+
 import DepartmentDetailPage from "./pages/department_detail";
 import { DepartmentDetailProvider } from "./pages/department_detail/DepartmentDetailContext";
+import EmployeeDetailPage from "@/pages/Management/pages/employee_detail";
+import { EmployeeDetailProvider } from "@/pages/Management/pages/employee_detail/EmployeeDetailContex";
+
+// import PerformancePage from "@/pages/Employee/pages/performance";
+// import { PerformanceProvider } from "./pages/performance/PerformanceContext";
+// import PerformanceDetailPage from "@/pages/Employee/pages/performanceDetail";
+// import PerformanceByEmployeePage from "@/pages/Employee/pages/performanceByEmployee";
+// import PerformanceByDepartmentPage from "@/pages/Employee/pages/performanceByDepartment";
 import MyPerformancePage from "@/pages/Employee/pages/myPerformance";
 
 
@@ -31,36 +36,16 @@ const route: RouteItem = {
     <span className="font-primary">Thông tin cá nhân</span>
   ) as unknown as string,
   element: <MainLayout />,
-  icon: <FaUserGroup className="text-base font-primary" />,
+  icon: <FaClipboardUser className="text-base font-primary" />,
   children: [
     {
-      path: "employees",
-      name: "Hồ sơ nhân sự",
-      element: (
-        <EmployeeProvider>
-          <EmployeePage />
-        </EmployeeProvider>
-      ),
-    },
-    {
-      path: "employees/add-new",
-      name: "Thêm mới",
+      path: "me",
+      name: "Sơ yếu lí lịch",
       element: (
         <EmployeeDetailProvider>
           <EmployeeDetailPage />
         </EmployeeDetailProvider>
       ),
-      hideInMenu: true,
-    },
-    {
-      path: "employees/:id",
-      name: "Chi tiết",
-      element: (
-        <EmployeeDetailProvider>
-          <EmployeeDetailPage />
-        </EmployeeDetailProvider>
-      ),
-      hideInMenu: true,
     },
     {
       path: "update-requests/add-new",
@@ -106,11 +91,6 @@ const route: RouteItem = {
       path: "my-update-requests",
       name: "Đơn yêu cầu của tôi",
       element: <MyRequestsPage />,
-    },
-    {
-      path: "my-contracts",
-      name: "Hợp đồng của tôi",
-      element: <MyContractsPage />,
     },
     {
       path: "my-contracts/:id",

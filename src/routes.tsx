@@ -20,10 +20,10 @@ export type RouteItem = Omit<RouteObject, "children"> & {
   minRoleLevel?: number; // Minimum role level required to access this route
 };
 
-export const ROUTER_DASHBOARD = "/employee/employees";
+export const ROUTER_DASHBOARD = "/management/employees";
 export const ROUTER_LOGIN = "/auth/login";
 
-export const DEFAULT_ROUTE = "/employee/employees";
+export const DEFAULT_ROUTE = "/management/employees";
 
 const routes: RouteItem[] = [
   {
