@@ -101,7 +101,7 @@ const SelectListEmployee = ({
           ...defaultOptions,
           ...options.filter(
             (option) =>
-              !defaultOptions.some((item) => item.value === option.value)
+              !defaultOptions.some((item) => item.value === option.value),
           ),
         ];
 

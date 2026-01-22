@@ -5,3 +5,4 @@ export { createTask } from "./createTask";
 export { updateTask } from "./updateTask";
 export { deleteTaskById } from "./deleteTask";
 export { setTaskAssignments } from "./setAssignments";
+export * from "./taskComments";
