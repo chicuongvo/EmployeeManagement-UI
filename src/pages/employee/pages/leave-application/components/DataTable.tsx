@@ -13,6 +13,8 @@ import type { LeaveApplication } from "@/apis/leave-application/model/LeaveAppli
 import { LeaveApplicationStatus } from "@/components/common/status";
 import showMessage from "@/utils/showMessage";
 
+import { LEAVE_OPTION_MAP } from "@/components/common/form/SelectListLeaveOption";
+
 const DataTable = () => {
   const {
     dataResponse,
@@ -53,7 +55,7 @@ const DataTable = () => {
       },
       {
         title: "Tên nhân viên",
-        dataIndex: ["employee", "name"],
+        dataIndex: ["employee", "fullName"],
         key: "employee_name",
         width: 200,
         align: "left",
@@ -68,31 +70,22 @@ const DataTable = () => {
         render: (value) => <TooltipTruncatedText value={value} />,
       },
       {
-        title: "Ngày bắt đầu",
-        dataIndex: "startDate",
+        title: "Ngày nghỉ",
+        dataIndex: "leaveDate",
         key: "start_date",
         align: "center",
         width: 150,
         render: (value) => dayjs(value).format("DD/MM/YYYY"),
       },
       {
-        title: "Ngày kết thúc",
-        dataIndex: "endDate",
+        title: "Buổi nghỉ",
+        dataIndex: "leaveOption",
         key: "end_date",
         align: "center",
         width: 150,
-        render: (value) => dayjs(value).format("DD/MM/YYYY"),
-      },
-      {
-        title: "Số ngày",
-        key: "days",
-        align: "center",
-        width: 100,
-        render: (_, record) => {
-          const start = dayjs(record.startDate);
-          const end = dayjs(record.endDate);
-          const days = end.diff(start, "day") + 1;
-          return <span>{days} ngày</span>;
+        render: (value) => {
+          if (!value) return "-";
+          return LEAVE_OPTION_MAP[value as keyof typeof LEAVE_OPTION_MAP] || value;
         },
       },
       {

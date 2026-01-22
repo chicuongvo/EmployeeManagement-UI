@@ -9,7 +9,8 @@ import { useEmployeeDetailContext } from "../EmployeeDetailContex";
 import React, { useCallback, useMemo } from "react";
 import { WorkStatus } from "@/components/common/status";
 
-const DEFAULT_AVATAR = "https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg";
+const DEFAULT_AVATAR =
+  "https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg";
 
 const BasicInformation = () => {
   const { employee } = useEmployeeDetailContext();
@@ -22,15 +23,24 @@ const BasicInformation = () => {
 
   const handleManagerClick = useCallback(() => {
     if (employee?.department?.managerId) {
-      window.location.href = `/employee/employees/${employee.department.managerId}`;
+      window.location.href = `/management/employees/${employee.department.managerId}`;
     }
   }, [employee?.department?.managerId]);
 
-  const avatarUrl = useMemo(() => employee?.avatar || DEFAULT_AVATAR, [employee?.avatar]);
+  const avatarUrl = useMemo(
+    () => employee?.avatar || DEFAULT_AVATAR,
+    [employee?.avatar],
+  );
 
-  const positionName = useMemo(() => employee?.position?.name || "N/A", [employee?.position?.name]);
+  const positionName = useMemo(
+    () => employee?.position?.name || "N/A",
+    [employee?.position?.name],
+  );
 
-  const departmentName = useMemo(() => employee?.department?.name || "N/A", [employee?.department?.name]);
+  const departmentName = useMemo(
+    () => employee?.department?.name || "N/A",
+    [employee?.department?.name],
+  );
 
   if (!employee) {
     return null;
@@ -38,23 +48,14 @@ const BasicInformation = () => {
 
   return (
     <div className="w-[300px] flex-shrink-0 mb-4">
-      <Card
-        className="rounded-2xl"
-        bodyStyle={{ padding: "20px" }}
-      >
+      <Card className="rounded-2xl" bodyStyle={{ padding: "20px" }}>
         {/* Profile Header */}
         <div className="flex flex-col items-center mb-6 gap-[10px]">
-          <Avatar
-            src={avatarUrl}
-            size={130}
-            className="mb-3"
-          />
+          <Avatar src={avatarUrl} size={130} className="mb-3" />
           <h3 className="text-lg font-semibold text-gray-800 text-center">
             {employee.fullName}
           </h3>
-          <p className="text-sm text-gray-500">
-            {positionName}
-          </p>
+          <p className="text-sm text-gray-500">{positionName}</p>
           <WorkStatus status={employee.workStatus} />
         </div>
 
@@ -103,7 +104,9 @@ const BasicInformation = () => {
                   <span className="text-xs text-gray-500 mb-1">Quản lý</span>
                   <div className="flex items-center gap-2">
                     <Avatar
-                      src={employee?.department?.manager?.avatar || DEFAULT_AVATAR}
+                      src={
+                        employee?.department?.manager?.avatar || DEFAULT_AVATAR
+                      }
                       size={24}
                     />
                     <span className="text-sm font-medium text-gray-800">

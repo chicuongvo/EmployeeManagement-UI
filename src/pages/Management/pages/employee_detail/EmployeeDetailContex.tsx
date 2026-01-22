@@ -7,6 +7,7 @@ import type {
   EMPLOYEE,
   GetEmployeeResponse,
 } from "@/apis/employee/model/Employee";
+import { useUser } from "@/hooks/useUser";
 
 interface EmployeeDetailContextType {
   employee: EMPLOYEE | undefined;
@@ -29,6 +30,15 @@ export const EmployeeDetailProvider: React.FC<{
   const location = useLocation();
   const pathname = location.pathname;
   const [editMode, setEditMode] = useState(false);
+  const { userProfile } = useUser();
+
+  // Determine employee ID: use user ID if route is /me, otherwise use params.id
+  const employeeId = useMemo(() => {
+    if (pathname.includes("/me")) {
+      return userProfile?.id || 0;
+    }
+    return Number(params.id) || 0;
+  }, [pathname, params.id, userProfile?.id]);
 
   const {
     isLoading: isLoadingEmployee,
@@ -37,11 +47,11 @@ export const EmployeeDetailProvider: React.FC<{
   } = useQuery({
     queryFn: (): Promise<GetEmployeeResponse> => {
       return getEmployee({
-        id: Number(params.id) || 0,
+        id: employeeId,
       });
     },
-    queryKey: ["employee-detail", Number(params.id)],
-    enabled: !!Number(params.id),
+    queryKey: ["employee-detail", employeeId],
+    enabled: !!employeeId,
   });
 
   const isCreate = useMemo(

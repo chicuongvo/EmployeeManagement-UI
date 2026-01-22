@@ -29,7 +29,7 @@ const DataTable = ({ departmentId }: DataTableProps = {}) => {
   } = useEmployeeContext();
 
   const { setListEmployeeActiveKey, listEmployeeActiveKey } = useTableStore(
-    (state) => state
+    (state) => state,
   );
 
   const baseColumns: ColumnsType<EMPLOYEE> = useMemo(
@@ -53,10 +53,11 @@ const DataTable = ({ departmentId }: DataTableProps = {}) => {
         align: "center",
         fixed: "left",
         width: 150,
-        render: (value, record) =>
-          <Link to={`/employee/employees/${record.id}`}>
+        render: (value, record) => (
+          <Link to={`/management/employees/${record.id}`}>
             <CopyTextPopover text={value} />
-          </Link>,
+          </Link>
+        ),
       },
       {
         title: "Họ và tên",
@@ -140,14 +141,13 @@ const DataTable = ({ departmentId }: DataTableProps = {}) => {
         width: 150,
         render: (value) => dayjs(value).format("DD/MM/YYYY HH:mm"),
       },
-
     ],
     [
       dataResponse?.data.pagination.page,
       dataResponse?.data.pagination.limit,
       setSelectedEmployee,
       setPopupUpdateEmployee,
-    ]
+    ],
   );
 
   const columns = useMemo(() => {
@@ -159,7 +159,7 @@ const DataTable = ({ departmentId }: DataTableProps = {}) => {
       setListEmployeeActiveKey(
         columns
           .map((col) => col.key as string)
-          .filter((key) => key !== COLUMN_KEYS.ACTION)
+          .filter((key) => key !== COLUMN_KEYS.ACTION),
       );
     }
   }, [columns, setListEmployeeActiveKey, listEmployeeActiveKey]);
@@ -192,11 +192,8 @@ const DataTable = ({ departmentId }: DataTableProps = {}) => {
       dataResponse?.data.pagination.total,
       dataResponse?.data.pagination.limit,
       dataResponse?.data.pagination.page,
-
-    ]
+    ],
   );
-
-
 
   console.log("dataResponse", dataResponse?.data.pagination);
   return (
@@ -215,7 +212,7 @@ const DataTable = ({ departmentId }: DataTableProps = {}) => {
           ...params,
           page: p.current,
           limit: p.pageSize,
-        })
+        });
       }}
       editColumnMode={true}
     />
