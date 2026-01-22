@@ -2,7 +2,6 @@ import { FaUserGroup } from "react-icons/fa6";
 import { VideoCameraOutlined } from "@ant-design/icons";
 
 import { type RouteItem } from "@/routes";
-import { ROLE_LEVELS } from "@/constants/roleLevel";
 import { EmployeeProvider } from "./pages/employee/EmployeeContext";
 import { DepartmentProvider } from "./pages/department/DepartmentContext";
 import { LeaveApplicationProvider } from "./pages/leave-application/LeaveApplicationContext";
@@ -22,14 +21,9 @@ import EmployeeDetailPage from "./pages/employee_detail";
 import { EmployeeDetailProvider } from "./pages/employee_detail/EmployeeDetailContex";
 import DepartmentDetailPage from "./pages/department_detail";
 import { DepartmentDetailProvider } from "./pages/department_detail/DepartmentDetailContext";
-
-import PerformancePage from "@/pages/Employee/pages/performance";
-import { PerformanceProvider } from "./pages/performance/PerformanceContext";
-import PerformanceDetailPage from "@/pages/Employee/pages/performanceDetail";
-import PerformanceByEmployeePage from "@/pages/Employee/pages/performanceByEmployee";
-import PerformanceByDepartmentPage from "@/pages/Employee/pages/performanceByDepartment";
 import MyPerformancePage from "@/pages/Employee/pages/myPerformance";
-import PerformanceCriteriaPage from "@/pages/Employee/pages/performanceCriteria";
+
+
 
 const route: RouteItem = {
   path: "/employee",
@@ -147,6 +141,11 @@ const route: RouteItem = {
       ),
     },
     {
+      path: "my-performance",
+      name: "Đánh giá của tôi",
+      element: <MyPerformancePage />,
+    },
+    {
       path: "departments/:id",
       name: "Chi tiết phòng ban",
       element: (
@@ -156,47 +155,6 @@ const route: RouteItem = {
       ),
       hideInMenu: true,
     },
-    {
-      path: "performance",
-      name: "Đánh giá",
-      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL, // Manager level (2) and above
-      element: (
-        <PerformanceProvider>
-          <PerformancePage />
-        </PerformanceProvider>
-      ),
-    },
-    {
-      path: "performance-criteria",
-      name: "Tiêu chí đánh giá",
-      minRoleLevel: ROLE_LEVELS.HR_LEVEL, // HR level (3) and above
-      element: <PerformanceCriteriaPage />,
-    },
-    {
-      path: "my-performance",
-      name: "Đánh giá của tôi",
-      // minRoleLevel: 1, // Employee level (1) and above
-      element: <MyPerformancePage />,
-    },
-    {
-      path: "department-performance",
-      name: "Đánh giá phòng ban",
-      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL, // Manager level (2) and above
-      element: <PerformanceByDepartmentPage />,
-    },
-    {
-      path: "performance/:id",
-      name: "Đánh giá chi tiết",
-      element: <PerformanceDetailPage />,
-      hideInMenu: true,
-    },
-    {
-      path: "performance/employee/:employeeId",
-      name: "Đánh giá nhân viên",
-      element: <PerformanceByEmployeePage />,
-      hideInMenu: true,
-    },
-
     {
       path: "meetings",
       name: "Cuộc họp sắp tới",
