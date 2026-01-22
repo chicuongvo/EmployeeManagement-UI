@@ -322,6 +322,7 @@ export function ContractForm({
             }
             required
             disabled={isLoading || !isEditable}
+            className="bg-white"
           />
         </div>
 
@@ -336,6 +337,7 @@ export function ContractForm({
             }
             required
             disabled={isLoading || !isEditable}
+            className="bg-white"
           />
         </div>
 
@@ -350,6 +352,7 @@ export function ContractForm({
             }
             required
             disabled={isLoading || !isEditable}
+            className="bg-white"
           />
         </div>
       </div>
@@ -363,6 +366,7 @@ export function ContractForm({
               value={
                 formData.employeeId ? Number(formData.employeeId) : undefined
               }
+              className="w-full"
               onChange={(value) =>
                 setFormData({
                   ...formData,
@@ -431,6 +435,7 @@ export function ContractForm({
             value={
               formData.signedById ? Number(formData.signedById) : undefined
             }
+            className="w-full"
             onChange={(value) =>
               setFormData({
                 ...formData,
@@ -479,6 +484,7 @@ export function ContractForm({
         <SelectListContractStatus
           placeholder="Chọn trạng thái"
           value={formData.status}
+          className="w-full"
           onChange={(value) =>
             setFormData({
               ...formData,
@@ -499,6 +505,7 @@ export function ContractForm({
           placeholder="Ghi chú về hợp đồng..."
           rows={3}
           disabled={isLoading || !isEditable}
+          className="bg-white"
         />
       </div>
 

@@ -5,8 +5,8 @@ import ManagementPastMeetingsPage from "./pages/meetings/past";
 import ManagementVideoCall from "./pages/video-call";
 import ManagementCreateMeetingPage from "./pages/meetings/create";
 import ManagementMeetingDetailPage from "./pages/meetings/detail";
+import ManagementContractPage from "./pages/contract";
 import { ContractProvider } from "../Employee/pages/contract/ContractContext";
-import ContractPage from "../Employee/pages/contract";
 import ContractDetailPage from "../Employee/pages/contract_detail";
 import { ContractDetailProvider } from "../Employee/pages/contract_detail/ContractDetailContext";
 import UpdateRequestDetailPage from "../Employee/pages/update_request_detail";
@@ -48,7 +48,7 @@ const management_route: RouteItem = {
       name: "Hợp đồng",
       element: (
         <ContractProvider>
-          <ContractPage />
+          <ManagementContractPage />
         </ContractProvider>
       ),
       icon: <FileTextOutlined />,
