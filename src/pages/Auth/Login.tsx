@@ -26,6 +26,9 @@ const Login = () => {
             await signIn(values);
             message.success("Đăng nhập thành công!");
             
+            // Small delay to ensure cookie is set before fetching profile
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
             // Trigger user profile refresh
             setUserChanged(true);
             
