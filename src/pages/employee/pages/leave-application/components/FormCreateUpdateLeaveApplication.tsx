@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import dayjs from "dayjs";
 import SelectListEmployee from "@/components/common/form/SelectListEmployee";
 import SelectListLeaveType from "@/components/common/form/SelectListLeaveType";
+import SelectListLeaveOption from "@/components/common/form/SelectListLeaveOption";
 import SelectLeaveApplicationStatus from "@/components/common/form/SelectLeaveApplicationStatus";
 import { useLeaveApplicationContext } from "../LeaveApplicationContext";
 import type { LeaveApplication } from "@/apis/leave-application/model/LeaveApplication";
@@ -30,6 +31,7 @@ const FormCreateUpdateLeaveApplication = ({
   useEffect(() => {
     if (open && leaveApplication) {
       form.setFieldsValue({
+        leaveDate: leaveApplication.leaveDate ? dayjs(leaveApplication.leaveDate) : null,
         startDate: leaveApplication.startDate
           ? dayjs(leaveApplication.startDate)
           : null,
@@ -39,6 +41,7 @@ const FormCreateUpdateLeaveApplication = ({
         reason: leaveApplication.reason,
         employeeId: leaveApplication.employeeId,
         leaveTypeId: leaveApplication.leaveTypeId,
+        leaveOption: leaveApplication.leaveOption,
         status: leaveApplication.status,
       });
     } else if (open) {
@@ -59,9 +62,13 @@ const FormCreateUpdateLeaveApplication = ({
           endDate: values.endDate
             ? dayjs(values.endDate).format("YYYY-MM-DD")
             : undefined,
+          leaveDate: values.leaveDate
+            ? dayjs(values.leaveDate).format("YYYY-MM-DD")
+            : undefined,
           reason: values.reason,
           employeeId: values.employeeId,
           leaveTypeId: values.leaveTypeId,
+          leaveOption: values.leaveOption,
           status: values.status,
         };
 
@@ -84,8 +91,10 @@ const FormCreateUpdateLeaveApplication = ({
           startDate: dayjs(values.startDate).format("YYYY-MM-DD"),
           endDate: dayjs(values.endDate).format("YYYY-MM-DD"),
           reason: values.reason,
+          leaveDate: dayjs(values.leaveDate).format("YYYY-MM-DD"),
           employeeId: values.employeeId,
           leaveTypeId: values.leaveTypeId,
+          leaveOption: values.leaveOption,
         };
 
         createLeaveApplicationMutation.mutate(payload, {
@@ -155,38 +164,28 @@ const FormCreateUpdateLeaveApplication = ({
 
         <div className="grid grid-cols-2 gap-4">
           <Form.Item
-            label="Ngày bắt đầu"
-            name="startDate"
+            label="Ngày nghỉ"
+            name="leaveDate"
             rules={[
-              { required: true, message: "Vui lòng chọn ngày bắt đầu!" },
+              { required: true, message: "Vui lòng chọn ngày nghỉ!" },
             ]}
           >
             <DatePicker
               format="DD/MM/YYYY"
               placeholder="Chọn ngày bắt đầu"
               style={{ width: "100%" }}
-              disabledDate={(current) => current && current < dayjs().startOf("day")}
+              // disabledDate={(current) => current && current < dayjs().startOf("day")}
             />
           </Form.Item>
 
           <Form.Item
-            label="Ngày kết thúc"
-            name="endDate"
+            label="Buổi nghỉ phép"
+            name="leaveOption"
             rules={[
-              { required: true, message: "Vui lòng chọn ngày kết thúc!" },
+              { required: true, message: "Vui lòng chọn buổi nghỉ phép!" },
             ]}
-            dependencies={["startDate"]}
           >
-            <DatePicker
-              format="DD/MM/YYYY"
-              placeholder="Chọn ngày kết thúc"
-              style={{ width: "100%" }}
-              disabledDate={(current) => {
-                const startDate = form.getFieldValue("startDate");
-                if (!startDate) return current && current < dayjs().startOf("day");
-                return current && current < dayjs(startDate).startOf("day");
-              }}
-            />
+            <SelectListLeaveOption placeholder="Chọn buổi nghỉ phép" />
           </Form.Item>
         </div>
 
