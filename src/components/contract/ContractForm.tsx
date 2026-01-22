@@ -86,7 +86,7 @@ export function ContractForm({
 
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(
-    initialData?.attachment || null
+    initialData?.attachment || null,
   );
   const [fileList, setFileList] = React.useState<UploadFile[]>(
     initialData?.attachment
@@ -96,13 +96,13 @@ export function ContractForm({
             name: initialData.attachment.match(/\.pdf$/i)
               ? "Hợp đồng.pdf"
               : initialData.attachment.match(/\.(jpg|jpeg|png|gif|webp)$/i)
-              ? "Hợp đồng.jpg"
-              : "File đính kèm",
+                ? "Hợp đồng.jpg"
+                : "File đính kèm",
             status: "done",
             url: initialData.attachment,
           },
         ]
-      : []
+      : [],
   );
   const [pdfFileList, setPdfFileList] = React.useState<UploadFile[]>([]);
   const [isExtractingPDF, setIsExtractingPDF] = React.useState(false);
@@ -223,7 +223,7 @@ export function ContractForm({
         message.error(
           `Lỗi khi đọc PDF: ${
             error.response?.data?.message || error.message || "Vui lòng thử lại"
-          }`
+          }`,
         );
         setPdfFileList([]);
       } finally {
@@ -610,17 +610,17 @@ export function ContractForm({
                     (previewUrl?.match(/\.pdf$/i)
                       ? "Hợp đồng.pdf"
                       : previewUrl?.match(/\.(jpg|jpeg|png|gif|webp)$/i)
-                      ? "Hợp đồng.jpg"
-                      : "File đính kèm")}
+                        ? "Hợp đồng.jpg"
+                        : "File đính kèm")}
                 </div>
                 <div className="text-xs text-gray-500">
                   {selectedFile?.type === "application/pdf" ||
                   previewUrl?.match(/\.pdf$/i)
                     ? "PDF Document"
                     : selectedFile?.type?.startsWith("image/") ||
-                      previewUrl?.match(/\.(jpg|jpeg|png|gif|webp)$/i)
-                    ? "Image"
-                    : "File"}
+                        previewUrl?.match(/\.(jpg|jpeg|png|gif|webp)$/i)
+                      ? "Image"
+                      : "File"}
                 </div>
               </div>
               <Button
