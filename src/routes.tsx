@@ -14,6 +14,7 @@ export type RouteItem = Omit<RouteObject, "children"> & {
   icon?: React.ReactNode;
   children?: RouteItem[];
   permissions?: string | string[];
+  minRoleLevel?: number; // Minimum role level required to access this route
 };
 
 export const ROUTER_DASHBOARD = "/employee/employees";

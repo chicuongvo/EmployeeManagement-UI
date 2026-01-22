@@ -29,7 +29,7 @@ import dayjs from "dayjs";
 interface ContractFormProps {
   initialData?: ContractResponse | null;
   onSubmit: (
-    data: CreateContractRequest | UpdateContractRequest | FormData,
+    data: CreateContractRequest | UpdateContractRequest | FormData
   ) => Promise<void>;
   onCancel: () => void;
   isLoading?: boolean;
@@ -86,7 +86,7 @@ export function ContractForm({
 
   const [selectedFile, setSelectedFile] = React.useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = React.useState<string | null>(
-    initialData?.attachment || null,
+    initialData?.attachment || null
   );
   const [fileList, setFileList] = React.useState<UploadFile[]>(
     initialData?.attachment
@@ -96,13 +96,13 @@ export function ContractForm({
             name: initialData.attachment.match(/\.pdf$/i)
               ? "Hợp đồng.pdf"
               : initialData.attachment.match(/\.(jpg|jpeg|png|gif|webp)$/i)
-                ? "Hợp đồng.jpg"
-                : "File đính kèm",
+              ? "Hợp đồng.jpg"
+              : "File đính kèm",
             status: "done",
             url: initialData.attachment,
           },
         ]
-      : [],
+      : []
   );
   const [pdfFileList, setPdfFileList] = React.useState<UploadFile[]>([]);
   const [isExtractingPDF, setIsExtractingPDF] = React.useState(false);
@@ -112,8 +112,18 @@ export function ContractForm({
     const { fileList: newFileList, file } = info;
     setFileList(newFileList);
 
-    if (file.status === "done" || file.originFileObj) {
+    console.log("handleFileUpload - file:", file);
+    console.log("handleFileUpload - file.status:", file.status);
+    console.log("handleFileUpload - file.originFileObj:", file.originFileObj);
+
+    // Với beforeUpload: false, file sẽ không có status "done"
+    // Nên chúng ta check originFileObj trực tiếp
+    if (
+      file.originFileObj ||
+      (file.status !== "removed" && file.status !== "error")
+    ) {
       const uploadedFile = file.originFileObj || (file as any);
+      console.log("handleFileUpload - Setting selectedFile:", uploadedFile);
       setSelectedFile(uploadedFile);
 
       // Preview for images
@@ -213,7 +223,7 @@ export function ContractForm({
         message.error(
           `Lỗi khi đọc PDF: ${
             error.response?.data?.message || error.message || "Vui lòng thử lại"
-          }`,
+          }`
         );
         setPdfFileList([]);
       } finally {
@@ -241,44 +251,37 @@ export function ContractForm({
       return;
     }
 
-    // Nếu có file, dùng FormData
-    if (selectedFile) {
-      const formDataToSend = new FormData();
-      formDataToSend.append("attachment", selectedFile);
-      formDataToSend.append("type", formData.type);
-      formDataToSend.append("startDate", formData.startDate);
-      formDataToSend.append("endDate", formData.endDate);
-      formDataToSend.append("signedDate", formData.signedDate);
-      formDataToSend.append("status", formData.status);
-      formDataToSend.append("dailySalary", formData.dailySalary);
-      formDataToSend.append("allowance", formData.allowance);
-      if (formData.note) formDataToSend.append("note", formData.note);
-      if (formData.employeeId)
-        formDataToSend.append("employeeId", formData.employeeId);
-      if (formData.signedById)
-        formDataToSend.append("signedById", formData.signedById);
+    // Luôn dùng FormData để tương thích với multer middleware
+    const formDataToSend = new FormData();
 
-      await onSubmit(formDataToSend);
+    // Debug log
+    console.log("ContractForm - selectedFile:", selectedFile);
+    console.log("ContractForm - selectedFile type:", selectedFile?.type);
+    console.log("ContractForm - selectedFile name:", selectedFile?.name);
+
+    // Thêm file nếu có
+    if (selectedFile) {
+      formDataToSend.append("attachment", selectedFile);
+      console.log("ContractForm - File added to FormData");
     } else {
-      // Không có file, gửi JSON
-      const data: CreateContractRequest | UpdateContractRequest = {
-        type: formData.type,
-        startDate: formData.startDate,
-        endDate: formData.endDate,
-        signedDate: formData.signedDate,
-        status: formData.status,
-        dailySalary: parseFloat(formData.dailySalary) || 0,
-        allowance: parseFloat(formData.allowance) || 0,
-        note: formData.note || undefined,
-        signedById: formData.signedById ? parseInt(formData.signedById) : undefined,
-        ...(mode === "create"
-          ? {
-              employeeId: parseInt(formData.employeeId),
-            }
-          : {}),
-      };
-      await onSubmit(data);
+      console.log("ContractForm - No file to add");
     }
+
+    // Thêm các field khác
+    formDataToSend.append("type", formData.type);
+    formDataToSend.append("startDate", formData.startDate);
+    formDataToSend.append("endDate", formData.endDate);
+    formDataToSend.append("signedDate", formData.signedDate);
+    formDataToSend.append("status", formData.status);
+    formDataToSend.append("dailySalary", formData.dailySalary);
+    formDataToSend.append("allowance", formData.allowance);
+    if (formData.note) formDataToSend.append("note", formData.note);
+    if (formData.employeeId)
+      formDataToSend.append("employeeId", formData.employeeId);
+    if (formData.signedById)
+      formDataToSend.append("signedById", formData.signedById);
+
+    await onSubmit(formDataToSend);
   };
 
   const uploadProps: UploadProps = {
@@ -308,7 +311,10 @@ export function ContractForm({
             placeholder="Chọn loại hợp đồng"
             value={formData.type}
             onChange={(value) =>
-              setFormData({ ...formData, type: (value || "FULL_TIME") as ContractType })
+              setFormData({
+                ...formData,
+                type: (value || "FULL_TIME") as ContractType,
+              })
             }
             disabled={isLoading || !isEditable}
             allowClear={false}
@@ -400,13 +406,27 @@ export function ContractForm({
             <Label htmlFor="employeeId">Nhân viên *</Label>
             <SelectListEmployee
               placeholder="Chọn nhân viên"
-              value={formData.employeeId ? Number(formData.employeeId) : undefined}
+              value={
+                formData.employeeId ? Number(formData.employeeId) : undefined
+              }
               onChange={(value) =>
-                setFormData({ ...formData, employeeId: value ? value.toString() : "" })
+                setFormData({
+                  ...formData,
+                  employeeId: value ? value.toString() : "",
+                })
               }
               allowClear={false}
               disabled={isLoading || !isEditable}
-              defaultValue={initialData?.employeeId ? [{ id: initialData.employeeId, name: initialData.employee?.fullName || "" }] : []}
+              defaultValue={
+                initialData?.employeeId
+                  ? [
+                      {
+                        id: initialData.employeeId,
+                        name: initialData.employee?.fullName || "",
+                      },
+                    ]
+                  : []
+              }
             />
           </div>
         ) : (
@@ -415,19 +435,35 @@ export function ContractForm({
             {isEditable ? (
               <SelectListEmployee
                 placeholder="Chọn nhân viên"
-                value={formData.employeeId ? Number(formData.employeeId) : undefined}
+                value={
+                  formData.employeeId ? Number(formData.employeeId) : undefined
+                }
                 onChange={(value) =>
-                  setFormData({ ...formData, employeeId: value ? value.toString() : "" })
+                  setFormData({
+                    ...formData,
+                    employeeId: value ? value.toString() : "",
+                  })
                 }
                 allowClear={false}
                 disabled={true}
-                defaultValue={initialData?.employeeId ? [{ id: initialData.employeeId, name: initialData.employee?.fullName || "" }] : []}
+                defaultValue={
+                  initialData?.employeeId
+                    ? [
+                        {
+                          id: initialData.employeeId,
+                          name: initialData.employee?.fullName || "",
+                        },
+                      ]
+                    : []
+                }
               />
             ) : (
               <div className="px-3 py-2 border rounded-md bg-gray-50">
                 <div>{initialData?.employee?.fullName || "-"}</div>
                 {initialData?.employee?.email && (
-                  <div className="text-sm text-gray-500">{initialData.employee.email}</div>
+                  <div className="text-sm text-gray-500">
+                    {initialData.employee.email}
+                  </div>
                 )}
               </div>
             )}
@@ -438,13 +474,27 @@ export function ContractForm({
           <Label htmlFor="signedById">Người ký *</Label>
           <SelectListEmployee
             placeholder="Chọn người ký"
-            value={formData.signedById ? Number(formData.signedById) : undefined}
+            value={
+              formData.signedById ? Number(formData.signedById) : undefined
+            }
             onChange={(value) =>
-              setFormData({ ...formData, signedById: value ? value.toString() : "" })
+              setFormData({
+                ...formData,
+                signedById: value ? value.toString() : "",
+              })
             }
             allowClear={false}
             disabled={isLoading || !isEditable}
-            defaultValue={initialData?.signedById ? [{ id: initialData.signedById, name: initialData.signedBy?.fullName || "" }] : []}
+            defaultValue={
+              initialData?.signedById
+                ? [
+                    {
+                      id: initialData.signedById,
+                      name: initialData.signedBy?.fullName || "",
+                    },
+                  ]
+                : []
+            }
           />
         </div>
       </div>
@@ -476,7 +526,10 @@ export function ContractForm({
           placeholder="Chọn trạng thái"
           value={formData.status}
           onChange={(value) =>
-            setFormData({ ...formData, status: (value || "DRAFT") as ContractStatus })
+            setFormData({
+              ...formData,
+              status: (value || "DRAFT") as ContractStatus,
+            })
           }
           disabled={isLoading || !isEditable}
           allowClear={false}
@@ -557,17 +610,17 @@ export function ContractForm({
                     (previewUrl?.match(/\.pdf$/i)
                       ? "Hợp đồng.pdf"
                       : previewUrl?.match(/\.(jpg|jpeg|png|gif|webp)$/i)
-                        ? "Hợp đồng.jpg"
-                        : "File đính kèm")}
+                      ? "Hợp đồng.jpg"
+                      : "File đính kèm")}
                 </div>
                 <div className="text-xs text-gray-500">
                   {selectedFile?.type === "application/pdf" ||
                   previewUrl?.match(/\.pdf$/i)
                     ? "PDF Document"
                     : selectedFile?.type?.startsWith("image/") ||
-                        previewUrl?.match(/\.(jpg|jpeg|png|gif|webp)$/i)
-                      ? "Image"
-                      : "File"}
+                      previewUrl?.match(/\.(jpg|jpeg|png|gif|webp)$/i)
+                    ? "Image"
+                    : "File"}
                 </div>
               </div>
               <Button
@@ -603,8 +656,8 @@ export function ContractForm({
             {isLoading
               ? "Đang xử lý..."
               : mode === "create"
-                ? "Tạo hợp đồng"
-                : "Cập nhật"}
+              ? "Tạo hợp đồng"
+              : "Cập nhật"}
           </Button>
         </div>
       )}

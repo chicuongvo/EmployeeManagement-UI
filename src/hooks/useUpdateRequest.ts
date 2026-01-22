@@ -4,8 +4,9 @@ import { UpdateRequestContext } from "../pages/Management/pages/update-request/U
 export const useUpdateRequest = () => {
   const context = useContext(UpdateRequestContext);
   if (!context) {
-    throw new Error("useUpdateRequest must be used within an UpdateRequestProvider");
+    throw new Error(
+      "useUpdateRequest must be used within an UpdateRequestProvider",
+    );
   }
   return context;
 };
-
