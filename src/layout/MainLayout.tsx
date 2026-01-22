@@ -7,14 +7,15 @@ import {
   useNavigate,
   Navigate,
 } from "react-router-dom";
-import { LogoutOutlined } from "@ant-design/icons";
 import { useEffect } from "react";
 import useGetMenus from "../hooks/useGetMenu";
 import { ROUTER_DASHBOARD, ROUTER_LOGIN } from "../routes";
 import { NotificationBell } from "@/components/common/shared/NotificationBell";
 import { CheckInButton } from "@/components/common/shared/CheckInButton";
 import { useUser } from "@/hooks/useUser";
-import { LockOutlined } from "@ant-design/icons";
+import { LogoutOutlined, LockOutlined } from "@ant-design/icons";
+import { Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 
 // Auth-related imports (commented out for now)
 // import { Input, Tooltip } from "antd";
@@ -85,16 +86,10 @@ const MainLayout = () => {
   // Show loading while checking auth
   if (isLoading) {
     return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-        }}
-      >
-        <div>Loading...</div>
-      </div>
+      <Spin
+          indicator={<LoadingOutlined className="text-primary-100" spin />}
+          size="small"
+        />  
     );
   }
 

@@ -12,7 +12,7 @@ import TableComponent from "@/components/common/table/TableComponent";
 import type { EMPLOYEE } from "@/apis/employee/model/Employee";
 import CopyTextPopover from "@/components/common/shared/CopyTextPopover";
 import { WorkStatus } from "@/components/common/status";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 interface DataTableProps {
   departmentId?: number;
@@ -27,6 +27,10 @@ const DataTable = ({ departmentId }: DataTableProps = {}) => {
     setSelectedEmployee,
     setPopupUpdateEmployee,
   } = useEmployeeContext();
+
+  const location = useLocation();
+  const pathname = location.pathname;
+  const isMeRoute = pathname.includes("/me");
 
   const { setListEmployeeActiveKey, listEmployeeActiveKey } = useTableStore(
     (state) => state,
@@ -53,11 +57,16 @@ const DataTable = ({ departmentId }: DataTableProps = {}) => {
         align: "center",
         fixed: "left",
         width: 150,
-        render: (value, record) => (
-          <Link to={`/management/employees/${record.id}`}>
-            <CopyTextPopover text={value} />
-          </Link>
-        ),
+        render: (value, record) => {
+          if (isMeRoute) {
+            return <CopyTextPopover text={value} />;
+          }
+          return (
+            <Link to={`/management/employees/${record.id}`}>
+              <CopyTextPopover text={value} />
+            </Link>
+          );
+        },
       },
       {
         title: "Họ và tên",
@@ -147,6 +156,8 @@ const DataTable = ({ departmentId }: DataTableProps = {}) => {
       dataResponse?.data.pagination.limit,
       setSelectedEmployee,
       setPopupUpdateEmployee,
+      departmentId,
+      isMeRoute,
     ],
   );
 

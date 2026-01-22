@@ -1,9 +1,10 @@
 /* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { getDepartment } from "@/apis/department/getDepartment";
 import type { DEPARTMENT } from "@/apis/department/model/Department";
+import { useUser } from "@/hooks/useUser";
 
 interface DepartmentDetailContextType {
     department: DEPARTMENT | undefined;
@@ -22,7 +23,18 @@ export const DepartmentDetailProvider: React.FC<{
     children: React.ReactNode;
 }> = ({ children }) => {
     const params = useParams();
+    const location = useLocation();
+    const pathname = location.pathname;
+    const { userProfile } = useUser();
     const [editMode, setEditMode] = useState(false);
+
+    // Determine department ID: use user's departmentId if route is /me, otherwise use params.id
+    const departmentId = useMemo(() => {
+        if (pathname.includes("/me")) {
+            return userProfile?.department?.id || 0;
+        }
+        return Number(params.id) || 0;
+    }, [pathname, params.id, userProfile?.department?.id]);
 
     const {
         isLoading: isLoadingDepartment,
@@ -30,10 +42,10 @@ export const DepartmentDetailProvider: React.FC<{
         refetch: refetchDepartment,
     } = useQuery({
         queryFn: (): Promise<DEPARTMENT> => {
-            return getDepartment(Number(params.id) || 0);
+            return getDepartment(departmentId);
         },
-        queryKey: ["department-detail", Number(params.id)],
-        enabled: !!Number(params.id),
+        queryKey: ["department-detail", departmentId],
+        enabled: !!departmentId,
     });
 
     const isEditable = useMemo(() => editMode, [editMode]);

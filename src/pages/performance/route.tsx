@@ -16,7 +16,6 @@ const route: RouteItem = {
     <span className="font-primary">Đánh giá</span>
   ) as unknown as string,
   element: <MainLayout />,
-  icon: <TrophyOutlined className="text-base font-primary" />,
   minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL, // Manager level (2) and above
   children: [
     {

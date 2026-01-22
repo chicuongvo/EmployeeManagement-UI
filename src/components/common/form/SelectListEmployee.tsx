@@ -72,7 +72,7 @@ const SelectListEmployee = ({
                   display: "flex",
                   alignItems: "center",
                   gap: 12,
-                  padding: "4px 0",
+                  padding: "2px 0",
                 }}
               >
                 <Avatar
@@ -80,11 +80,11 @@ const SelectListEmployee = ({
                     d.avatar ??
                     "https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg"
                   }
-                  size="large"
+                  size="small"
                   style={{ flexShrink: 0 }}
                 ></Avatar>
                 <span
-                  style={{ fontSize: "15px", fontWeight: 500 }}
+                  style={{ fontSize: "13px", fontWeight: 500 }}
                 >{`${d.fullName} - #${d.employeeCode}`}</span>
               </div>
             ),
@@ -103,13 +103,13 @@ const SelectListEmployee = ({
                 display: "flex",
                 alignItems: "center",
                 gap: 12,
-                padding: "4px 0",
+                padding: "2px 0",
               }}
             >
-              <Avatar size="large" style={{ flexShrink: 0 }}>
+              <Avatar size="small" style={{ flexShrink: 0 }}>
                 {item.name?.charAt(0)?.toUpperCase() || "?"}
               </Avatar>
-              <span style={{ fontSize: "15px", fontWeight: 500 }}>
+              <span style={{ fontSize: "13px", fontWeight: 500 }}>
                 {item.name}
               </span>
             </div>
