@@ -110,6 +110,20 @@ export default function PerformanceByDepartmentPage() {
         return scoreObj ? scoreObj.score : null;
     };
 
+    const calculateAverageScore = (detail: DepartmentPerformanceDetail): number | null => {
+        // Use average_score if available, otherwise calculate from scores
+        if (detail.average_score != null) {
+            return detail.average_score;
+        }
+        
+        if (!detail.scores || detail.scores.length === 0) {
+            return null;
+        }
+        
+        const sum = detail.scores.reduce((acc, s) => acc + s.score, 0);
+        return sum / detail.scores.length;
+    };
+
     // Build columns dynamically
     const columns: ColumnsType<DepartmentPerformanceDetail> = useMemo(() => {
         const fixedColumns: ColumnsType<DepartmentPerformanceDetail> = [
@@ -194,7 +208,7 @@ export default function PerformanceByDepartmentPage() {
                 align: "center",
                 width: 100,
                 render: (_, record) => {
-                    const score = record.average_score;
+                    const score = calculateAverageScore(record);
                     let color = "default";
                     if (score != null) {
                         if (score >= 1.1) color = "green";
