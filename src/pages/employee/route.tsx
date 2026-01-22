@@ -1,4 +1,5 @@
 import { FaUserGroup } from "react-icons/fa6";
+import { VideoCameraOutlined } from "@ant-design/icons";
 
 import { type RouteItem } from "@/routes";
 import { ROLE_LEVELS } from "@/constants/roleLevel";
@@ -6,19 +7,13 @@ import { EmployeeProvider } from "./pages/employee/EmployeeContext";
 import { DepartmentProvider } from "./pages/department/DepartmentContext";
 import { LeaveApplicationProvider } from "./pages/leave-application/LeaveApplicationContext";
 import EmployeePage from "./pages/employee";
-import { UpdateRequestProvider } from "./pages/update-request/UpdateRequestContext";
-import UpdateRequestPage from "./pages/update-request";
 import MyRequestsPage from "./pages/update-request/my-requests";
-import { ContractProvider } from "./pages/contract/ContractContext";
-import ContractPage from "./pages/contract";
 import MyContractsPage from "./pages/contract/my-contracts";
 import ContractDetailPage from "./pages/contract_detail";
 import { ContractDetailProvider } from "./pages/contract_detail/ContractDetailContext";
 import UpdateRequestDetailPage from "./pages/update_request_detail";
 import { UpdateRequestDetailProvider } from "./pages/update_request_detail/UpdateRequestDetailContext";
 import MeetingPage from "./pages/meeting";
-import CreateMeetingPage from "./pages/meeting/create";
-import MeetingDetailPage from "./pages/meeting/detail";
 import DepartmentPage from "./pages/department";
 import LeaveApplicationPage from "./pages/leave-application";
 import VideoCall from "./pages/video-call";
@@ -28,13 +23,13 @@ import { EmployeeDetailProvider } from "./pages/employee_detail/EmployeeDetailCo
 import DepartmentDetailPage from "./pages/department_detail";
 import { DepartmentDetailProvider } from "./pages/department_detail/DepartmentDetailContext";
 
-import PerformancePage from "@/pages/employee/pages/performance";
+import PerformancePage from "@/pages/Employee/pages/performance";
 import { PerformanceProvider } from "./pages/performance/PerformanceContext";
-import PerformanceDetailPage from "@/pages/employee/pages/performanceDetail";
-import PerformanceByEmployeePage from "@/pages/employee/pages/performanceByEmployee";
-import PerformanceByDepartmentPage from "@/pages/employee/pages/performanceByDepartment";
-import MyPerformancePage from "@/pages/employee/pages/myPerformance";
-import PerformanceCriteriaPage from "@/pages/employee/pages/performanceCriteria";
+import PerformanceDetailPage from "@/pages/Employee/pages/performanceDetail";
+import PerformanceByEmployeePage from "@/pages/Employee/pages/performanceByEmployee";
+import PerformanceByDepartmentPage from "@/pages/Employee/pages/performanceByDepartment";
+import MyPerformancePage from "@/pages/Employee/pages/myPerformance";
+import PerformanceCriteriaPage from "@/pages/Employee/pages/performanceCriteria";
 
 const route: RouteItem = {
   path: "/employee",
@@ -72,15 +67,6 @@ const route: RouteItem = {
         </EmployeeDetailProvider>
       ),
       hideInMenu: true,
-    },
-    {
-      path: "update-requests",
-      name: "Yêu cầu cập nhật",
-      element: (
-        <UpdateRequestProvider>
-          <UpdateRequestPage />
-        </UpdateRequestProvider>
-      ),
     },
     {
       path: "update-requests/add-new",
@@ -126,35 +112,6 @@ const route: RouteItem = {
       path: "my-update-requests",
       name: "Đơn yêu cầu của tôi",
       element: <MyRequestsPage />,
-    },
-    {
-      path: "contracts",
-      name: "Hợp đồng",
-      element: (
-        <ContractProvider>
-          <ContractPage />
-        </ContractProvider>
-      ),
-    },
-    {
-      path: "contracts/add-new",
-      name: "Thêm mới",
-      element: (
-        <ContractDetailProvider>
-          <ContractDetailPage />
-        </ContractDetailProvider>
-      ),
-      hideInMenu: true,
-    },
-    {
-      path: "contracts/:id",
-      name: "Chi tiết",
-      element: (
-        <ContractDetailProvider>
-          <ContractDetailPage />
-        </ContractDetailProvider>
-      ),
-      hideInMenu: true,
     },
     {
       path: "my-contracts",
@@ -242,26 +199,15 @@ const route: RouteItem = {
 
     {
       path: "meetings",
-      name: "Cuộc họp",
+      name: "Cuộc họp sắp tới",
       element: <MeetingPage />,
-    },
-    {
-      path: "meetings/add-new",
-      name: "Tạo cuộc họp",
-      element: <CreateMeetingPage />,
-      hideInMenu: true,
-    },
-    {
-      path: "meetings/:id",
-      name: "Chi tiết cuộc họp",
-      element: <MeetingDetailPage />,
-      hideInMenu: true,
+      icon: <VideoCameraOutlined />,
     },
     {
       path: "video-call",
       name: "Video Call",
-      hideInMenu: true,
       element: <VideoCall />,
+      hideInMenu: true,
     },
   ],
 };

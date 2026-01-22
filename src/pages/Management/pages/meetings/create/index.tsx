@@ -10,7 +10,7 @@ import { MdSaveAs } from "react-icons/md";
 import { IoMdCloseCircle } from "react-icons/io";
 import CircleButton from "@/components/common/button/CircleButton";
 
-const CreateMeetingPage = () => {
+const ManagementCreateMeetingPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<{
@@ -28,11 +28,11 @@ const CreateMeetingPage = () => {
       setIsLoading(true);
       await createMeeting(data);
       toast.success("Tạo cuộc họp thành công!");
-      navigate("/employee/meetings"); // Navigate to list page instead of detail (detail page not implemented yet)
-    } catch (error: any) {
+      navigate("/management/meetings/past");
+    } catch (error: unknown) {
       console.error("Error creating meeting:", error);
       toast.error(
-        error.response?.data?.message || "Có lỗi xảy ra khi tạo cuộc họp"
+        error.response?.data?.message || "Có lỗi xảy ra khi tạo cuộc họp",
       );
       throw error;
     } finally {
@@ -41,7 +41,7 @@ const CreateMeetingPage = () => {
   };
 
   const handleCancel = useCallback(() => {
-    navigate("/employee/meetings");
+    navigate("/management/meetings/past");
   }, [navigate]);
 
   const handleFormDataChange = useCallback((data: typeof formData) => {
@@ -49,8 +49,7 @@ const CreateMeetingPage = () => {
   }, []);
 
   const disableSubmit = useMemo(() => {
-    const hasAllRequiredFields =
-      formData.title.trim() && formData.scheduledAt;
+    const hasAllRequiredFields = formData.title.trim() && formData.scheduledAt;
     return !hasAllRequiredFields;
   }, [formData]);
 
@@ -67,11 +66,10 @@ const CreateMeetingPage = () => {
         breadcrumb: {
           items: [
             {
-              title: "Hồ sơ nhân sự",
+              title: "Quản lý nhân sự",
             },
             {
               title: "Cuộc họp",
-              href: "/employee/meetings",
             },
             {
               title: "Tạo cuộc họp mới",
@@ -120,4 +118,4 @@ const CreateMeetingPage = () => {
   );
 };
 
-export default CreateMeetingPage;
+export default ManagementCreateMeetingPage;

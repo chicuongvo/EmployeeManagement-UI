@@ -23,8 +23,6 @@ export type ContractResponse = {
   endDate: string;
   signedDate: string;
   status: ContractStatus;
-  dailySalary: number;
-  allowance: number;
   note?: string | null;
   attachment?: string | null;
   createdAt: string;
@@ -49,8 +47,6 @@ export type CreateContractRequest = {
   endDate: string;
   signedDate: string;
   status?: ContractStatus;
-  dailySalary: number;
-  allowance: number;
   note?: string;
   attachment?: string;
   signedById?: number; // Optional - backend sẽ tự động lấy từ token
@@ -69,8 +65,6 @@ export type RenewContractRequest = {
   startDate: string;
   endDate: string;
   signedDate: string;
-  dailySalary: number;
-  allowance: number;
   note?: string;
 };
 
@@ -100,4 +94,3 @@ export type ContractStats = {
   pending: number;
   renewed: number;
 };
-

@@ -11,7 +11,7 @@ import type {
 
 // Get all contracts
 export const getAllContracts = async (
-  params?: ContractQueryParams
+  params?: ContractQueryParams,
 ): Promise<{
   data: ContractResponse[];
   pagination: {
@@ -48,7 +48,7 @@ export const getAllContracts = async (
 
 // Get contract by ID
 export const getContractById = async (
-  id: number
+  id: number,
 ): Promise<ContractResponse> => {
   const response = await axiosClient.get(`/contract/${id}`);
   return response.data.data;
@@ -56,7 +56,7 @@ export const getContractById = async (
 
 // Create contract
 export const createContract = async (
-  data: CreateContractRequest | FormData
+  data: CreateContractRequest | FormData,
 ): Promise<ContractResponse> => {
   const response = await axiosClient.post("/contract", data, {
     headers:
@@ -70,7 +70,7 @@ export const createContract = async (
 // Update contract
 export const updateContract = async (
   id: number,
-  data: UpdateContractRequest | FormData
+  data: UpdateContractRequest | FormData,
 ): Promise<ContractResponse> => {
   const response = await axiosClient.put(`/contract/${id}`, data, {
     headers:
@@ -83,7 +83,7 @@ export const updateContract = async (
 
 // Delete contract
 export const deleteContract = async (
-  id: number
+  id: number,
 ): Promise<{ message: string }> => {
   const response = await axiosClient.delete(`/contract/${id}`);
   return response.data;
@@ -92,7 +92,7 @@ export const deleteContract = async (
 // Update contract status
 export const updateContractStatus = async (
   id: number,
-  data: UpdateContractStatusRequest
+  data: UpdateContractStatusRequest,
 ): Promise<ContractResponse> => {
   const response = await axiosClient.patch(`/contract/${id}/status`, data);
   return response.data.data;
@@ -100,7 +100,7 @@ export const updateContractStatus = async (
 
 // Get contracts by employee
 export const getContractsByEmployee = async (
-  employeeId: number
+  employeeId: number,
 ): Promise<ContractResponse[]> => {
   const response = await axiosClient.get(`/contract/employee/${employeeId}`);
   return response.data.data;
@@ -108,7 +108,7 @@ export const getContractsByEmployee = async (
 
 // Get contracts by manager
 export const getContractsByManager = async (
-  managerId: number
+  managerId: number,
 ): Promise<ContractResponse[]> => {
   const response = await axiosClient.get(`/contract/signed-by/${managerId}`);
   return response.data.data;
@@ -117,7 +117,7 @@ export const getContractsByManager = async (
 // Renew contract
 export const renewContract = async (
   id: number,
-  data: RenewContractRequest
+  data: RenewContractRequest,
 ): Promise<ContractResponse> => {
   const response = await axiosClient.post(`/contract/${id}/renew`, data);
   return response.data.data;
@@ -131,15 +131,13 @@ export const getContractStats = async (): Promise<ContractStats> => {
 
 // Extract contract info from PDF
 export const extractContractFromPDF = async (
-  pdfFile: File
+  pdfFile: File,
 ): Promise<{
   contractCode: string | null;
   type: string;
   startDate: string | null;
   endDate: string | null;
   signedDate: string | null;
-  dailySalary: number | null;
-  allowance: number;
   note: string | null;
   employeeName: string | null;
   employeeId: number | null;
@@ -155,7 +153,7 @@ export const extractContractFromPDF = async (
       headers: {
         "Content-Type": "multipart/form-data",
       },
-    }
+    },
   );
   return response.data.data;
 };

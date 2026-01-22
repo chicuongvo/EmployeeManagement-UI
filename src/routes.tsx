@@ -1,6 +1,6 @@
 import { Navigate, type RouteObject } from "react-router-dom";
 
-import employee_route from "./pages/employee/route";
+import employee_route from "./pages/Employee/route";
 import project_route from "./pages/project/route";
 import attendance_route from "./pages/attendance/route";
 import holiday_route from "./pages/holiday/route";

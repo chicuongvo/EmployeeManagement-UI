@@ -6,7 +6,10 @@ import PageTitle from "@/components/common/shared/PageTitle";
 import { useContractDetailContext } from "./ContractDetailContext";
 import { ContractForm } from "@/components/contract/ContractForm";
 import { createContract, updateContract } from "@/services/contract";
-import type { CreateContractRequest, UpdateContractRequest } from "@/types/Contract";
+import type {
+  CreateContractRequest,
+  UpdateContractRequest,
+} from "@/types/Contract";
 import type { ContractType, ContractStatus } from "@/types/Contract";
 import { MdEditSquare, MdSaveAs } from "react-icons/md";
 import { IoMdCloseCircle } from "react-icons/io";
@@ -34,8 +37,6 @@ const Index = () => {
     endDate: string;
     signedDate: string;
     status: ContractStatus;
-    dailySalary: string;
-    allowance: string;
     note: string;
     employeeId: string;
     signedById: string;
@@ -46,20 +47,18 @@ const Index = () => {
     endDate: contract?.endDate ? contract.endDate.split("T")[0] : "",
     signedDate: contract?.signedDate ? contract.signedDate.split("T")[0] : "",
     status: (contract?.status || "DRAFT") as ContractStatus,
-    dailySalary: contract?.dailySalary?.toString() || "",
-    allowance: contract?.allowance?.toString() || "",
     note: contract?.note || "",
     employeeId: contract?.employeeId?.toString() || "",
     signedById: contract?.signedById?.toString() || "",
   });
 
   const handleCreate = async (
-    data: CreateContractRequest | UpdateContractRequest | FormData
+    data: CreateContractRequest | UpdateContractRequest | FormData,
   ) => {
     try {
       setIsLoading(true);
       const result = await createContract(
-        data as CreateContractRequest | FormData
+        data as CreateContractRequest | FormData,
       );
       toast.success("Tạo hợp đồng thành công!");
 
@@ -67,13 +66,13 @@ const Index = () => {
         // Nếu tạo trong ngữ cảnh "Hợp đồng của tôi" (sau này nếu có), quay về danh sách của tôi
         navigate("/employee/my-contracts");
       } else {
-        navigate(`/employee/contracts/${result.id}`);
+        navigate(`/management/contracts/${result.id}`);
         refetchContract();
       }
     } catch (error: any) {
       console.error("Error creating contract:", error);
       toast.error(
-        error.response?.data?.message || "Có lỗi xảy ra khi tạo hợp đồng"
+        error.response?.data?.message || "Có lỗi xảy ra khi tạo hợp đồng",
       );
       throw error;
     } finally {
@@ -82,14 +81,14 @@ const Index = () => {
   };
 
   const handleUpdate = async (
-    data: CreateContractRequest | UpdateContractRequest | FormData
+    data: CreateContractRequest | UpdateContractRequest | FormData,
   ) => {
     if (!contract?.id) return;
     try {
       setIsLoading(true);
       await updateContract(
         contract.id,
-        data as UpdateContractRequest | FormData
+        data as UpdateContractRequest | FormData,
       );
       toast.success("Cập nhật hợp đồng thành công!");
       setEditMode(false);
@@ -97,7 +96,7 @@ const Index = () => {
     } catch (error: any) {
       console.error("Error updating contract:", error);
       toast.error(
-        error.response?.data?.message || "Có lỗi xảy ra khi cập nhật hợp đồng"
+        error.response?.data?.message || "Có lỗi xảy ra khi cập nhật hợp đồng",
       );
       throw error;
     } finally {
@@ -107,7 +106,9 @@ const Index = () => {
 
   const handleCancel = useCallback(() => {
     if (isCreate) {
-      navigate(isFromMyContracts ? "/employee/my-contracts" : "/employee/contracts");
+      navigate(
+        isFromMyContracts ? "/employee/my-contracts" : "/management/contracts",
+      );
       return;
     }
     if (editMode) {
@@ -115,7 +116,9 @@ const Index = () => {
       return;
     }
     // Đang ở màn chi tiết (không edit): quay lại danh sách tương ứng
-    navigate(isFromMyContracts ? "/employee/my-contracts" : "/employee/contracts");
+    navigate(
+      isFromMyContracts ? "/employee/my-contracts" : "/management/contracts",
+    );
   }, [isCreate, navigate, editMode, setEditMode, isFromMyContracts]);
 
   const handleFormDataChange = useCallback((data: typeof formData) => {
@@ -128,8 +131,6 @@ const Index = () => {
         formData.startDate &&
         formData.endDate &&
         formData.signedDate &&
-        formData.dailySalary &&
-        formData.allowance &&
         formData.employeeId &&
         formData.signedById;
       return !hasAllRequiredFields;
@@ -235,7 +236,7 @@ const Index = () => {
               title: isFromMyContracts ? "Hợp đồng của tôi" : "Hợp đồng",
               href: isFromMyContracts
                 ? "/employee/my-contracts?tab=1"
-                : "/employee/contracts?limit=10&page=1&tab=1",
+                : "/management/contracts?limit=10&page=1&tab=1",
             },
             {
               title: isCreate ? "Thêm mới" : "Chi tiết",
@@ -243,7 +244,9 @@ const Index = () => {
           ],
         },
       }}
-      title={<PageTitle title={`${isCreate ? "Thêm mới" : "Chi tiết"} hợp đồng`} />}
+      title={
+        <PageTitle title={`${isCreate ? "Thêm mới" : "Chi tiết"} hợp đồng`} />
+      }
     >
       <div className="px-6 my-3">
         <ContractForm
