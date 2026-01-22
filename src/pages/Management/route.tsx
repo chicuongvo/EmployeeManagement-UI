@@ -19,6 +19,8 @@ import {
   FileTextOutlined,
   CalendarOutlined,
 } from "@ant-design/icons";
+import { LeaveApplicationProvider } from "../employee/pages/leave-application/LeaveApplicationContext";
+import MyLeaveApplicationPage from "../Employee/pages/my-leave-applications";
 import { FaProjectDiagram } from "react-icons/fa";
 import { ProjectProvider } from "../employee/pages/project/ProjectContext";
 import { ProjectDetailProvider } from "../employee/pages/project-detail/ProjectDetailContext";
@@ -33,6 +35,7 @@ import { FaUserGroup } from "react-icons/fa6";
 import { EmployeeProvider } from "./pages/employee/EmployeeContext";
 import { EmployeeDetailProvider } from "./pages/employee_detail/EmployeeDetailContex";
 import EmployeeDetailPage from "./pages/employee_detail";
+import ManagementAttendanceCorrectionPage from "./pages/attendance-correction";
 import { DepartmentProvider } from "../Employee/pages/department/DepartmentContext";
 import DepartmentDetailPage from "../Employee/pages/department_detail";
 import DepartmentPage from "../Employee/pages/department";
@@ -50,6 +53,15 @@ const management_route: RouteItem = {
   icon: <FaUserGroup className="text-base font-primary" />,
   minRoleLevel: ROLE_LEVELS.SIDEBAR_MIN_LEVEL_MANAGEMENT,
   children: [
+    {
+      path: "leave-applications",
+      name: "Đơn nghỉ phép",
+      element: (
+        <LeaveApplicationProvider>
+          <MyLeaveApplicationPage />
+        </LeaveApplicationProvider>
+      ),
+    },
     {
       path: "employees",
       name: "Hồ sơ nhân sự",
@@ -222,7 +234,20 @@ const management_route: RouteItem = {
       name: "Chấm công",
       icon: <CalendarOutlined />,
       minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
-      element: <AttendanceManagementPage />,
+      children: [
+        {
+          path: "reports",
+          name: "Báo cáo chấm công",
+          element: <AttendanceManagementPage />,
+          minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+        },
+        {
+          path: "correction-requests",
+          name: "Quản lý đơn điểm danh bù",
+          element: <ManagementAttendanceCorrectionPage />,
+          minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+        },
+      ],
     },
     {
       path: "holiday/management",

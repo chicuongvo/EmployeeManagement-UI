@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo } from "react";
 import { Card, Form, Input, Select } from "antd";
+import { useUser } from "@/hooks/useUser";
 
 import BoxFilter from "@/components/common/shared/BoxFiltered";
 import { useEmployeeContext } from "../EmployeeContext";
@@ -17,6 +18,13 @@ interface FormFilterProps {
 const FormFilter = ({ onSearch }: FormFilterProps) => {
   const [form] = Form.useForm();
   const { params, paramsStr, handleFilterSubmit, tab } = useEmployeeContext();
+  const { userProfile } = useUser();
+
+  // Check if user is HR
+  const isHR = userProfile?.department?.departmentCode === "HR";
+
+  // Disable department filter if user has department and is not HR
+  const isDepartmentFilterDisabled = !isHR && !!userProfile?.department?.id;
 
   useEffect(() => {
     form.resetFields();
@@ -46,7 +54,7 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
         setTimeout(() => onSearch(), 100);
       }
     },
-    [handleFilterSubmit, onSearch]
+    [handleFilterSubmit, onSearch],
   );
 
   const handleReset = useCallback(() => {
@@ -58,11 +66,11 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
       ...params,
       created_range_picker: convertToDateRange(
         params.created_date_from,
-        params.created_date_to
+        params.created_date_to,
       ),
       updated_range_picker: convertToDateRange(
         params.updated_date_from,
-        params.updated_date_to
+        params.updated_date_to,
       ),
     };
   }, [params]);
@@ -106,7 +114,11 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
       {
         name: "departmentId",
         component: (
-          <SelectListDepartment placeholder="- Chọn phòng ban -" allowClear />
+          <SelectListDepartment
+            placeholder="- Chọn phòng ban -"
+            allowClear
+            disabled={isDepartmentFilterDisabled}
+          />
         ),
       },
       {
@@ -134,7 +146,7 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
         ),
       },
     ],
-    [optionsInput]
+    [optionsInput, isDepartmentFilterDisabled],
   );
 
   return (

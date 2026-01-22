@@ -26,9 +26,12 @@ import { EmployeeDetailProvider } from "@/pages/Management/pages/employee_detail
 // import PerformanceDetailPage from "@/pages/Employee/pages/performanceDetail";
 // import PerformanceByEmployeePage from "@/pages/Employee/pages/performanceByEmployee";
 // import PerformanceByDepartmentPage from "@/pages/Employee/pages/performanceByDepartment";
-import MyPerformancePage from "@/pages/Employee/pages/myPerformance";
-import PerformanceCriteriaPage from "@/pages/Employee/pages/performanceCriteria";
-import MyProjectsPage from "@/pages/Employee/pages/my-projects";
+import MyPerformancePage from "@/pages/employee/pages/myPerformance";
+import PerformanceCriteriaPage from "@/pages/employee/pages/performanceCriteria";
+import MyProjectsPage from "@/pages/employee/pages/my-projects";
+import AttendanceCorrectionPage from "@/pages/employee/pages/attendance-correction";
+import MyAttendancePage from "@/pages/employee/pages/my-attendance";
+import MyLeaveApplicationPage from "./pages/my-leave-applications";
 
 const route: RouteItem = {
   path: "/employee",
@@ -117,9 +120,24 @@ const route: RouteItem = {
       ),
     },
     {
+      path: "attendance-correction",
+      name: "Đơn xin điểm danh bù",
+      element: <AttendanceCorrectionPage />,
+    },
+    {
+      path: "my-attendance",
+      name: "Lịch sử chấm công",
+      element: <MyAttendancePage />,
+    },
+    {
       path: "my-performance",
       name: "Đánh giá của tôi",
       element: <MyPerformancePage />,
+    },
+    {
+      path: "my-leave-applications",
+      name: "Đơn nghỉ phép của tôi",
+      element: <MyLeaveApplicationPage />,
     },
     {
       path: "departments/me",

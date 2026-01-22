@@ -87,9 +87,9 @@ const MainLayout = () => {
   if (isLoading) {
     return (
       <Spin
-          indicator={<LoadingOutlined className="text-primary-100" spin />}
-          size="small"
-        />  
+        indicator={<LoadingOutlined className="text-primary-100" spin />}
+        size="small"
+      />
     );
   }
 
@@ -206,6 +206,8 @@ const MainLayout = () => {
                           icon: <LogoutOutlined />,
                           label: "Đăng xuất",
                           onClick: handleLogout,
+                        },
+                        {
                           key: "change-password",
                           icon: <LockOutlined />,
                           label: "Đổi Mật Khẩu",

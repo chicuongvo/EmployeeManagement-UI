@@ -8,6 +8,7 @@ import React, {
   useState,
 } from "react";
 import { useSearchParams } from "react-router-dom";
+import { useUser } from "@/hooks/useUser";
 
 import useGetParam from "@/hooks/useGetParam";
 // import useTableStore from "@/stores/tableStore";
@@ -38,24 +39,25 @@ interface EmployeeContextType {
 }
 
 const EmployeeContext = createContext<EmployeeContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export const EmployeeProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const [, setSearchParams] = useSearchParams();
+  const { userProfile } = useUser();
   //   const { listEmployeeActiveKey } = useTableStore((state) => state);
   const [popupUpdateEmployee, setPopupUpdateEmployee] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<EMPLOYEE | null>(
-    null
+    null,
   );
 
   const generalCode = useGetParam<string>("general_code", "string");
   const generalCodeType = useGetParam<string>(
     "general_code_type",
     "string",
-    "fullName"
+    "fullName",
   );
   const q = useGetParam<string>("q", "string");
 
@@ -73,18 +75,30 @@ export const EmployeeProvider: React.FC<{
   const updated_date_to = useGetParam<number>("updated_date_to", "number");
 
   const params = useMemo((): GetListEmployeeRequest => {
+    // Check if user is HR by department code
+    const isHR = userProfile?.department?.departmentCode === "HR";
+
+    // If user has a department and is not HR, auto-filter by their department
+    const autoDepartmentId =
+      !isHR && userProfile?.department?.id
+        ? userProfile.department.id
+        : undefined;
+
+    // Use manual filter if provided, otherwise use auto-filter
+    const finalDepartmentId = departmentId ?? autoDepartmentId;
+
     return {
       general_code: generalCode,
       general_code_type: generalCodeType,
       q,
-      departmentId,
+      departmentId: finalDepartmentId,
       positionId,
       isActive:
         isActiveParam === "true"
           ? true
           : isActiveParam === "false"
-          ? false
-          : undefined,
+            ? false
+            : undefined,
       page,
       limit,
       sort,
@@ -107,6 +121,7 @@ export const EmployeeProvider: React.FC<{
     created_date_to,
     updated_date_from,
     updated_date_to,
+    userProfile,
   ]);
 
   const paramsStr = useMemo(() => JSON.stringify(params), [params]);
@@ -137,8 +152,8 @@ export const EmployeeProvider: React.FC<{
           updated_range_picker: undefined,
           tab: tab ?? 1,
         },
-        { arrayFormat: "comma" }
-      )
+        { arrayFormat: "comma" },
+      ),
     );
   };
 
@@ -162,7 +177,7 @@ export const EmployeeProvider: React.FC<{
           tab: 1,
           page: 1,
           limit: 10,
-        })
+        }),
       );
     }
   }, [setSearchParams, tab]);
@@ -194,7 +209,7 @@ export const useEmployeeContext = () => {
   const context = useContext(EmployeeContext);
   if (!context) {
     throw new Error(
-      "useEmployeeContext must be used within an EmployeeProvider"
+      "useEmployeeContext must be used within an EmployeeProvider",
     );
   }
   return context;

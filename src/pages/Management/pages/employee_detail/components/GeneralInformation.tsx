@@ -557,7 +557,8 @@ const GeneralInformation = (_props: Props) => {
   const renderWorkStatus = useCallback(
     (isActive: boolean | undefined, onChange: (value: boolean) => void) => {
       // Convert isActive to status: false = "INACTIVE", true or undefined = "ACTIVE"
-      const status: "ACTIVE" | "INACTIVE" = isActive === false ? "INACTIVE" : "ACTIVE";
+      const status: "ACTIVE" | "INACTIVE" =
+        isActive === false ? "INACTIVE" : "ACTIVE";
 
       if (!isEditable) {
         return <ActiveStatus status={status} />;
