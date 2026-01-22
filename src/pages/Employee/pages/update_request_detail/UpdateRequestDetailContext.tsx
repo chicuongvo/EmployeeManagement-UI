@@ -39,10 +39,7 @@ export const UpdateRequestDetailProvider: React.FC<{
     enabled: !!Number(params.id),
   });
 
-  const isCreate = useMemo(
-    () => pathname.includes("add-new") && !updateRequestDetailData,
-    [pathname, updateRequestDetailData]
-  );
+  const isCreate = useMemo(() => pathname.includes("add-new"), [pathname]);
 
   const isEditable = useMemo(() => {
     if (isCreate) return true;
@@ -68,7 +65,7 @@ export const UpdateRequestDetailProvider: React.FC<{
       setEditMode,
       refetchUpdateRequest,
       isLoadingUpdateRequest,
-    ]
+    ],
   );
 
   return (
@@ -82,7 +79,7 @@ export const useUpdateRequestDetailContext = () => {
   const context = useContext(UpdateRequestDetailContext);
   if (context === undefined) {
     throw new Error(
-      "useUpdateRequestDetailContext must be used within a UpdateRequestDetailProvider"
+      "useUpdateRequestDetailContext must be used within a UpdateRequestDetailProvider",
     );
   }
   return context;

@@ -29,7 +29,7 @@ import dayjs from "dayjs";
 interface ContractFormProps {
   initialData?: ContractResponse | null;
   onSubmit: (
-    data: CreateContractRequest | UpdateContractRequest | FormData
+    data: CreateContractRequest | UpdateContractRequest | FormData,
   ) => Promise<void>;
   onCancel: () => void;
   isLoading?: boolean;
@@ -43,8 +43,6 @@ interface ContractFormProps {
     endDate: string;
     signedDate: string;
     status: ContractStatus;
-    dailySalary: string;
-    allowance: string;
     note: string;
     employeeId: string;
     signedById: string;
@@ -72,8 +70,6 @@ export function ContractForm({
       ? initialData.signedDate.split("T")[0]
       : "",
     status: (initialData?.status || "DRAFT") as ContractStatus,
-    dailySalary: initialData?.dailySalary?.toString() || "",
-    allowance: initialData?.allowance?.toString() || "",
     note: initialData?.note || "",
     employeeId: initialData?.employeeId?.toString() || "",
     signedById: initialData?.signedById?.toString() || "",
@@ -175,12 +171,6 @@ export function ContractForm({
           startDate: extractedInfo.startDate || prev.startDate,
           endDate: extractedInfo.endDate || prev.endDate,
           signedDate: extractedInfo.signedDate || prev.signedDate,
-          dailySalary: extractedInfo.dailySalary
-            ? extractedInfo.dailySalary.toString()
-            : prev.dailySalary,
-          allowance: extractedInfo.allowance
-            ? extractedInfo.allowance.toString()
-            : prev.allowance,
           note: extractedInfo.note || prev.note,
           ...(extractedInfo.employeeId && mode === "create"
             ? { employeeId: extractedInfo.employeeId.toString() }
@@ -273,8 +263,6 @@ export function ContractForm({
     formDataToSend.append("endDate", formData.endDate);
     formDataToSend.append("signedDate", formData.signedDate);
     formDataToSend.append("status", formData.status);
-    formDataToSend.append("dailySalary", formData.dailySalary);
-    formDataToSend.append("allowance", formData.allowance);
     if (formData.note) formDataToSend.append("note", formData.note);
     if (formData.employeeId)
       formDataToSend.append("employeeId", formData.employeeId);
@@ -360,40 +348,6 @@ export function ContractForm({
             onChange={(e) =>
               setFormData({ ...formData, signedDate: e.target.value })
             }
-            required
-            disabled={isLoading || !isEditable}
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="dailySalary">Lương ngày *</Label>
-          <Input
-            id="dailySalary"
-            type="number"
-            step="0.01"
-            value={formData.dailySalary}
-            onChange={(e) =>
-              setFormData({ ...formData, dailySalary: e.target.value })
-            }
-            placeholder="0.00"
-            required
-            disabled={isLoading || !isEditable}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="allowance">Phụ cấp *</Label>
-          <Input
-            id="allowance"
-            type="number"
-            step="0.01"
-            value={formData.allowance}
-            onChange={(e) =>
-              setFormData({ ...formData, allowance: e.target.value })
-            }
-            placeholder="0.00"
             required
             disabled={isLoading || !isEditable}
           />
@@ -656,8 +610,8 @@ export function ContractForm({
             {isLoading
               ? "Đang xử lý..."
               : mode === "create"
-              ? "Tạo hợp đồng"
-              : "Cập nhật"}
+                ? "Tạo hợp đồng"
+                : "Cập nhật"}
           </Button>
         </div>
       )}

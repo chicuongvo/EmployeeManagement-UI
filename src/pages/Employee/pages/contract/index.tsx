@@ -7,10 +7,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Tabs, type TabsProps } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import PageTitle from "@/components/common/shared/PageTitle";
-import {
-  useContractContext,
-  ContractProvider,
-} from "./ContractContext";
+import { useContractContext, ContractProvider } from "./ContractContext";
 import PrimaryButton from "@/components/common/button/PrimaryButton";
 
 export const TABS = {
@@ -53,7 +50,7 @@ const ContractPageContent = () => {
       }}
       title={<PageTitle title="Quản lý hợp đồng" />}
       extra={[
-        <Link to={`/employee/contracts/add-new`} key="create-contract">
+        <Link to={`/management/contracts/add-new`} key="create-contract">
           <PrimaryButton
             icon={<PlusOutlined className="icon-hover-effect" />}
             key="new-contract"
@@ -97,4 +94,3 @@ const Index = () => {
 };
 
 export default Index;
-
