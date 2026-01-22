@@ -2,14 +2,27 @@ import { PageContainer } from "@ant-design/pro-components";
 import { useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Card, Descriptions, Tag, Button, Spin, Empty, Space, Typography, List, Avatar, Tooltip, message } from "antd";
-import { 
-  PlayCircleOutlined, 
-  UserOutlined, 
+import {
+  Card,
+  Descriptions,
+  Tag,
+  Button,
+  Spin,
+  Empty,
+  Space,
+  Typography,
+  List,
+  Avatar,
+  Tooltip,
+  message,
+} from "antd";
+import {
+  PlayCircleOutlined,
+  UserOutlined,
   CalendarOutlined,
   ArrowLeftOutlined,
   CheckCircleOutlined,
-  CloseCircleOutlined
+  CloseCircleOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { getMeetingById, updateParticipantStatus } from "@/api/meeting.api";
@@ -17,36 +30,40 @@ import PageTitle from "@/components/common/shared/PageTitle";
 import { useUser } from "@/hooks/useUser";
 const { Paragraph, Text } = Typography;
 
-const MeetingDetailPage = () => {
+const ManagementMeetingDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { userProfile } = useUser();
 
   // Fetch meeting data
-  const { data: meeting, isLoading, refetch } = useQuery({
-    queryKey: ["meeting", id],
+  const {
+    data: meeting,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["management-meeting", id],
     queryFn: async () => {
       if (!id) throw new Error("Meeting ID is required");
       return await getMeetingById(id);
     },
     enabled: !!id,
-    refetchInterval: 5000, // Refetch every 5 seconds to get updated participant status
+    refetchInterval: 5000,
   });
 
-  // Check if user is Host - MUST be before early returns
-  const isHost = useMemo(() => {
-    if (!userProfile || !meeting) return false;
-    return meeting.createdById === userProfile.id;
-  }, [userProfile, meeting]);
+  // Management users are always hosts
+  const isHost = true;
 
-  // Calculate participant statistics - chỉ có 2 trạng thái: Tham gia và Không tham gia - MUST be before early returns
+  // Calculate participant statistics
   const participantStats = useMemo(() => {
     if (!meeting?.participants) {
       return { joined: 0, notJoined: 0, total: 0 };
     }
-    const joined = meeting.participants.filter((p) => p.status === "ACCEPTED").length;
-    // PENDING và DECLINED đều coi là "Không tham gia"
-    const notJoined = meeting.participants.filter((p) => p.status === "PENDING" || p.status === "DECLINED").length;
+    const joined = meeting.participants.filter(
+      (p) => p.status === "ACCEPTED",
+    ).length;
+    const notJoined = meeting.participants.filter(
+      (p) => p.status === "PENDING" || p.status === "DECLINED",
+    ).length;
     return {
       joined,
       notJoined,
@@ -54,21 +71,20 @@ const MeetingDetailPage = () => {
     };
   }, [meeting?.participants]);
 
-  // Check current user's participant status - MUST be before early returns
+  // Check current user's participant status
   const currentUserParticipant = useMemo(() => {
     if (!meeting?.participants || !userProfile?.id) return null;
     return meeting.participants.find((p) => p.employeeId === userProfile.id);
   }, [meeting?.participants, userProfile?.id]);
 
-  // Check if meeting time has arrived - MUST be before early returns
+  // Check if meeting time has arrived
   const hasTimeArrived = useMemo(() => {
-    if (!meeting?.scheduledAt) return true; // If no scheduled time, allow join
+    if (!meeting?.scheduledAt) return true;
     const now = dayjs();
     const scheduledTime = dayjs(meeting.scheduledAt);
     return now.isAfter(scheduledTime) || now.isSame(scheduledTime, "minute");
   }, [meeting?.scheduledAt]);
 
-  // Early returns AFTER all hooks
   if (isLoading) {
     return (
       <PageContainer>
@@ -87,7 +103,6 @@ const MeetingDetailPage = () => {
     );
   }
 
-  // Helper functions and computed values AFTER early returns
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
       SCHEDULED: "blue",
@@ -107,72 +122,48 @@ const MeetingDetailPage = () => {
     };
     return texts[status] || status;
   };
-  
-  const canJoin = (meeting.status === "SCHEDULED" || meeting.status === "ONGOING") && hasTimeArrived;
 
-  const userHasJoined = currentUserParticipant?.status === "ACCEPTED";
-  const userHasDeclined = currentUserParticipant?.status === "DECLINED";
+  const canJoin =
+    (meeting.status === "SCHEDULED" || meeting.status === "ONGOING") &&
+    hasTimeArrived;
 
   const handleJoinMeeting = async () => {
     if (!meeting || !userProfile?.id) return;
-    
-    // Check if time has arrived
+
     if (!hasTimeArrived && meeting.scheduledAt) {
-      message.warning(`Cuộc họp chưa đến giờ. Thời gian bắt đầu: ${dayjs(meeting.scheduledAt).format("HH:mm DD/MM/YYYY")}`);
+      message.warning(
+        `Cuộc họp chưa đến giờ. Thời gian bắt đầu: ${dayjs(meeting.scheduledAt).format("HH:mm DD/MM/YYYY")}`,
+      );
       return;
     }
-    
+
     try {
       // Update participant status to ACCEPTED when joining
       try {
-        console.log("MeetingDetailPage - Updating participant status:", { 
-          meetingId: meeting.id, 
-          userId: userProfile.id 
+        console.log("Management - Updating participant status:", {
+          meetingId: meeting.id,
+          userId: userProfile.id,
         });
         await updateParticipantStatus(meeting.id, userProfile.id, "ACCEPTED");
-        console.log("MeetingDetailPage - Participant status updated successfully");
-        // Refetch to update UI
+        console.log("Management - Participant status updated successfully");
         refetch();
       } catch (error) {
-        console.error("MeetingDetailPage - Error updating participant status:", error);
-        // Continue even if update fails
+        console.error("Management - Error updating participant status:", error);
       }
-      
-      // Navigate to video call
-      navigate(`/employee/video-call?callId=${meeting.callId}&meetingId=${meeting.id}`);
-    } catch (error) {
-      console.error("MeetingDetailPage - Error joining meeting:", error);
-    }
-  };
 
-  const handleDeclineMeeting = async () => {
-    if (!meeting || !userProfile?.id) return;
-    
-    try {
-      // Update participant status to DECLINED when declining
-      try {
-        console.log("MeetingDetailPage - Declining meeting:", { 
-          meetingId: meeting.id, 
-          userId: userProfile.id 
-        });
-        await updateParticipantStatus(meeting.id, userProfile.id, "DECLINED");
-        console.log("MeetingDetailPage - Participant declined successfully");
-        // Refetch to update UI
-        refetch();
-      } catch (error) {
-        console.error("MeetingDetailPage - Error declining meeting:", error);
-      }
+      // Navigate to management video call
+      navigate(
+        `/management/video-call?callId=${meeting.callId}&meetingId=${meeting.id}`,
+      );
     } catch (error) {
-      console.error("MeetingDetailPage - Error declining meeting:", error);
+      console.error("Management - Error joining meeting:", error);
     }
   };
 
   const getParticipantStatusIcon = (status: string) => {
-    // Chỉ có 2 trạng thái: Tham gia (check) và Không tham gia (close)
     if (status === "ACCEPTED") {
       return <CheckCircleOutlined style={{ color: "#52c41a" }} />;
     }
-    // PENDING và DECLINED đều hiển thị icon "không tham gia"
     return <CloseCircleOutlined style={{ color: "#8c8c8c" }} />;
   };
 
@@ -189,10 +180,12 @@ const MeetingDetailPage = () => {
   };
 
   const getParticipantStatusTag = (status: string) => {
-    // Chỉ có 2 trạng thái: Tham gia (success) và Không tham gia (default)
     const isJoined = status === "ACCEPTED";
     return (
-      <Tag color={isJoined ? "success" : "default"} icon={getParticipantStatusIcon(status)}>
+      <Tag
+        color={isJoined ? "success" : "default"}
+        icon={getParticipantStatusIcon(status)}
+      >
         {getParticipantStatusText(status)}
       </Tag>
     );
@@ -203,19 +196,17 @@ const MeetingDetailPage = () => {
       header={{
         breadcrumb: {
           items: [
-            { title: "Hồ sơ nhân sự" },
-            { title: "Cuộc họp", href: "/employee/meetings" },
+            { title: "Quản lý nhân sự" },
+            { title: "Cuộc họp" },
             { title: meeting.title },
           ],
         },
       }}
       title={<PageTitle title={meeting.title} />}
       extra={
-        isHost && (
-          <Tag color="orange" style={{ fontSize: "14px", padding: "4px 12px" }}>
-            Host
-          </Tag>
-        )
+        <Tag color="orange" style={{ fontSize: "14px", padding: "4px 12px" }}>
+          Host
+        </Tag>
       }
     >
       <div className="space-y-6">
@@ -282,7 +273,9 @@ const MeetingDetailPage = () => {
                     title={
                       <Space>
                         <Text strong>{participant.employee.fullName}</Text>
-                        <Text type="secondary">#{participant.employee.employeeCode}</Text>
+                        <Text type="secondary">
+                          #{participant.employee.employeeCode}
+                        </Text>
                       </Space>
                     }
                     description={participant.employee.email}
@@ -297,51 +290,27 @@ const MeetingDetailPage = () => {
         {/* Actions */}
         <Card title="Thao tác">
           <Space direction="vertical" size="middle" className="w-full">
-            {(meeting.status === "SCHEDULED" || meeting.status === "ONGOING") && !userHasJoined && !userHasDeclined && (
-              <>
-                <Tooltip
-                  title={!hasTimeArrived && meeting.scheduledAt ? `Cuộc họp chưa đến giờ. Thời gian bắt đầu: ${dayjs(meeting.scheduledAt).format("HH:mm DD/MM/YYYY")}` : undefined}
-                >
-                  <Button
-                    type="primary"
-                    icon={<PlayCircleOutlined />}
-                    size="large"
-                    onClick={handleJoinMeeting}
-                    block
-                    disabled={!canJoin}
-                  >
-                    Tham gia cuộc họp
-                  </Button>
-                </Tooltip>
-                <Button
-                  icon={<CloseCircleOutlined />}
-                  size="large"
-                  onClick={handleDeclineMeeting}
-                  block
-                >
-                  Không tham gia
-                </Button>
-              </>
-            )}
-            {(meeting.status === "SCHEDULED" || meeting.status === "ONGOING") && (userHasJoined || userHasDeclined) && (
-              <Tooltip
-                title={!hasTimeArrived && meeting.scheduledAt ? `Cuộc họp chưa đến giờ. Thời gian bắt đầu: ${dayjs(meeting.scheduledAt).format("HH:mm DD/MM/YYYY")}` : undefined}
+            <Tooltip
+              title={
+                !hasTimeArrived && meeting.scheduledAt
+                  ? `Cuộc họp chưa đến giờ. Thời gian bắt đầu: ${dayjs(meeting.scheduledAt).format("HH:mm DD/MM/YYYY")}`
+                  : undefined
+              }
+            >
+              <Button
+                type="primary"
+                icon={<PlayCircleOutlined />}
+                size="large"
+                onClick={handleJoinMeeting}
+                block
+                disabled={!canJoin}
               >
-                <Button
-                  type="primary"
-                  icon={<PlayCircleOutlined />}
-                  size="large"
-                  onClick={handleJoinMeeting}
-                  block
-                  disabled={!canJoin}
-                >
-                  Tham gia cuộc họp
-                </Button>
-              </Tooltip>
-            )}
+                Bắt đầu cuộc họp
+              </Button>
+            </Tooltip>
             <Button
               icon={<ArrowLeftOutlined />}
-              onClick={() => navigate("/employee/meetings")}
+              onClick={() => navigate("/management/meetings/past")}
             >
               Quay lại danh sách
             </Button>
@@ -352,4 +321,4 @@ const MeetingDetailPage = () => {
   );
 };
 
-export default MeetingDetailPage;
+export default ManagementMeetingDetailPage;

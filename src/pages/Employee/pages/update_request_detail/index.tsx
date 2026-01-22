@@ -5,10 +5,18 @@ import { toast } from "react-toastify";
 import PageTitle from "@/components/common/shared/PageTitle";
 import { useUpdateRequestDetailContext } from "./UpdateRequestDetailContext";
 import { UpdateRequestForm } from "@/components/update-request/UpdateRequestForm";
-import { createUpdateRequest, updateUpdateRequest } from "@/services/update-request";
-import type { CreateUpdateRequestRequest, UpdateUpdateRequestRequest } from "@/types/UpdateRequest";
+import {
+  createUpdateRequest,
+  updateUpdateRequest,
+  reviewRequest,
+} from "@/services/update-request";
+import type {
+  CreateUpdateRequestRequest,
+  UpdateUpdateRequestRequest,
+} from "@/types/UpdateRequest";
 import { MdEditSquare, MdSaveAs } from "react-icons/md";
 import { IoMdCloseCircle } from "react-icons/io";
+import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import CircleButton from "@/components/common/button/CircleButton";
 import { useUser } from "@/hooks/useUser";
 
@@ -29,6 +37,7 @@ const Index = () => {
   const pathname = location.pathname;
   const isFromMyRequests =
     from === "my" || pathname.includes("my-update-requests");
+  const isFromManagement = pathname.includes("/management/");
   const { userProfile } = useUser();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<{
@@ -42,7 +51,7 @@ const Index = () => {
   // Nếu tạo từ trang "Đơn yêu cầu của tôi" thì mặc định người yêu cầu là user hiện tại
   useEffect(() => {
     if (isCreate && isFromMyRequests && userProfile?.id) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         requestedById: userProfile.id,
       }));
@@ -50,28 +59,39 @@ const Index = () => {
   }, [isCreate, isFromMyRequests, userProfile?.id]);
 
   const handleCreate = async (
-    data: CreateUpdateRequestRequest | UpdateUpdateRequestRequest
+    data: CreateUpdateRequestRequest | UpdateUpdateRequestRequest,
   ) => {
     try {
       setIsLoading(true);
       const result = await createUpdateRequest(
-        data as CreateUpdateRequestRequest
+        data as CreateUpdateRequestRequest,
       );
       toast.success("Tạo yêu cầu cập nhật thành công!");
 
       if (isFromMyRequests) {
         // Nếu tạo từ trang "Đơn yêu cầu của tôi" thì quay lại danh sách của tôi
         navigate("/employee/my-update-requests");
+      } else if (isFromManagement) {
+        // Ngữ cảnh quản lý: đi tới trang chi tiết management
+        navigate(`/management/update-requests/${result.id}`);
+        refetchUpdateRequest();
       } else {
-        // Ngữ cảnh quản trị: đi tới trang chi tiết
+        // Ngữ cảnh employee: đi tới trang chi tiết employee
         navigate(`/employee/update-requests/${result.id}`);
         refetchUpdateRequest();
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error creating update request:", error);
-      toast.error(
-        error.response?.data?.message || "Có lỗi xảy ra khi tạo yêu cầu cập nhật"
-      );
+      let errorMessage = "Có lỗi xảy ra khi tạo yêu cầu cập nhật";
+      if (error && typeof error === "object" && "response" in error) {
+        const response = (
+          error as { response?: { data?: { message?: string } } }
+        ).response;
+        if (response?.data?.message) {
+          errorMessage = response.data.message;
+        }
+      }
+      toast.error(errorMessage);
       throw error;
     } finally {
       setIsLoading(false);
@@ -79,29 +99,74 @@ const Index = () => {
   };
 
   const handleUpdate = async (
-    data: CreateUpdateRequestRequest | UpdateUpdateRequestRequest
+    data: CreateUpdateRequestRequest | UpdateUpdateRequestRequest,
   ) => {
     if (!updateRequest?.id) return;
     try {
       setIsLoading(true);
-      await updateUpdateRequest(updateRequest.id, data as UpdateUpdateRequestRequest);
+      await updateUpdateRequest(
+        updateRequest.id,
+        data as UpdateUpdateRequestRequest,
+      );
       toast.success("Cập nhật yêu cầu thành công!");
       setEditMode(false);
       refetchUpdateRequest();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error updating update request:", error);
-      toast.error(
-        error.response?.data?.message || "Có lỗi xảy ra khi cập nhật yêu cầu"
-      );
+      let errorMessage = "Có lỗi xảy ra khi cập nhật yêu cầu";
+      if (error && typeof error === "object" && "response" in error) {
+        const response = (
+          error as { response?: { data?: { message?: string } } }
+        ).response;
+        if (response?.data?.message) {
+          errorMessage = response.data.message;
+        }
+      }
+      toast.error(errorMessage);
       throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleReview = useCallback(
+    async (status: "APPROVED" | "NOT_APPROVED") => {
+      if (!updateRequest?.id) return;
+      try {
+        setIsLoading(true);
+        await reviewRequest(updateRequest.id, { status });
+        toast.success(
+          `Yêu cầu đã được ${status === "APPROVED" ? "phê duyệt" : "từ chối"}`,
+        );
+        refetchUpdateRequest();
+      } catch (error: unknown) {
+        console.error("Error reviewing update request:", error);
+        let errorMessage = "Có lỗi xảy ra khi xử lý yêu cầu";
+        if (error && typeof error === "object" && "response" in error) {
+          const response = (
+            error as { response?: { data?: { message?: string } } }
+          ).response;
+          if (response?.data?.message) {
+            errorMessage = response.data.message;
+          }
+        }
+        toast.error(errorMessage);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [updateRequest?.id, refetchUpdateRequest],
+  );
+
   const handleCancel = useCallback(() => {
     if (isCreate) {
-      navigate(isFromMyRequests ? "/employee/my-update-requests" : "/employee/update-requests");
+      if (isFromMyRequests) {
+        navigate("/employee/my-update-requests");
+      } else if (isFromManagement) {
+        navigate("/management/update-requests");
+      } else {
+        navigate("/employee/update-requests");
+      }
       return;
     }
     if (editMode) {
@@ -109,8 +174,21 @@ const Index = () => {
       return;
     }
     // Đang ở màn chi tiết (không edit): quay lại danh sách tương ứng
-    navigate(isFromMyRequests ? "/employee/my-update-requests" : "/employee/update-requests");
-  }, [isCreate, navigate, editMode, setEditMode, isFromMyRequests]);
+    if (isFromMyRequests) {
+      navigate("/employee/my-update-requests");
+    } else if (isFromManagement) {
+      navigate("/management/update-requests");
+    } else {
+      navigate("/employee/update-requests");
+    }
+  }, [
+    isCreate,
+    navigate,
+    editMode,
+    setEditMode,
+    isFromMyRequests,
+    isFromManagement,
+  ]);
 
   const handleFormDataChange = useCallback((data: typeof formData) => {
     setFormData(data);
@@ -125,12 +203,19 @@ const Index = () => {
     return false;
   }, [formData, isCreate]);
 
-  // Ở module "Đơn yêu cầu của tôi" thì chỉ cho xem, không cho sửa
-  const allowEdit = useMemo(() => !isFromMyRequests, [isFromMyRequests]);
+  // Ở module "Đơn yêu cầu của tôi" thì chỉ cho xem, không cho sửa (trừ khi đang tạo mới)
+  // Ở module Management thì cho phép sửa tất cả
+  const allowEdit = useMemo(() => {
+    if (isCreate) return true; // Khi tạo mới thì luôn cho phép edit
+    if (isFromManagement) return true; // Management có thể sửa tất cả
+    return !isFromMyRequests; // Employee context: chỉ cho edit nếu không phải từ "Đơn yêu cầu của tôi"
+  }, [isFromMyRequests, isFromManagement, isCreate]);
 
   const handleCreateUpdateRequest = useCallback(() => {
     // Trigger form submit - UpdateRequestForm will handle the submit logic internally
-    const form = document.getElementById("update-request-form") as HTMLFormElement;
+    const form = document.getElementById(
+      "update-request-form",
+    ) as HTMLFormElement;
     if (form) {
       form.requestSubmit();
     }
@@ -139,8 +224,9 @@ const Index = () => {
   const canEdit = useMemo(() => {
     if (!allowEdit) return false;
     if (isCreate) return true;
-    return updateRequest?.status === "PENDING";
-  }, [allowEdit, isCreate, updateRequest?.status]);
+    if (isFromManagement) return true; // Management có thể sửa tất cả trạng thái
+    return updateRequest?.status === "PENDING"; // Employee chỉ sửa được PENDING
+  }, [allowEdit, isCreate, isFromManagement, updateRequest?.status]);
 
   const renderActionButton = useCallback(() => {
     // Nếu là trang "Đơn yêu cầu của tôi" ở chế độ xem chi tiết, chỉ có nút Đóng
@@ -186,6 +272,53 @@ const Index = () => {
         </div>
       );
     }
+
+    // Nếu là Management và status là PENDING, hiển thị nút Approve/Reject
+    if (isFromManagement && !isCreate && updateRequest?.status === "PENDING") {
+      return (
+        <div className="w-fit mx-auto min-h-14 px-8 rounded-full bg-gray-300/20 backdrop-blur-md flex gap-2 justify-center items-center shadow-lg">
+          <CircleButton
+            icon={
+              <CheckCircleOutlined size={32} className="icon-hover-effect" />
+            }
+            key="approve"
+            color="green"
+            type="button"
+            onClick={() => handleReview("APPROVED")}
+            disabled={isLoading}
+            loading={isLoading}
+          >
+            Phê duyệt
+          </CircleButton>
+          <CircleButton
+            icon={
+              <CloseCircleOutlined size={32} className="icon-hover-effect" />
+            }
+            key="reject"
+            color="red"
+            type="button"
+            onClick={() => handleReview("NOT_APPROVED")}
+            disabled={isLoading}
+          >
+            Từ chối
+          </CircleButton>
+          {canEdit && (
+            <CircleButton
+              onClick={() => {
+                setEditMode(true);
+              }}
+              icon={<MdEditSquare size={32} className="icon-hover-effect" />}
+              key="edit"
+              type="button"
+              color="blue"
+            >
+              Sửa
+            </CircleButton>
+          )}
+        </div>
+      );
+    }
+
     // Chỉ hiển thị nút Sửa nếu có thể edit (status === PENDING)
     if (!canEdit) {
       return null;
@@ -205,7 +338,20 @@ const Index = () => {
         </CircleButton>
       </div>
     );
-  }, [isEditable, isCreate, isFromMyRequests, isLoading, disableSubmit, handleCancel, setEditMode, handleCreateUpdateRequest, canEdit]);
+  }, [
+    isEditable,
+    isCreate,
+    isFromMyRequests,
+    isFromManagement,
+    isLoading,
+    disableSubmit,
+    handleCancel,
+    setEditMode,
+    handleCreateUpdateRequest,
+    handleReview,
+    updateRequest?.status,
+    canEdit,
+  ]);
 
   if (isLoadingUpdateRequest) {
     return (
@@ -221,13 +367,19 @@ const Index = () => {
         breadcrumb: {
           items: [
             {
-              title: "Hồ sơ nhân sự",
+              title: isFromManagement ? "Quản lý nhân sự" : "Hồ sơ nhân sự",
             },
             {
-              title: isFromMyRequests ? "Đơn yêu cầu của tôi" : "Yêu cầu cập nhật",
+              title: isFromMyRequests
+                ? "Đơn yêu cầu của tôi"
+                : isFromManagement
+                  ? "Quản lí yêu cầu cập nhật"
+                  : "Yêu cầu cập nhật",
               href: isFromMyRequests
                 ? "/employee/my-update-requests?tab=1"
-                : "/employee/update-requests?limit=10&page=1&tab=1",
+                : isFromManagement
+                  ? "/management/update-requests"
+                  : "/employee/update-requests?limit=10&page=1&tab=1",
             },
             {
               title: isCreate ? "Thêm mới" : "Chi tiết",
@@ -235,7 +387,11 @@ const Index = () => {
           ],
         },
       }}
-      title={<PageTitle title={`${isCreate ? "Thêm mới" : "Chi tiết"} yêu cầu cập nhật`} />}
+      title={
+        <PageTitle
+          title={`${isCreate ? "Thêm mới" : "Chi tiết"} yêu cầu cập nhật`}
+        />
+      }
     >
       <div className="px-6 my-3">
         <UpdateRequestForm
@@ -244,7 +400,7 @@ const Index = () => {
           onCancel={handleCancel}
           isLoading={isLoading}
           mode={isCreate ? "create" : "edit"}
-          isEditable={isEditable && allowEdit}
+          isEditable={allowEdit}
           hideSubmitButton={true}
           onFormDataChange={handleFormDataChange}
           lockRequestedBy={isCreate && isFromMyRequests}

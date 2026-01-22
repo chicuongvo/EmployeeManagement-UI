@@ -33,15 +33,19 @@ export const ContractDetailProvider: React.FC<{
     refetch: refetchContract,
   } = useQuery({
     queryFn: async (): Promise<ContractResponse> => {
-      return getContractById(Number(params.id) || 0);
+      const contractId = Number(params.id);
+      if (!contractId || contractId <= 0) {
+        throw new Error("Invalid contract ID");
+      }
+      return getContractById(contractId);
     },
     queryKey: ["contract-detail", Number(params.id)],
-    enabled: !!Number(params.id),
+    enabled: !!params.id && Number(params.id) > 0,
   });
 
   const isCreate = useMemo(
     () => pathname.includes("add-new") && !contractDetailData,
-    [pathname, contractDetailData]
+    [pathname, contractDetailData],
   );
 
   const isEditable = useMemo(() => editMode || isCreate, [editMode, isCreate]);
@@ -64,7 +68,7 @@ export const ContractDetailProvider: React.FC<{
       setEditMode,
       refetchContract,
       isLoadingContract,
-    ]
+    ],
   );
 
   return (
@@ -78,7 +82,7 @@ export const useContractDetailContext = () => {
   const context = useContext(ContractDetailContext);
   if (context === undefined) {
     throw new Error(
-      "useContractDetailContext must be used within a ContractDetailProvider"
+      "useContractDetailContext must be used within a ContractDetailProvider",
     );
   }
   return context;

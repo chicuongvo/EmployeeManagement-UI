@@ -13,7 +13,7 @@ import useTableStore from "@/stores/tableStore";
 import { useEffect, useMemo } from "react";
 import { COLUMN_KEYS } from "@/constant/columns";
 
-import { useUpdateRequestContext } from "../UpdateRequestContext";
+import { useUpdateRequestContext } from "../../../../Employee/pages/update-request/UpdateRequestContext";
 import TooltipTruncatedText from "@/components/common/shared/TooltipTruncatedText";
 import TableComponent from "@/components/common/table/TableComponent";
 import type {
@@ -27,12 +27,8 @@ interface DataTableProps {
 }
 
 const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
-  const {
-    dataResponse,
-    isSuccess,
-    handleFilterSubmit,
-    params,
-  } = useUpdateRequestContext();
+  const { dataResponse, isSuccess, handleFilterSubmit, params } =
+    useUpdateRequestContext();
   const navigate = useNavigate();
 
   const { setListUpdateRequestActiveKey, listUpdateRequestActiveKey } =
@@ -155,11 +151,7 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
               type="text"
               icon={<EyeOutlined />}
               onClick={() => {
-                if (isMyRequests) {
-                  navigate(`/employee/my-update-requests/${record.id}`);
-                } else {
-                  navigate(`/employee/update-requests/${record.id}`);
-                }
+                navigate(`/management/update-requests/${record.id}`);
               }}
             />
           </div>
@@ -171,7 +163,7 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
       dataResponse?.pagination.limit,
       isMyRequests,
       navigate,
-    ]
+    ],
   );
 
   const columns = useMemo(() => {
@@ -183,7 +175,7 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
       setListUpdateRequestActiveKey(
         columns
           .map((col) => col.key as string)
-          .filter((key) => key !== COLUMN_KEYS.ACTION)
+          .filter((key) => key !== COLUMN_KEYS.ACTION),
       );
     }
   }, [columns, setListUpdateRequestActiveKey, listUpdateRequestActiveKey]);
@@ -206,7 +198,7 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
       dataResponse?.pagination.total,
       dataResponse?.pagination.limit,
       dataResponse?.pagination.page,
-    ]
+    ],
   );
 
   return (
