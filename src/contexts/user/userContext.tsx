@@ -3,11 +3,15 @@ import type { ReactNode } from "react";
 import { UserContext } from "./userContext";
 import { getProfile } from "../../api/user.api";
 import type { UserResponse } from "../../types/User";
+import { useRoleLevelSettings } from "../../hooks/useRoleLevelSettings";
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [userProfile, setUserProfile] = useState<UserResponse | null>(null);
   const [userChanged, setUserChanged] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Initialize role level settings
+  useRoleLevelSettings();
 
   // Calculate roleLevel from userProfile
   const roleLevel = userProfile?.position?.role?.level ?? null;
