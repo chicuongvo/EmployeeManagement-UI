@@ -3,16 +3,15 @@ import { useRef } from "react";
 import FormFilter from "./components/FormFilter";
 import DataTable from "./components/DataTable";
 import ModalContract from "./components/ModalContract";
-import ModalCreateContract from "./components/ModalCreateContract";
-import ModalEditContract from "./components/ModalEditContract";
-import { useSearchParams } from "react-router-dom";
-import { Tabs, type TabsProps, Button, Card } from "antd";
+import { Link, useSearchParams } from "react-router-dom";
+import { Tabs, type TabsProps } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import PageTitle from "@/components/common/shared/PageTitle";
 import {
   useContractContext,
   ContractProvider,
 } from "./ContractContext";
+import PrimaryButton from "@/components/common/button/PrimaryButton";
 
 export const TABS = {
   CONTRACT: "1",
@@ -20,8 +19,8 @@ export const TABS = {
 
 const ContractPageContent = () => {
   const dataTableRef = useRef<HTMLDivElement>(null);
-  const { tab, setPopupCreateContract } = useContractContext();
-  const [_, setSearchParams] = useSearchParams();
+  const { tab } = useContractContext();
+  const [, setSearchParams] = useSearchParams();
 
   const handleChangeTab = (key: string) => {
     setSearchParams({ tab: key });
@@ -44,7 +43,7 @@ const ContractPageContent = () => {
         breadcrumb: {
           items: [
             {
-              title: "Master list",
+              title: "Hồ sơ nhân sự",
             },
             {
               title: "Hợp đồng",
@@ -53,6 +52,18 @@ const ContractPageContent = () => {
         },
       }}
       title={<PageTitle title="Quản lý hợp đồng" />}
+      extra={[
+        <Link to={`/employee/contracts/add-new`} key="create-contract">
+          <PrimaryButton
+            icon={<PlusOutlined className="icon-hover-effect" />}
+            key="new-contract"
+            color="green"
+            className="font-primary"
+          >
+            Thêm mới
+          </PrimaryButton>
+        </Link>,
+      ]}
     >
       <Tabs
         type="card"
@@ -63,22 +74,11 @@ const ContractPageContent = () => {
           key: tabItem.key,
           children: (
             <>
-              <Card className="mb-3" size="small">
-                <Button
-                  type="primary"
-                  icon={<PlusOutlined />}
-                  onClick={() => setPopupCreateContract(true)}
-                >
-                  Tạo hợp đồng mới
-                </Button>
-              </Card>
               <FormFilter onSearch={scrollToDataTable} />
               <div ref={dataTableRef}>
                 <DataTable />
               </div>
               <ModalContract />
-              <ModalCreateContract />
-              <ModalEditContract />
             </>
           ),
           label: tabItem.label,

@@ -1,7 +1,7 @@
 import { PageContainer } from "@ant-design/pro-components";
 import { useRef, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import { Tabs, type TabsProps, Button } from "antd";
+import { Link, useSearchParams } from "react-router-dom";
+import { Tabs, type TabsProps } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import PageTitle from "@/components/common/shared/PageTitle";
 import {
@@ -9,9 +9,9 @@ import {
   UpdateRequestProvider,
 } from "../UpdateRequestContext";
 import DataTable from "../components/DataTable";
-import ModalUpdateRequest from "../components/ModalUpdateRequest";
 import { useUser } from "@/hooks/useUser";
 import FormFilter from "../components/FormFilter";
+import PrimaryButton from "@/components/common/button/PrimaryButton";
 
 export const TABS = {
   MY_REQUESTS: "1",
@@ -19,13 +19,12 @@ export const TABS = {
 
 const MyRequestsPageContent = () => {
   const dataTableRef = useRef<HTMLDivElement>(null);
-  const { tab, setPopupUpdateRequest, setSelectedUpdateRequest } =
-    useUpdateRequestContext();
+  const { tab } = useUpdateRequestContext();
   const { userProfile } = useUser();
-  const [_, setSearchParams] = useSearchParams();
+  const [, setSearchParams] = useSearchParams();
 
   useEffect(() => {
-    // Auto filter by current user's ID when component mounts
+    // Khi vào trang \"Đơn yêu cầu của tôi\", luôn filter theo user hiện tại
     if (userProfile?.id) {
       setSearchParams({
         tab: "1",
@@ -44,7 +43,9 @@ const MyRequestsPageContent = () => {
     setSearchParams(params);
   };
 
-  const tabs: TabsProps["items"] = [{ key: "1", label: "Đơn yêu cầu của tôi" }];
+  const tabs: TabsProps["items"] = [
+    { key: TABS.MY_REQUESTS, label: "Đơn yêu cầu của tôi" },
+  ];
 
   const scrollToDataTable = () => {
     if (dataTableRef.current) {
@@ -55,18 +56,13 @@ const MyRequestsPageContent = () => {
     }
   };
 
-  const handleCreateNew = () => {
-    setSelectedUpdateRequest(null);
-    setPopupUpdateRequest(true);
-  };
-
   return (
     <PageContainer
       header={{
         breadcrumb: {
           items: [
             {
-              title: "Master list",
+              title: "Hồ sơ nhân sự",
             },
             {
               title: "Đơn yêu cầu của tôi",
@@ -78,7 +74,7 @@ const MyRequestsPageContent = () => {
     >
       <Tabs
         type="card"
-        activeKey={`${tab ?? "1"}`}
+        activeKey={`${tab ?? TABS.MY_REQUESTS}`}
         className="tag-ticket-list report-tab"
         onChange={handleChangeTab}
         items={tabs.map((tabItem) => ({
@@ -86,24 +82,21 @@ const MyRequestsPageContent = () => {
           children: (
             <>
               <div className="mb-4 flex justify-between items-center">
-                <div></div>
-                <Button
-                  type="primary"
-                  icon={<PlusOutlined />}
-                  onClick={handleCreateNew}
-                  style={{
-                    background: "#306e51",
-                    borderColor: "#306e51",
-                  }}
-                >
-                  Tạo đơn yêu cầu mới
-                </Button>
+                <div />
+                <Link to="/employee/my-update-requests/add-new">
+                  <PrimaryButton
+                    icon={<PlusOutlined className="icon-hover-effect" />}
+                    color="green"
+                    className="font-primary"
+                  >
+                    Tạo đơn yêu cầu mới
+                  </PrimaryButton>
+                </Link>
               </div>
-              <FormFilter onSearch={scrollToDataTable} />
+              <FormFilter onSearch={scrollToDataTable} isMyRequests />
               <div ref={dataTableRef}>
-                <DataTable isMyRequests={true} />
+                <DataTable isMyRequests />
               </div>
-              <ModalUpdateRequest isMyRequests={true} />
             </>
           ),
           label: tabItem.label,

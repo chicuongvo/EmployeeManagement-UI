@@ -21,7 +21,7 @@ import {
   FileText,
 } from "lucide-react";
 import { useUpdateRequest } from "@/hooks/useUpdateRequest";
-import { UpdateRequestProvider } from "./UpdateRequestContext";
+import { UpdateRequestProvider } from "./update-request-provider";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -64,7 +64,7 @@ const UpdateRequestTableContent = () => {
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -107,13 +107,13 @@ const UpdateRequestTableContent = () => {
 
   const handleReview = async (
     id: number,
-    status: "APPROVED" | "NOT_APPROVED"
+    status: "APPROVED" | "NOT_APPROVED",
   ) => {
     try {
       // Backend sẽ tự động gán người phê duyệt từ token
       await reviewRequest(id, { status });
       toast.success(
-        `Yêu cầu đã được ${status === "APPROVED" ? "phê duyệt" : "từ chối"}`
+        `Yêu cầu đã được ${status === "APPROVED" ? "phê duyệt" : "từ chối"}`,
       );
       refreshUpdateRequests();
     } catch (error) {
@@ -321,7 +321,7 @@ const UpdateRequestTableContent = () => {
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
                   );
@@ -349,7 +349,7 @@ const UpdateRequestTableContent = () => {
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -402,8 +402,8 @@ const UpdateRequestTableContent = () => {
                         selectedRequest.status === "PENDING"
                           ? "bg-yellow-100 text-yellow-800"
                           : selectedRequest.status === "APPROVED"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-800"
                       }`}
                     >
                       {selectedRequest.status === "PENDING" ? (
@@ -416,8 +416,8 @@ const UpdateRequestTableContent = () => {
                       {selectedRequest.status === "PENDING"
                         ? "Chờ xử lý"
                         : selectedRequest.status === "APPROVED"
-                        ? "Đã phê duyệt"
-                        : "Không phê duyệt"}
+                          ? "Đã phê duyệt"
+                          : "Không phê duyệt"}
                     </span>
                   </p>
                 </div>

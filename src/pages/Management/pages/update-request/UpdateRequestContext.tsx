@@ -66,7 +66,7 @@ interface UpdateRequestContextType {
   tab?: string;
 }
 
-const UpdateRequestContext = createContext<
+export const UpdateRequestContext = createContext<
   UpdateRequestContextType | undefined
 >(undefined);
 
