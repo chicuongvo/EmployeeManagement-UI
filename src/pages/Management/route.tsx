@@ -35,6 +35,7 @@ import { FaUserGroup } from "react-icons/fa6";
 import { EmployeeProvider } from "./pages/employee/EmployeeContext";
 import { EmployeeDetailProvider } from "./pages/employee_detail/EmployeeDetailContex";
 import EmployeeDetailPage from "./pages/employee_detail";
+import ManagementAttendanceCorrectionPage from "./pages/attendance-correction";
 import { DepartmentProvider } from "../Employee/pages/department/DepartmentContext";
 import DepartmentDetailPage from "../Employee/pages/department_detail";
 import DepartmentPage from "../Employee/pages/department";
@@ -233,6 +234,34 @@ const management_route: RouteItem = {
       name: "Chấm công",
       icon: <CalendarOutlined />,
       minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+      children: [
+        {
+          path: "reports",
+          name: "Báo cáo chấm công",
+          element: <AttendanceManagementPage />,
+          minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+        },
+        {
+          path: "correction-requests",
+          name: "Quản lý đơn điểm danh bù",
+          element: <ManagementAttendanceCorrectionPage />,
+          minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+        },
+      ],
+    },
+    {
+      path: "holiday",
+      name: "Quản lý nghỉ lễ",
+      icon: <CalendarOutlined />,
+      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+      children: [
+        {
+          path: "management",
+          name: "Quản lý ngày nghỉ",
+          element: <HolidayManagementPage />,
+          minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+        },
+      ],
       element: <AttendanceManagementPage />,
     },
     {
