@@ -2,6 +2,7 @@ import { FaUserGroup } from "react-icons/fa6";
 import { VideoCameraOutlined } from "@ant-design/icons";
 
 import { type RouteItem } from "@/routes";
+import { ROLE_LEVELS } from "@/constants/roleLevel";
 import { EmployeeProvider } from "./pages/employee/EmployeeContext";
 import { DepartmentProvider } from "./pages/department/DepartmentContext";
 import { LeaveApplicationProvider } from "./pages/leave-application/LeaveApplicationContext";
@@ -158,6 +159,7 @@ const route: RouteItem = {
     {
       path: "performance",
       name: "Đánh giá",
+      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL, // Manager level (2) and above
       element: (
         <PerformanceProvider>
           <PerformancePage />
@@ -167,16 +169,19 @@ const route: RouteItem = {
     {
       path: "performance-criteria",
       name: "Tiêu chí đánh giá",
+      minRoleLevel: ROLE_LEVELS.HR_LEVEL, // HR level (3) and above
       element: <PerformanceCriteriaPage />,
     },
     {
       path: "my-performance",
       name: "Đánh giá của tôi",
+      // minRoleLevel: 1, // Employee level (1) and above
       element: <MyPerformancePage />,
     },
     {
       path: "department-performance",
       name: "Đánh giá phòng ban",
+      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL, // Manager level (2) and above
       element: <PerformanceByDepartmentPage />,
     },
     {
