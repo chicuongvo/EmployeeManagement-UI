@@ -68,7 +68,7 @@ export interface DepartmentPaginationMeta {
 
 // Response interface for list departments (matches API structure)
 export interface GetListDepartmentResponse
-  extends PaginationResponse<DEPARTMENT> { }
+  extends PaginationResponse<DEPARTMENT> {}
 // Create department request
 export interface CreateDepartmentRequest {
   departmentCode: string;
@@ -85,9 +85,4 @@ export interface UpdateDepartmentRequest {
   foundedAt?: Date | string;
   description?: string;
   managerId?: number;
-  previousManagerAction?: "CHANGE_POSITION" | "REMOVE_POSITION";
-  oldManagerNewPositionId?: number;
-  oldManagerNewDepartmentId?: number;
 }
-
-
