@@ -218,9 +218,20 @@ const route: RouteItem = {
       element: <MyPerformancePage />,
     },
     {
+      path: "department-performance",
+      name: "Đánh giá phòng ban",
+      element: <PerformanceByDepartmentPage />,
+    },
+    {
       path: "performance/:id",
       name: "Đánh giá chi tiết",
       element: <PerformanceDetailPage />,
+      hideInMenu: true,
+    },
+    {
+      path: "performance/employee/:employeeId",
+      name: "Đánh giá nhân viên",
+      element: <PerformanceByEmployeePage />,
       hideInMenu: true,
     },
 
