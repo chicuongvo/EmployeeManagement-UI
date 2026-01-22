@@ -11,7 +11,7 @@ import {
 } from "antd";
 import type { TextAreaProps } from "antd/es/input";
 import { useEmployeeDetailContext } from "../EmployeeDetailContex";
-import type { EMPLOYEE, WorkStatus as WorkStatusType } from "@/apis/employee/model/Employee";
+import type { EMPLOYEE } from "@/apis/employee/model/Employee";
 import ImageUpload from "@/components/common/form/ImageUpload";
 import FileUpload from "@/components/common/form/FileUpload";
 import SelectListEthnicity from "@/components/common/form/SelectListEthnicity";
@@ -23,9 +23,9 @@ import SelectListDepartment from "@/components/common/form/SelectListDepartment"
 import SelectListPosition from "@/components/common/form/SelectListPosition";
 import SelectListEmployee from "@/components/common/form/SelectListEmployee";
 import { Link } from "react-router-dom";
-// import ChangeStatus from "@/components/common/status/ChangeStatus";
-import { WorkStatus } from "@/components/common/status";
 import { getPosition } from "@/apis/position";
+import { useUser } from "@/hooks/useUser";
+import { ROLE_LEVELS } from "@/constants/roleLevel";
 
 const { TextArea } = Input;
 
@@ -55,6 +55,7 @@ export const FORM_FIELDS = {
   // ===== Contact Information =====
   PHONE: "phone",
   EMAIL: "email",
+  GITHUB_USERNAME: "githubUsername",
   PERMANENT_ADDRESS: "permanentAddress",
   CURRENT_ADDRESS: "currentAddress",
 
@@ -107,6 +108,7 @@ interface Props {
 
 const GeneralInformation = (_props: Props) => {
   const { isCreate, isEditable } = useEmployeeDetailContext();
+  const { roleLevel } = useUser();
   const [form] = Form.useForm();
   // Ref to track if department is being set from position selection
   const isSettingDepartmentFromPosition = useRef(false);
@@ -114,6 +116,9 @@ const GeneralInformation = (_props: Props) => {
   const prevDepartmentIdRef = useRef<number | undefined>(
     _props.initialValues.departmentId
   );
+  
+  // Check if user can edit system fields (roleLevel > Manager level)
+  const canEditSystemFields = roleLevel !== null && roleLevel > ROLE_LEVELS.MANAGEMENT_LEVEL;
   
   // Watch departmentId and positionId changes from form
   const departmentId = Form.useWatch(FORM_FIELDS.DEPARTMENT_ID, form);
@@ -271,7 +276,8 @@ const GeneralInformation = (_props: Props) => {
   const renderDatePicker = useCallback((
     value: any,
     format = "DD/MM/YYYY",
-    placeholder: string
+    placeholder: string,
+    disabled = false
   ) => {
     if (!isEditable) {
       return <span>{value ? dayjs(value).format(format) : "-"}</span>;
@@ -281,6 +287,7 @@ const GeneralInformation = (_props: Props) => {
         format={format}
         placeholder={placeholder}
         className="w-full"
+        disabled={disabled}
       />
     );
   }, [isEditable, _props.initialValues]);
@@ -346,18 +353,24 @@ const GeneralInformation = (_props: Props) => {
 
   const renderDepartmentPositionField = useCallback((
     type: "department" | "position" | "employee",
-    id: number
+    id: number,
+    isSystemField = false
   ) => {
     // Get current values from form or fallback to props
     const currentDepartmentId = departmentId ?? _props.changeInfoValue.departmentId ?? _props.initialValues.departmentId;
     const currentPositionId = positionId ?? _props.changeInfoValue.positionId ?? _props.initialValues.positionId;
+    
+    // Disable if it's a system field and user doesn't have permission
+    const isDisabled = isSystemField && !canEditSystemFields;
 
     return isEditable ? (
       type === "department" ? (
         <SelectListDepartment
           placeholder="Chọn phòng ban"
           value={currentDepartmentId ?? undefined}
+          disabled={isDisabled}
           onChange={async (value: number | null | undefined) => {
+            if (isDisabled) return;
             const newDepartmentId = value ?? undefined;
             
             // Update form field - useEffect will handle clearing position
@@ -373,7 +386,9 @@ const GeneralInformation = (_props: Props) => {
           placeholder="Chọn vị trí"
           value={currentPositionId ?? undefined}
           departmentId={currentDepartmentId ?? undefined}
+          disabled={isDisabled}
           onChange={async (value: number | null | undefined) => {
+            if (isDisabled) return;
             const newPositionId = value ?? undefined;
             
             // Update form field
@@ -437,7 +452,7 @@ const GeneralInformation = (_props: Props) => {
         );
       })()
     );
-  }, [isEditable, _props.initialValues, _props.changeInfoValue, departmentId, positionId, form]);
+  }, [isEditable, _props.initialValues, _props.changeInfoValue, departmentId, positionId, form, canEditSystemFields]);
 
   const renderAddress = useCallback((
     address: string | AddressValue | undefined,
@@ -460,19 +475,36 @@ const GeneralInformation = (_props: Props) => {
     );
   }, [isEditable, getAddressValue, _props.initialValues]);
 
+  // Active/Inactive status options
+  const activeStatusOptions = useMemo(() => [
+    { value: true, label: "Active" },
+    { value: false, label: "Inactive" },
+  ], []);
+
   const renderWorkStatus = useCallback((
-    value: WorkStatusType | undefined,
-    onChange: (value: WorkStatusType) => void
+    isActive: boolean | undefined,
+    onChange: (value: boolean) => void
   ) => {
-    if (!value) return <span>-</span>;
+    // Always show "Active" for display, regardless of workStatus
+    const displayValue = isActive !== undefined ? isActive : true;
+    
+    if (!isEditable) {
+      return <span>{displayValue ? "Active" : "Inactive"}</span>;
+    }
 
     return (
-      <WorkStatus
-        status={value}
-      // enabledDropdown={isEditable}
+      <Select
+        placeholder="Chọn trạng thái"
+        value={displayValue}
+        options={activeStatusOptions}
+        onChange={(value: boolean) => {
+          if (!canEditSystemFields) return;
+          onChange(value);
+        }}
+        disabled={!canEditSystemFields}
       />
     );
-  }, [isEditable, _props.initialValues]);
+  }, [isEditable, canEditSystemFields, activeStatusOptions]);
 
   const systemFields = useMemo(() => [
     getFieldConfig(
@@ -492,7 +524,8 @@ const GeneralInformation = (_props: Props) => {
       "Phòng ban",
       renderDepartmentPositionField(
         "department",
-        _props.initialValues.departmentId ?? 0
+        _props.initialValues.departmentId ?? 0,
+        true // isSystemField
       )
     ),
     getFieldConfig(
@@ -500,18 +533,21 @@ const GeneralInformation = (_props: Props) => {
       "Vị trí",
       renderDepartmentPositionField(
         "position",
-        _props.initialValues.positionId ?? 0
+        _props.initialValues.positionId ?? 0,
+        true // isSystemField
       )
     ),
     getFieldConfig(
       FORM_FIELDS.WORK_STATUS,
       "Trạng thái làm việc",
       renderWorkStatus(
-        _props.initialValues.workStatus,
-        (value: WorkStatusType) => {
+        _props.initialValues.isActive,
+        (value: boolean) => {
+          if (!canEditSystemFields) return;
+          // Only update isActive, not workStatus
           _props.setChangeInfoValue({
             ..._props.changeInfoValue,
-            workStatus: value,
+            isActive: value,
           });
         }
       )
@@ -522,11 +558,12 @@ const GeneralInformation = (_props: Props) => {
       renderDatePicker(
         _props.initialValues.onboardDate,
         "DD/MM/YYYY",
-        "Chọn ngày nhận việc"
+        "Chọn ngày nhận việc",
+        !canEditSystemFields // disabled if no permission
       ),
       true
     ),
-  ], [isEditable, _props.initialValues, renderDepartmentPositionField, renderSelect, renderWorkStatus, renderDatePicker, _props.initialValues]);
+  ], [isEditable, _props.initialValues, renderDepartmentPositionField, renderSelect, renderWorkStatus, renderDatePicker, canEditSystemFields]);
 
   const personalFields = useMemo(() => [
     getFieldConfig(
@@ -670,6 +707,27 @@ const GeneralInformation = (_props: Props) => {
       "Email",
       renderInput("Nhập email", _props.initialValues.email ?? ""),
       true
+    ),
+    getFieldConfig(
+      FORM_FIELDS.GITHUB_USERNAME,
+      "Github Username",
+      renderInput(
+        "Nhập Github username", 
+        _props.initialValues.githubUsername ?? "", 
+        "text",
+        {
+          onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+            const value = e.target.value || undefined;
+            form.setFieldsValue({
+              [FORM_FIELDS.GITHUB_USERNAME]: value,
+            });
+            _props.setChangeInfoValue({
+              ..._props.changeInfoValue,
+              githubUsername: value,
+            });
+          }
+        }
+      )
     ),
     getFieldConfig(
       FORM_FIELDS.PERMANENT_ADDRESS,
