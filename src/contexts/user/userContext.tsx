@@ -9,6 +9,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [userChanged, setUserChanged] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Calculate roleLevel from userProfile
+  const roleLevel = userProfile?.position?.role?.level ?? null;
+
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -40,6 +43,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         userChanged,
         setUserChanged,
         isLoading,
+        roleLevel,
       }}
     >
       {children}

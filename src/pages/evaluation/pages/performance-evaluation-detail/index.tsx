@@ -1,11 +1,13 @@
 import { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { PageContainer } from "@ant-design/pro-components";
-import { Tabs, type TabsProps, Button } from "antd";
+import { Tabs, type TabsProps, Table, Tag, Avatar, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { EyeOutlined } from "@ant-design/icons";
 import PageTitle from "@/components/common/shared/PageTitle";
-import { toast, Toaster } from "sonner";
+import PrimaryButton from "@/components/common/button/PrimaryButton";
+import { PlusOutlined } from "@ant-design/icons";
+import { toast } from "sonner";
 import { performanceService } from "@/apis/performance/performanceService";
 import { performanceDetailService } from "@/apis/performance/performanceDetailService";
 import { performanceDetailScoreService } from "@/apis/performance/performanceDetailScoreService";
@@ -15,9 +17,6 @@ import type { PerformanceCriteria } from "@/apis/performance/model/PerformanceCr
 import AddPerformanceDetailDialog, { type PerformanceDetailSubmit } from "./components/AddPerformanceDetailDialog";
 import ViewPerformanceDetailDialog from "./components/ViewPerformanceDetailDialog";
 import FormFilter from "./components/FormFilter";
-import TableComponent from "@/components/common/table/TableComponent";
-import TooltipTruncatedText from "@/components/common/shared/TooltipTruncatedText";
-import useTableStore from "@/stores/tableStore";
 
 export default function PerformanceDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -31,11 +30,6 @@ export default function PerformanceDetailPage() {
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const [selectedDetail, setSelectedDetail] = useState<PerformanceDetail | null>(null);
   const [criteria, setCriteria] = useState<PerformanceCriteria[]>([]);
-
-  const { setListPerformanceDetailActiveKey, listPerformanceDetailActiveKey } = useTableStore(
-    (state) => state
-  );
-
   const [filterValues, setFilterValues] = useState<any>({});
 
   useEffect(() => {
@@ -131,7 +125,7 @@ export default function PerformanceDetailPage() {
   const baseColumns: ColumnsType<PerformanceDetail> = useMemo(() => {
     const fixedColumns: ColumnsType<PerformanceDetail> = [
       {
-        title: "No",
+        title: "STT",
         key: "no",
         render: (_, __, index: number) => {
           return (currentPage - 1) * pageSize + index + 1;
@@ -141,26 +135,25 @@ export default function PerformanceDetailPage() {
         align: "center",
       },
       {
-        title: "Employee Code",
+        title: "Mã NV",
         key: "employeeCode",
-        width: 150,
+        width: 120,
         fixed: "left",
-        align: "left",
+        align: "center",
         render: (_, record) => (
-          <TooltipTruncatedText value={record.employee?.employeeCode || "N/A"} />
+          <Tag color="blue">{record.employee?.employeeCode || "N/A"}</Tag>
         ),
       },
       {
-        title: "Employee Name",
+        title: "Nhân viên",
         key: "employeeName",
         fixed: "left",
         width: 250,
         render: (_, record) => (
           <div className="flex items-center gap-2">
-            <img
-              src={record.employee?.avatar || "/default-avatar.svg"}
-              alt={record.employee?.fullName || "Unknown"}
-              className="w-8 h-8 rounded-full object-cover"
+            <Avatar
+              src={record.employee?.avatar || "https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg"}
+              size={40}
             />
             <div className="flex flex-col">
               <span className="font-medium">{record.employee?.fullName || "N/A"}</span>
@@ -172,36 +165,54 @@ export default function PerformanceDetailPage() {
     ];
 
     const criteriaColumns: ColumnsType<PerformanceDetail> = criteria.map((c) => ({
-      title: c.name,
+      title: (
+        <Tooltip title={c.description}>
+          {c.name}
+        </Tooltip>
+      ),
       key: `criteria_${c.id}`,
       align: "center" as const,
       width: 120,
-      render: (_, record) => formatScore(getScoreByCriteriaId(record, c.id)),
+      render: (_, record) => {
+        const score = getScoreByCriteriaId(record, c.id);
+        if (score === null) return <span className="text-gray-400">-</span>;
+        const color = score >= 4 ? "green" : score >= 3 ? "blue" : score >= 2 ? "orange" : "red";
+        return <Tag color={color}>{formatScore(score)}</Tag>;
+      },
     }));
 
     const actionColumns: ColumnsType<PerformanceDetail> = [
       {
-        title: "Average Score",
+        title: "Điểm TB",
         key: "averageScore",
         align: "center",
-        width: 120,
-        render: (_, record) => formatScore(calculateAverageScore(record)),
+        width: 100,
+        render: (_, record) => {
+          const avg = calculateAverageScore(record);
+          if (avg === null) return <span className="text-gray-400">-</span>;
+          const color = avg >= 4 ? "green" : avg >= 3 ? "blue" : avg >= 2 ? "orange" : "red";
+          return <Tag color={color} className="font-bold">{formatScore(avg)}</Tag>;
+        },
       },
       {
-        title: "Action",
+        title: "Hành động",
         key: "action",
         width: 100,
         fixed: "right",
         align: "center",
         render: (_, record) => (
-          <Button
-            type="text"
-            onClick={() => {
-              setSelectedDetail(record);
-              setIsViewDialogOpen(true);
-            }}
-            icon={<EyeOutlined style={{ color: "#1890ff" }} />}
-          />
+          <Tooltip title="Xem chi tiết">
+            <button
+              onClick={() => {
+                setSelectedDetail(record);
+                setIsViewDialogOpen(true);
+              }}
+              className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors"
+            >
+              <EyeOutlined />
+              Xem
+            </button>
+          </Tooltip>
         ),
       },
     ];
@@ -212,33 +223,6 @@ export default function PerformanceDetailPage() {
   const columns = useMemo(() => {
     return baseColumns;
   }, [baseColumns]);
-
-  useEffect(() => {
-    if (!listPerformanceDetailActiveKey) {
-      setListPerformanceDetailActiveKey(
-        columns
-          .map((col) => col.key as string)
-          .filter((key) => key !== "action")
-      );
-    }
-  }, [columns, setListPerformanceDetailActiveKey, listPerformanceDetailActiveKey]);
-
-  const paginationConfig = useMemo(
-    () => ({
-      total: filteredDetails.length,
-      pageSize: pageSize,
-      current: currentPage,
-      showTotal: (total: number) => (
-        <span>
-          <span className="font-bold">Total:</span> {total}
-        </span>
-      ),
-      showSizeChanger: true,
-      showQuickJumper: true,
-      pageSizeOptions: ["10", "20", "50", "100"],
-    }),
-    [filteredDetails.length, pageSize, currentPage]
-  );
 
   const handleTableChange = (pagination: any) => {
     setCurrentPage(pagination.current);
@@ -303,7 +287,7 @@ export default function PerformanceDetailPage() {
   }
 
   const tabs: TabsProps["items"] = [
-    { key: "1", label: `Performance ${performance.month}/${performance.year}` },
+    { key: "1", label: `Đánh giá tháng ${performance.month}/${performance.year}` },
   ];
 
   return (
@@ -320,17 +304,26 @@ export default function PerformanceDetailPage() {
               className: "cursor-pointer hover:text-blue-600",
             },
             {
-              title: `${performance.month}/${performance.year}`,
+              title: `Tháng ${performance.month}/${performance.year}`,
             },
           ],
         },
       }}
       title={
-        <PageTitle title={`Performance ${performance.month}/${performance.year}`} />
+        <PageTitle title={`Đánh giá tháng ${performance.month}/${performance.year}`} />
       }
+      extra={[
+        <PrimaryButton
+          key="add-detail"
+          icon={<PlusOutlined className="icon-hover-effect" />}
+          color="green"
+          className="font-primary"
+          onClick={() => setIsDialogOpen(true)}
+        >
+          Thêm đánh giá
+        </PrimaryButton>,
+      ]}
     >
-      <Toaster position="top-right" />
-
       <Tabs
         type="card"
         activeKey="1"
@@ -342,22 +335,26 @@ export default function PerformanceDetailPage() {
               <FormFilter
                 onSearch={handleFilterSearch}
                 onReset={handleFilterReset}
-                onAddReport={() => setIsDialogOpen(true)}
                 loading={isLoading}
               />
 
               {/* Table */}
-              <TableComponent
-                isSuccess={!isLoading}
-                rowKey={(record) => record.id || ""}
+              <Table<PerformanceDetail>
+                rowKey={(record) => record.id?.toString() || ""}
                 dataSource={filteredDetails.slice((currentPage - 1) * pageSize, currentPage * pageSize)}
                 columns={columns}
-                scroll={{ x: true }}
-                activeKeys={listPerformanceDetailActiveKey}
-                setActiveKeys={setListPerformanceDetailActiveKey}
-                pagination={paginationConfig}
+                loading={isLoading}
+                bordered
+                scroll={{ x: 1200 }}
+                pagination={{
+                  total: filteredDetails.length,
+                  pageSize: pageSize,
+                  current: currentPage,
+                  showTotal: (total, range) => `${range[0]}-${range[1]} của ${total} nhân viên`,
+                  showSizeChanger: true,
+                  pageSizeOptions: ["10", "20", "50", "100"],
+                }}
                 onChange={handleTableChange}
-                editColumnMode={true}
               />
 
               {/* Add Performance Detail Dialog */}

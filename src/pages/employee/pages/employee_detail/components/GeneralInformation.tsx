@@ -429,14 +429,6 @@ const GeneralInformation = (_props: Props) => {
       )
     ),
     getFieldConfig(
-      FORM_FIELDS.DIRECT_MANAGER_ID,
-      "Quản lý trực tiếp",
-      renderDepartmentPositionField(
-        "employee",
-        _props.initialValues.directManagerId ?? 0
-      )
-    ),
-    getFieldConfig(
       FORM_FIELDS.WORK_STATUS,
       "Trạng thái làm việc",
       renderWorkStatus(

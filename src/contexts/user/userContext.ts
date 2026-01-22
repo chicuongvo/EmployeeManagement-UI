@@ -7,6 +7,7 @@ export interface UserContextType {
   userChanged: boolean;
   setUserChanged: React.Dispatch<React.SetStateAction<boolean>>;
   isLoading: boolean;
+  roleLevel: number | null;
 }
 
 export const UserContext = createContext<UserContextType | null>(null);
