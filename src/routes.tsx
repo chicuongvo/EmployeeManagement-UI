@@ -6,7 +6,9 @@ import attendance_route from "./pages/attendance/route";
 import holiday_route from "./pages/holiday/route";
 import management_route from "./pages/Management/route";
 import admin_route from "./pages/Admin/route";
+import performance_route from "./pages/performance/route";
 import Login from "./pages/Auth/Login";
+import ChangePassword from "./pages/Auth/ChangePassword";
 
 export type RouteItem = Omit<RouteObject, "children"> & {
   name?: string;
@@ -34,10 +36,16 @@ const routes: RouteItem[] = [
     hideInMenu: true,
     element: <Login />,
   } as RouteItem,
+  {
+    path: "/auth/change-password",
+    hideInMenu: true,
+    element: <ChangePassword />,
+  } as RouteItem,
   employee_route,
   project_route,
   attendance_route,
   holiday_route,
+  performance_route,
   management_route,
   admin_route,
 ];

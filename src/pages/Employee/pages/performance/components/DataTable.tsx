@@ -107,7 +107,7 @@ const DataTable = () => {
         render: (_, record) => (
           <Tooltip title="Xem chi tiết">
             <button
-              onClick={() => navigate(`/employee/performance/${record.id}`)}
+              onClick={() => navigate(`/performance/${record.id}`)}
               className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors"
             >
               <FileTextOutlined />
@@ -143,7 +143,7 @@ const DataTable = () => {
         },
       }}
       onRow={(record) => ({
-        onClick: () => navigate(`/employee/performance/${record.id}`),
+        onClick: () => navigate(`/performance/${record.id}`),
         style: { cursor: "pointer" },
       })}
     />

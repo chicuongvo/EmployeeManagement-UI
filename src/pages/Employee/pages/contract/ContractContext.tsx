@@ -10,14 +10,9 @@ import React, {
 import { useSearchParams } from "react-router-dom";
 
 import useGetParam from "@/hooks/useGetParam";
-import useTableStore from "@/stores/tableStore";
 
 import { getAllContracts } from "@/api/contract.api";
-import type {
-  ContractResponse,
-  ContractQueryParams,
-} from "@/types/Contract";
-import { toast } from "react-toastify";
+import type { ContractResponse, ContractQueryParams } from "@/types/Contract";
 
 interface GetListContractResponse {
   data: ContractResponse[];
@@ -51,14 +46,13 @@ interface ContractContextType {
 }
 
 const ContractContext = createContext<ContractContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export const ContractProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const [_, setSearchParams] = useSearchParams();
-  const { listContractActiveKey } = useTableStore((state) => state);
+  const [, setSearchParams] = useSearchParams();
   const [popupContract, setPopupContract] = useState(false);
   const [popupCreateContract, setPopupCreateContract] = useState(false);
   const [popupEditContract, setPopupEditContract] = useState(false);
@@ -136,12 +130,17 @@ export const ContractProvider: React.FC<{
     queryKey: ["contracts", params, tab],
     queryFn: async (): Promise<GetListContractResponse> => {
       const response = await getAllContracts(params);
-      
+
       // If response is already in paginated format
-      if (response && typeof response === 'object' && 'data' in response && 'pagination' in response) {
+      if (
+        response &&
+        typeof response === "object" &&
+        "data" in response &&
+        "pagination" in response
+      ) {
         return response as GetListContractResponse;
       }
-      
+
       // If response is an array, wrap it
       const dataArray = Array.isArray(response) ? response : [];
       return {
@@ -164,8 +163,8 @@ export const ContractProvider: React.FC<{
           ...values,
           tab: tab ?? 1,
         },
-        { arrayFormat: "comma" }
-      )
+        { arrayFormat: "comma" },
+      ),
     );
   };
 
@@ -176,7 +175,7 @@ export const ContractProvider: React.FC<{
           tab: 1,
           page: 1,
           limit: 10,
-        })
+        }),
       );
     }
   }, [setSearchParams, tab]);
@@ -210,8 +209,9 @@ export const ContractProvider: React.FC<{
 export const useContractContext = () => {
   const context = useContext(ContractContext);
   if (!context) {
-    throw new Error("useContractContext must be used within a ContractProvider");
+    throw new Error(
+      "useContractContext must be used within a ContractProvider",
+    );
   }
   return context;
 };
-

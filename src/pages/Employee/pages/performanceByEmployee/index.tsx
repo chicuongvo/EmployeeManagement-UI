@@ -230,7 +230,7 @@ export default function PerformanceByEmployeePage() {
                         { title: "Master list" },
                         {
                             title: "Performance",
-                            onClick: () => navigate("/employee/performance"),
+                            onClick: () => navigate("/performance/list"),
                             className: "cursor-pointer hover:text-blue-600",
                         },
                         {
