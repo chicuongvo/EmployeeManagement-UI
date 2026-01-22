@@ -1,7 +1,13 @@
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import { Button, Tag, Tooltip } from "antd";
-import { EyeOutlined, EditOutlined, FileTextOutlined, DownloadOutlined } from "@ant-design/icons";
+import {
+  EyeOutlined,
+  EditOutlined,
+  FileTextOutlined,
+  DownloadOutlined,
+} from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 import useTableStore from "@/stores/tableStore";
 import { useEffect, useMemo } from "react";
@@ -26,13 +32,12 @@ const DataTable = ({ isMyContracts = false }: DataTableProps = {}) => {
     isSuccess,
     handleFilterSubmit,
     params,
-    setSelectedContract,
-    setPopupContract,
-    setPopupEditContract,
   } = useContractContext();
+  const navigate = useNavigate();
 
-  const { setListContractActiveKey, listContractActiveKey } =
-    useTableStore((state) => state);
+  const { setListContractActiveKey, listContractActiveKey } = useTableStore(
+    (state) => state,
+  );
 
   const getStatusTag = (status: ContractStatus) => {
     const statusConfig: Record<
@@ -79,23 +84,19 @@ const DataTable = ({ isMyContracts = false }: DataTableProps = {}) => {
         align: "center",
       },
       {
-        title: "ID",
-        dataIndex: "id",
-        key: COLUMN_KEYS.ID,
-        width: 80,
-        fixed: "left",
-        align: "center",
-      },
-      {
         title: "Mã hợp đồng",
         dataIndex: "contractCode",
         key: "contractCode",
         width: 150,
+        align: "center",
+        fixed: "left",
       },
       {
         title: "Loại",
         dataIndex: "type",
         key: "type",
+        align: "center",
+        fixed: "left",
         width: 120,
         render: (type: ContractType) => getTypeTag(type),
       },
@@ -130,8 +131,7 @@ const DataTable = ({ isMyContracts = false }: DataTableProps = {}) => {
         align: "left",
         key: "startDate",
         width: 120,
-        render: (value) =>
-          value ? dayjs(value).format("DD/MM/YYYY") : "-",
+        render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
       },
       {
         title: "Ngày kết thúc",
@@ -139,8 +139,7 @@ const DataTable = ({ isMyContracts = false }: DataTableProps = {}) => {
         align: "left",
         key: "endDate",
         width: 120,
-        render: (value) =>
-          value ? dayjs(value).format("DD/MM/YYYY") : "-",
+        render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
       },
       {
         title: "Lương/ngày",
@@ -170,14 +169,23 @@ const DataTable = ({ isMyContracts = false }: DataTableProps = {}) => {
           if (!attachment) {
             return <span className="text-gray-400">-</span>;
           }
-          
+
           const isPDF = attachment.match(/\.pdf$/i);
           const isImage = attachment.match(/\.(jpg|jpeg|png|gif|webp)$/i);
-          
+
           return (
             <div className="flex items-center justify-center gap-2">
               {isPDF ? (
-                <FileTextOutlined className="text-red-600 text-lg" />
+                <Tooltip title="Xem PDF">
+                  <Button
+                    type="text"
+                    size="small"
+                    icon={<FileTextOutlined className="text-red-600 text-lg" />}
+                    onClick={() => {
+                      window.open(attachment, "_blank");
+                    }}
+                  />
+                </Tooltip>
               ) : isImage ? (
                 <div className="w-8 h-8 rounded overflow-hidden border">
                   <img
@@ -211,7 +219,7 @@ const DataTable = ({ isMyContracts = false }: DataTableProps = {}) => {
       {
         title: "Action",
         key: COLUMN_KEYS.ACTION,
-        width: 120,
+        width: isMyContracts ? 80 : 120,
         fixed: "right",
         align: "center",
         render: (_, record) => (
@@ -221,21 +229,25 @@ const DataTable = ({ isMyContracts = false }: DataTableProps = {}) => {
                 type="text"
                 icon={<EyeOutlined />}
                 onClick={() => {
-                  setSelectedContract(record);
-                  setPopupContract(true);
+                  if (isMyContracts) {
+                    navigate(`/employee/my-contracts/${record.id}`);
+                  } else {
+                    navigate(`/employee/contracts/${record.id}`);
+                  }
                 }}
               />
             </Tooltip>
-            <Tooltip title="Chỉnh sửa">
-              <Button
-                type="text"
-                icon={<EditOutlined />}
-                onClick={() => {
-                  setSelectedContract(record);
-                  setPopupEditContract(true);
-                }}
-              />
-            </Tooltip>
+            {!isMyContracts && (
+              <Tooltip title="Chỉnh sửa">
+                <Button
+                  type="text"
+                  icon={<EditOutlined />}
+                  onClick={() => {
+                    navigate(`/employee/contracts/${record.id}`);
+                  }}
+                />
+              </Tooltip>
+            )}
           </div>
         ),
       },
@@ -243,11 +255,9 @@ const DataTable = ({ isMyContracts = false }: DataTableProps = {}) => {
     [
       dataResponse?.pagination.page,
       dataResponse?.pagination.limit,
-      setSelectedContract,
-      setPopupContract,
-      setPopupEditContract,
       isMyContracts,
-    ]
+      navigate,
+    ],
   );
 
   const columns = useMemo(() => {
@@ -259,7 +269,7 @@ const DataTable = ({ isMyContracts = false }: DataTableProps = {}) => {
       setListContractActiveKey(
         columns
           .map((col) => col.key as string)
-          .filter((key) => key !== COLUMN_KEYS.ACTION)
+          .filter((key) => key !== COLUMN_KEYS.ACTION),
       );
     }
   }, [columns, setListContractActiveKey, listContractActiveKey]);
@@ -282,7 +292,7 @@ const DataTable = ({ isMyContracts = false }: DataTableProps = {}) => {
       dataResponse?.pagination.total,
       dataResponse?.pagination.limit,
       dataResponse?.pagination.page,
-    ]
+    ],
   );
 
   return (
@@ -308,4 +318,3 @@ const DataTable = ({ isMyContracts = false }: DataTableProps = {}) => {
 };
 
 export default DataTable;
-

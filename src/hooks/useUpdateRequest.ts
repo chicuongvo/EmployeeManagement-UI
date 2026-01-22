@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { UpdateRequestContext } from "../contexts/update-request/updateRequestContext";
+import { UpdateRequestContext } from "../pages/Management/pages/update-request/UpdateRequestContext";
 
 export const useUpdateRequest = () => {
   const context = useContext(UpdateRequestContext);
