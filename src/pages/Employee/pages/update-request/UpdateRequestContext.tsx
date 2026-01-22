@@ -36,13 +36,15 @@ interface GetListUpdateRequestResponse {
 }
 
 interface UpdateRequestContextType {
+  updateRequests: UpdateRequestResponse[];
+  isLoading: boolean;
+  refreshUpdateRequests: () => void;
   params: UpdateRequestQueryParams;
   paramsStr: string;
   setPopupUpdateRequest: React.Dispatch<React.SetStateAction<boolean>>;
   popupUpdateRequest: boolean;
   refetch: () => void;
   dataResponse?: GetListUpdateRequestResponse;
-  isLoading: boolean;
   isSuccess: boolean;
   handleFilterSubmit: (values: UpdateRequestQueryParams) => void;
   setSelectedUpdateRequest: React.Dispatch<
@@ -129,6 +131,14 @@ export const UpdateRequestProvider: React.FC<{
     enabled: !!tab,
   });
 
+  const updateRequests = useMemo(() => {
+    return data?.data || [];
+  }, [data]);
+
+  const refreshUpdateRequests = () => {
+    refetch();
+  };
+
   const handleFilterSubmit = (values: UpdateRequestQueryParams) => {
     setSearchParams(
       queryString.stringify(
@@ -214,13 +224,15 @@ export const UpdateRequestProvider: React.FC<{
   return (
     <UpdateRequestContext.Provider
       value={{
+        updateRequests,
+        isLoading,
+        refreshUpdateRequests,
         params,
         paramsStr,
         setPopupUpdateRequest,
         popupUpdateRequest,
         refetch,
         dataResponse: data,
-        isLoading: isLoading,
         isSuccess,
         handleFilterSubmit,
         setSelectedUpdateRequest,
