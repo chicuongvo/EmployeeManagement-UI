@@ -152,7 +152,7 @@ export default function PerformanceByDepartmentPage() {
                                 className="font-medium cursor-pointer hover:text-blue-600"
                                 onClick={() =>
                                     navigate(
-                                        `/employee/performance/employee/${record.employeeId}`
+                                        `/performance/employee/${record.employeeId}`
                                     )
                                 }
                             >
@@ -306,7 +306,7 @@ export default function PerformanceByDepartmentPage() {
                         { title: "Master list" },
                         {
                             title: "Performance",
-                            onClick: () => navigate("/employee/performance"),
+                            onClick: () => navigate("/performance/list"),
                             className: "cursor-pointer hover:text-blue-600",
                         },
                         {
