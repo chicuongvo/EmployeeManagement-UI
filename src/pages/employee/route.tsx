@@ -33,7 +33,7 @@ import PerformanceDetailPage from "@/pages/employee/pages/performanceDetail";
 const route: RouteItem = {
   path: "/employee",
   name: (
-    <span className="font-primary">Hồ sơ nhân viên</span>
+    <span className="font-primary">Thông tin cá nhân</span>
   ) as unknown as string,
   element: <MainLayout />,
   icon: <FaUserGroup className="text-base font-primary" />,
