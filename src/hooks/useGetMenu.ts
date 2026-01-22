@@ -11,9 +11,9 @@ const useGetMenus = (): MenuDataItem[] => {
 
   const hasAccess = (menu: RouteItem): boolean => {
     // If user has no role level, deny access
-    if (roleLevel === null) {
-      return false;
-    }
+    // if (roleLevel === null) {
+    //   return false;
+    // }
 
     // If no minRoleLevel is specified, allow access
     if (menu.minRoleLevel === undefined) {

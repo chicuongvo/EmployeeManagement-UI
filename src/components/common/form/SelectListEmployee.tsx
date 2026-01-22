@@ -6,10 +6,12 @@ import type { GetListEmployeeResponse } from "@/apis/employee/model/Employee";
 
 interface SelectListEmployeeProps extends SelectProps {
   defaultValue?: { id: number; name: string }[];
+  showSelectAll?: boolean;
 }
 
 const SelectListEmployee = ({
   defaultValue = [],
+  showSelectAll = false,
   ...props
 }: SelectListEmployeeProps) => {
   // const [extraOptions, setExtraOptions] = useState<
@@ -53,6 +55,7 @@ const SelectListEmployee = ({
         },
       }}
       optionLabelProp="title"
+      showSelectAll={showSelectAll}
       fetcher={(search) =>
         getListEmployee({
           q: search,
@@ -64,7 +67,14 @@ const SelectListEmployee = ({
           data?.data.data?.map((d) => ({
             value: d.id,
             label: (
-              <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "4px 0" }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                  padding: "4px 0",
+                }}
+              >
                 <Avatar
                   src={
                     d.avatar ??
@@ -73,7 +83,9 @@ const SelectListEmployee = ({
                   size="large"
                   style={{ flexShrink: 0 }}
                 ></Avatar>
-                <span style={{ fontSize: "15px", fontWeight: 500 }}>{`${d.fullName} - #${d.employeeCode}`}</span>
+                <span
+                  style={{ fontSize: "15px", fontWeight: 500 }}
+                >{`${d.fullName} - #${d.employeeCode}`}</span>
               </div>
             ),
             title: `${d.fullName} - #${d.employeeCode}`, // For search/filter
@@ -86,11 +98,20 @@ const SelectListEmployee = ({
         const defaultOptions = defaultValue.map((item) => ({
           value: item.id,
           label: (
-            <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "4px 0" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                padding: "4px 0",
+              }}
+            >
               <Avatar size="large" style={{ flexShrink: 0 }}>
                 {item.name?.charAt(0)?.toUpperCase() || "?"}
               </Avatar>
-              <span style={{ fontSize: "15px", fontWeight: 500 }}>{item.name}</span>
+              <span style={{ fontSize: "15px", fontWeight: 500 }}>
+                {item.name}
+              </span>
             </div>
           ),
           title: item.name, // For search/filter

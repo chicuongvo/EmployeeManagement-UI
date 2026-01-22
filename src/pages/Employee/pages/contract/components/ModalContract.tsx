@@ -1,7 +1,17 @@
 import { Modal, Descriptions, Tag, Button, Space } from "antd";
-import { DownloadOutlined, EyeOutlined, FileTextOutlined, FileImageOutlined, FileOutlined } from "@ant-design/icons";
+import {
+  DownloadOutlined,
+  EyeOutlined,
+  FileTextOutlined,
+  FileImageOutlined,
+  FileOutlined,
+} from "@ant-design/icons";
 import { useContractContext } from "../ContractContext";
-import type { ContractResponse, ContractStatus, ContractType } from "@/types/Contract";
+import type {
+  ContractResponse,
+  ContractStatus,
+  ContractType,
+} from "@/types/Contract";
 import dayjs from "dayjs";
 
 const ModalContract = () => {
@@ -58,9 +68,7 @@ const ModalContract = () => {
       footer={null}
     >
       <Descriptions bordered column={1}>
-        <Descriptions.Item label="ID">
-          {selectedContract.id}
-        </Descriptions.Item>
+        <Descriptions.Item label="ID">{selectedContract.id}</Descriptions.Item>
         <Descriptions.Item label="Mã hợp đồng">
           {selectedContract.contractCode}
         </Descriptions.Item>
@@ -105,18 +113,6 @@ const ModalContract = () => {
             ? dayjs(selectedContract.signedDate).format("DD/MM/YYYY")
             : "-"}
         </Descriptions.Item>
-        <Descriptions.Item label="Lương/ngày">
-          {selectedContract.dailySalary
-            ? new Intl.NumberFormat("vi-VN").format(selectedContract.dailySalary) +
-              " VNĐ"
-            : "-"}
-        </Descriptions.Item>
-        <Descriptions.Item label="Phụ cấp">
-          {selectedContract.allowance
-            ? new Intl.NumberFormat("vi-VN").format(selectedContract.allowance) +
-              " VNĐ"
-            : "-"}
-        </Descriptions.Item>
         {selectedContract.note && (
           <Descriptions.Item label="Ghi chú">
             <div className="whitespace-pre-wrap bg-gray-50 p-3 rounded">
@@ -133,7 +129,9 @@ const ModalContract = () => {
           <Descriptions.Item label="File hợp đồng đã upload">
             <div className="flex items-center gap-3 p-3 bg-gray-50 rounded border">
               <div className="flex-shrink-0">
-                {selectedContract.attachment.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                {selectedContract.attachment.match(
+                  /\.(jpg|jpeg|png|gif|webp)$/i,
+                ) ? (
                   <div className="w-16 h-16 rounded overflow-hidden border bg-white flex items-center justify-center">
                     <img
                       src={selectedContract.attachment}
@@ -153,7 +151,9 @@ const ModalContract = () => {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-2">
-                  {selectedContract.attachment.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                  {selectedContract.attachment.match(
+                    /\.(jpg|jpeg|png|gif|webp)$/i,
+                  ) ? (
                     <FileImageOutlined className="text-blue-600" />
                   ) : selectedContract.attachment.match(/\.pdf$/i) ? (
                     <FileTextOutlined className="text-red-600" />
@@ -163,9 +163,11 @@ const ModalContract = () => {
                   <span className="text-sm font-medium truncate">
                     {selectedContract.attachment.match(/\.pdf$/i)
                       ? "Hợp đồng.pdf"
-                      : selectedContract.attachment.match(/\.(jpg|jpeg|png|gif|webp)$/i)
-                      ? "Hợp đồng.jpg"
-                      : "File đính kèm"}
+                      : selectedContract.attachment.match(
+                            /\.(jpg|jpeg|png|gif|webp)$/i,
+                          )
+                        ? "Hợp đồng.jpg"
+                        : "File đính kèm"}
                   </span>
                 </div>
                 <Space>
@@ -190,9 +192,11 @@ const ModalContract = () => {
                         selectedContract.contractCode +
                         (selectedContract.attachment!.match(/\.pdf$/i)
                           ? ".pdf"
-                          : selectedContract.attachment!.match(/\.(jpg|jpeg|png|gif|webp)$/i)
-                          ? ".jpg"
-                          : "");
+                          : selectedContract.attachment!.match(
+                                /\.(jpg|jpeg|png|gif|webp)$/i,
+                              )
+                            ? ".jpg"
+                            : "");
                       document.body.appendChild(link);
                       link.click();
                       document.body.removeChild(link);
@@ -211,4 +215,3 @@ const ModalContract = () => {
 };
 
 export default ModalContract;
-
