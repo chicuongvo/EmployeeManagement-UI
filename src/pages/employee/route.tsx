@@ -28,7 +28,12 @@ import DepartmentDetailPage from "./pages/department_detail";
 import { DepartmentDetailProvider } from "./pages/department_detail/DepartmentDetailContext";
 
 import PerformancePage from "@/pages/employee/pages/performance";
+import { PerformanceProvider } from "./pages/performance/PerformanceContext";
 import PerformanceDetailPage from "@/pages/employee/pages/performanceDetail";
+import PerformanceByEmployeePage from "@/pages/employee/pages/performanceByEmployee";
+import PerformanceByDepartmentPage from "@/pages/employee/pages/performanceByDepartment";
+import MyPerformancePage from "@/pages/employee/pages/myPerformance";
+import PerformanceCriteriaPage from "@/pages/employee/pages/performanceCriteria";
 
 const route: RouteItem = {
   path: "/employee",
@@ -196,7 +201,26 @@ const route: RouteItem = {
     {
       path: "performance",
       name: "Đánh giá",
-      element: <PerformancePage />,
+      element: (
+        <PerformanceProvider>
+          <PerformancePage />
+        </PerformanceProvider>
+      ),
+    },
+    {
+      path: "performance-criteria",
+      name: "Tiêu chí đánh giá",
+      element: <PerformanceCriteriaPage />,
+    },
+    {
+      path: "my-performance",
+      name: "Đánh giá của tôi",
+      element: <MyPerformancePage />,
+    },
+    {
+      path: "department-performance",
+      name: "Đánh giá phòng ban",
+      element: <PerformanceByDepartmentPage />,
     },
     {
       path: "performance/:id",
@@ -204,6 +228,13 @@ const route: RouteItem = {
       element: <PerformanceDetailPage />,
       hideInMenu: true,
     },
+    {
+      path: "performance/employee/:employeeId",
+      name: "Đánh giá nhân viên",
+      element: <PerformanceByEmployeePage />,
+      hideInMenu: true,
+    },
+
     {
       path: "meetings",
       name: "Cuộc họp",
