@@ -33,6 +33,7 @@ import { FaUserGroup } from "react-icons/fa6";
 import { EmployeeProvider } from "./pages/employee/EmployeeContext";
 import { EmployeeDetailProvider } from "./pages/employee_detail/EmployeeDetailContex";
 import EmployeeDetailPage from "./pages/employee_detail";
+import ManagementAttendanceCorrectionPage from "./pages/attendance-correction";
 const HolidayManagementPage = lazy(
   () => import("../holiday/HolidayManagementPage"),
 );
@@ -202,6 +203,12 @@ const management_route: RouteItem = {
           path: "reports",
           name: "Báo cáo chấm công",
           element: <AttendanceManagementPage />,
+          minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+        },
+        {
+          path: "correction-requests",
+          name: "Quản lý đơn điểm danh bù",
+          element: <ManagementAttendanceCorrectionPage />,
           minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
         },
       ],
