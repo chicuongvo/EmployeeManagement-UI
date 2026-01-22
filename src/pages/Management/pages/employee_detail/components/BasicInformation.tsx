@@ -7,7 +7,7 @@ import {
 } from "@ant-design/icons";
 import { useEmployeeDetailContext } from "../EmployeeDetailContex";
 import React, { useCallback, useMemo } from "react";
-import { WorkStatus } from "@/components/common/status";
+import ActiveStatus from "@/components/common/status/ActiveStatus";
 
 const DEFAULT_AVATAR =
   "https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg";
@@ -56,7 +56,7 @@ const BasicInformation = () => {
             {employee.fullName}
           </h3>
           <p className="text-sm text-gray-500">{positionName}</p>
-          <WorkStatus status={employee.workStatus} />
+          <ActiveStatus status={employee.isActive === false ? "INACTIVE" : "ACTIVE"} />
         </div>
 
         <Divider />
