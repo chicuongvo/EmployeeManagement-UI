@@ -25,10 +25,12 @@ import { useUpdateEmployee } from "@/apis/employee/createUpdateEmployee";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import PerformanceSection from "./components/PerformanceSection";
 import WorkHistoryTable from "./components/WorkHistoryTable";
+import ContractTable from "./components/ContractTable";
 
 export const TABS = {
   GENERAL_INFO: "1",
   WORK_HISTORY: "2",
+  CONTRACT: "3",
 } as const;
 
 const Index = () => {
@@ -435,12 +437,17 @@ const Index = () => {
       },
     ];
 
-    // Only show work history tab when not in create mode (employee exists)
+    // Only show work history and contract tabs when not in create mode (employee exists)
     if (!isCreate && employee) {
       items.push({
         key: TABS.WORK_HISTORY,
         label: "Lịch sử công việc",
         children: <WorkHistoryTable />,
+      });
+      items.push({
+        key: TABS.CONTRACT,
+        label: "Hợp đồng",
+        children: <ContractTable />,
       });
     }
 
