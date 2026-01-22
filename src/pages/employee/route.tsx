@@ -93,11 +93,6 @@ const route: RouteItem = {
       element: <MyRequestsPage />,
     },
     {
-      path: "my-contracts",
-      name: "Hợp đồng của tôi",
-      element: <MyContractsPage />,
-    },
-    {
       path: "my-contracts/:id",
       name: "Chi tiết hợp đồng của tôi",
       element: (
