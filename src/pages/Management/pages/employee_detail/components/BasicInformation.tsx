@@ -17,7 +17,7 @@ const BasicInformation = () => {
 
   const handleDepartmentClick = useCallback(() => {
     if (employee?.departmentId) {
-      window.location.href = `/employee/departments/${employee.departmentId}`;
+      window.location.href = `/management/departments/${employee.departmentId}`;
     }
   }, [employee?.departmentId]);
 

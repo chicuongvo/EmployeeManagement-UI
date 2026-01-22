@@ -108,15 +108,6 @@ const route: RouteItem = {
       element: <MyProjectsPage />,
     },
     {
-      path: "departments",
-      name: "Phòng ban",
-      element: (
-        <DepartmentProvider>
-          <DepartmentPage />
-        </DepartmentProvider>
-      ),
-    },
-    {
       path: "leave-applications",
       name: "Đơn nghỉ phép",
       element: (
@@ -131,14 +122,13 @@ const route: RouteItem = {
       element: <MyPerformancePage />,
     },
     {
-      path: "departments/:id",
-      name: "Chi tiết phòng ban",
+      path: "departments/me",
+      name: "Phòng ban của tôi",
       element: (
         <DepartmentDetailProvider>
           <DepartmentDetailPage />
         </DepartmentDetailProvider>
       ),
-      hideInMenu: true,
     },
     {
       path: "meetings",

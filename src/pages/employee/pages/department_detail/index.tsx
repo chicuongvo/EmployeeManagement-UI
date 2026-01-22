@@ -17,6 +17,7 @@ import type {
   UpdateDepartmentRequest,
 } from "@/apis/department/model/Department";
 import dayjs from "dayjs";
+import { useLocation } from "react-router-dom";
 
 const Index = () => {
   const {
@@ -26,6 +27,10 @@ const Index = () => {
     setEditMode,
     refetchDepartment,
   } = useDepartmentDetailContext();
+  
+  const location = useLocation();
+  const pathname = location.pathname;
+  const isMeRoute = pathname.includes("/me");
 
   const [form] = Form.useForm();
   const [changeInfoValue, setChangeInfoValue] = useState<Partial<DEPARTMENT>>(
@@ -202,7 +207,7 @@ const Index = () => {
   }, [
     editMode,
     setEditMode,
-    handleUpdate,
+    handleSaveClick,
     handleReset,
     disableSubmit,
     isLoadingUpdate,
@@ -219,7 +224,7 @@ const Index = () => {
             },
             {
               title: "Danh sách phòng ban",
-              href: "/employee/departments?limit=10&page=1&tab=1",
+              href: "/management/departments?limit=10&page=1&tab=1",
             },
             {
               title: "Chi tiết",
@@ -227,7 +232,7 @@ const Index = () => {
           ],
         },
       }}
-      title={<PageTitle title="Chi tiết phòng ban" />}
+      title={<PageTitle title={isMeRoute ? "Phòng ban của tôi" : "Chi tiết phòng ban"} />}
     >
       <Form
         form={form}
