@@ -28,7 +28,7 @@ const ManagementCreateMeetingPage = () => {
       setIsLoading(true);
       await createMeeting(data);
       toast.success("Tạo cuộc họp thành công!");
-      navigate("/management/meetings/past");
+      navigate("/employee/meetings");
     } catch (error: unknown) {
       console.error("Error creating meeting:", error);
       toast.error(
