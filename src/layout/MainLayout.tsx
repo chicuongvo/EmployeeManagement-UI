@@ -1,9 +1,17 @@
 import { ProConfigProvider, ProLayout } from "@ant-design/pro-components";
 import { ConfigProvider, Dropdown } from "antd";
-import { Link, Outlet, useLocation, Navigate, useNavigate } from "react-router-dom";
+import {
+  Link,
+  Outlet,
+  useLocation,
+  useNavigate,
+  Navigate,
+} from "react-router-dom";
+import { useEffect } from "react";
 import useGetMenus from "../hooks/useGetMenu";
 import { ROUTER_DASHBOARD, ROUTER_LOGIN } from "../routes";
 import { NotificationBell } from "@/components/common/shared/NotificationBell";
+import { CheckInButton } from "@/components/common/shared/CheckInButton";
 import { useUser } from "@/hooks/useUser";
 import { LogoutOutlined, LockOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
@@ -28,7 +36,38 @@ const MainLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const menus = useGetMenus();
-  const { userProfile, isLoading } = useUser();
+  const { userProfile, isLoading, setUserProfile } = useUser();
+
+  // Redirect to login only if not loading and user is null
+  console.log(
+    "MainLayout - isLoading:",
+    isLoading,
+    "userProfile:",
+    userProfile,
+  );
+  useEffect(() => {
+    if (!isLoading && !userProfile) {
+      navigate("/auth/login");
+    }
+  }, [isLoading, userProfile, navigate]);
+
+  const handleLogout = () => {
+    // Clear cookies
+    document.cookie =
+      "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie =
+      "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    // Redirect to login
+    navigate(ROUTER_LOGIN);
+  };
+
+  // Show nothing while loading user
+  if (isLoading) {
+    return null;
+  }
+
+  // Redirect to login if not authenticated (handled by useEffect)
+  // No need for early return, useEffect will navigate
 
   // ========================================
   // AUTH LOGIC
@@ -152,7 +191,9 @@ const MainLayout = () => {
               autoClose: false,
             }}
             avatarProps={{
-              src: userProfile?.avatar || "https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg",
+              src:
+                userProfile?.avatar ||
+                "https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg",
               size: "small",
               title: userProfile?.fullName || "User",
               render: (_, dom) => {
@@ -161,6 +202,10 @@ const MainLayout = () => {
                     menu={{
                       items: [
                         {
+                          key: "logout",
+                          icon: <LogoutOutlined />,
+                          label: "Đăng xuất",
+                          onClick: handleLogout,
                           key: "change-password",
                           icon: <LockOutlined />,
                           label: "Đổi Mật Khẩu",
@@ -230,7 +275,10 @@ const MainLayout = () => {
             }}
             // Actions (search, notifications, language)
             actionsRender={() => {
-              return [<NotificationBell key="notification" />];
+              return [
+                <CheckInButton key="checkin" />,
+                <NotificationBell key="notification" />,
+              ];
             }}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             menuFooterRender={(props: any) => {

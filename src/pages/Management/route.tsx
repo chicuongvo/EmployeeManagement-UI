@@ -5,8 +5,8 @@ import ManagementPastMeetingsPage from "./pages/meetings/past";
 import ManagementVideoCall from "./pages/video-call";
 import ManagementCreateMeetingPage from "./pages/meetings/create";
 import ManagementMeetingDetailPage from "./pages/meetings/detail";
+import ManagementContractPage from "./pages/contract";
 import { ContractProvider } from "../Employee/pages/contract/ContractContext";
-import ContractPage from "../Employee/pages/contract";
 import ContractDetailPage from "../Employee/pages/contract_detail";
 import { ContractDetailProvider } from "../Employee/pages/contract_detail/ContractDetailContext";
 import UpdateRequestDetailPage from "../Employee/pages/update_request_detail";
@@ -17,14 +17,25 @@ import {
   PlusOutlined,
   HistoryOutlined,
   FileTextOutlined,
+  CalendarOutlined,
 } from "@ant-design/icons";
-import { FaUserGroup } from "react-icons/fa6";
-
-import { EmployeeProvider } from "./pages/employee/EmployeeContext";
+import { FaProjectDiagram } from "react-icons/fa";
+import { ProjectProvider } from "../employee/pages/project/ProjectContext";
+import { ProjectDetailProvider } from "../employee/pages/project-detail/ProjectDetailContext";
+import { EpicTaskProvider } from "../employee/pages/epic-tasks/EpicTaskContext";
+import ProjectPage from "../employee/pages/project";
+import ProjectDetailPage from "../employee/pages/project-detail";
 import EmployeePage from "./pages/employee";
-
-import EmployeeDetailPage from "./pages/employee_detail";
+import EpicTaskPage from "../employee/pages/epic-tasks";
+import AttendanceManagementPage from "../attendance/AttendanceManagementPage";
+import { lazy } from "react";
+import { FaUserGroup } from "react-icons/fa6";
+import { EmployeeProvider } from "./pages/employee/EmployeeContext";
 import { EmployeeDetailProvider } from "./pages/employee_detail/EmployeeDetailContex";
+import EmployeeDetailPage from "./pages/employee_detail";
+const HolidayManagementPage = lazy(
+  () => import("../holiday/HolidayManagementPage"),
+);
 
 const management_route: RouteItem = {
   path: "/management",
@@ -84,7 +95,7 @@ const management_route: RouteItem = {
       name: "Hợp đồng",
       element: (
         <ContractProvider>
-          <ContractPage />
+          <ManagementContractPage />
         </ContractProvider>
       ),
       icon: <FileTextOutlined />,
@@ -147,6 +158,67 @@ const management_route: RouteItem = {
       element: <ManagementVideoCall />,
       hideInMenu: true,
       minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+    },
+    {
+      path: "projects",
+      name: "Quản lý dự án",
+      element: (
+        <ProjectProvider>
+          <ProjectPage />
+        </ProjectProvider>
+      ),
+      icon: <FaProjectDiagram className="text-base font-primary" />,
+      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+    },
+    {
+      path: "projects/:projectId",
+      name: "Chi tiết dự án",
+      element: (
+        <ProjectDetailProvider>
+          <ProjectDetailPage />
+        </ProjectDetailProvider>
+      ),
+      hideInMenu: true,
+      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+    },
+    {
+      path: "projects/:projectId/epics/:epicId/tasks",
+      name: "Epic Tasks",
+      element: (
+        <EpicTaskProvider>
+          <EpicTaskPage />
+        </EpicTaskProvider>
+      ),
+      hideInMenu: true,
+      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+    },
+    {
+      path: "attendance",
+      name: "Chấm công",
+      icon: <CalendarOutlined />,
+      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+      children: [
+        {
+          path: "reports",
+          name: "Báo cáo chấm công",
+          element: <AttendanceManagementPage />,
+          minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+        },
+      ],
+    },
+    {
+      path: "holiday",
+      name: "Quản lý nghỉ lễ",
+      icon: <CalendarOutlined />,
+      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+      children: [
+        {
+          path: "management",
+          name: "Quản lý ngày nghỉ",
+          element: <HolidayManagementPage />,
+          minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+        },
+      ],
     },
   ],
 };
