@@ -14,6 +14,8 @@ import type { ContractType, ContractStatus } from "@/types/Contract";
 import { MdEditSquare, MdSaveAs } from "react-icons/md";
 import { IoMdCloseCircle } from "react-icons/io";
 import CircleButton from "@/components/common/button/CircleButton";
+import { Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const Index = () => {
   const {
@@ -224,9 +226,10 @@ const Index = () => {
 
   if (isLoadingContract) {
     return (
-      <PageContainer>
-        <div>Loading...</div>
-      </PageContainer>
+      <Spin
+          indicator={<LoadingOutlined className="text-primary-100" spin />}
+          size="small"
+        />  
     );
   }
 

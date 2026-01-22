@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import {
   Card,
   Collapse,
@@ -25,6 +25,7 @@ import SelectListEmployee from "@/components/common/form/SelectListEmployee";
 import { Link } from "react-router-dom";
 // import ChangeStatus from "@/components/common/status/ChangeStatus";
 import { WorkStatus } from "@/components/common/status";
+import { getPosition } from "@/apis/position";
 
 const { TextArea } = Input;
 
@@ -106,6 +107,53 @@ interface Props {
 
 const GeneralInformation = (_props: Props) => {
   const { isCreate, isEditable } = useEmployeeDetailContext();
+  const [form] = Form.useForm();
+  // Ref to track if department is being set from position selection
+  const isSettingDepartmentFromPosition = useRef(false);
+  // Ref to track previous departmentId value
+  const prevDepartmentIdRef = useRef<number | undefined>(
+    _props.initialValues.departmentId
+  );
+  
+  // Watch departmentId and positionId changes from form
+  const departmentId = Form.useWatch(FORM_FIELDS.DEPARTMENT_ID, form);
+  const positionId = Form.useWatch(FORM_FIELDS.POSITION_ID, form);
+  
+  // Initialize prevDepartmentIdRef when component mounts or initialValues change
+  useEffect(() => {
+    const initialDepartmentId = _props.initialValues.departmentId ?? undefined;
+    if (prevDepartmentIdRef.current === undefined && initialDepartmentId !== undefined) {
+      prevDepartmentIdRef.current = initialDepartmentId;
+    }
+  }, [_props.initialValues.departmentId]);
+  
+  // Clear position when department changes (except when set from position)
+  useEffect(() => {
+    const currentDepartmentId = departmentId ?? undefined;
+    const prevDepartmentId = prevDepartmentIdRef.current;
+    
+    // Skip if department is being set from position selection
+    if (isSettingDepartmentFromPosition.current) {
+      isSettingDepartmentFromPosition.current = false;
+      prevDepartmentIdRef.current = currentDepartmentId;
+      return;
+    }
+    
+    // Skip on initial mount (when both are undefined or same)
+    if (prevDepartmentId === undefined && currentDepartmentId === undefined) {
+      return;
+    }
+    
+    // If department changed (including cleared), clear position
+    if (currentDepartmentId !== prevDepartmentId) {
+      form.setFieldsValue({
+        [FORM_FIELDS.POSITION_ID]: undefined,
+      });
+    }
+    
+    // Update ref for next comparison
+    prevDepartmentIdRef.current = currentDepartmentId;
+  }, [departmentId, form]);
 
   const getAddressValue = useCallback((
     address: string | AddressValue | undefined
@@ -300,27 +348,55 @@ const GeneralInformation = (_props: Props) => {
     type: "department" | "position" | "employee",
     id: number
   ) => {
+    // Get current values from form or fallback to props
+    const currentDepartmentId = departmentId ?? _props.changeInfoValue.departmentId ?? _props.initialValues.departmentId;
+    const currentPositionId = positionId ?? _props.changeInfoValue.positionId ?? _props.initialValues.positionId;
+
     return isEditable ? (
       type === "department" ? (
         <SelectListDepartment
           placeholder="Chọn phòng ban"
-          value={_props.initialValues.departmentId ?? undefined}
-          onChange={(value: number) => {
-            _props.setChangeInfoValue({
-              ..._props.changeInfoValue,
-              departmentId: value ?? undefined,
+          value={currentDepartmentId ?? undefined}
+          onChange={async (value: number | null | undefined) => {
+            const newDepartmentId = value ?? undefined;
+            
+            // Update form field - useEffect will handle clearing position
+            form.setFieldsValue({
+              [FORM_FIELDS.DEPARTMENT_ID]: newDepartmentId,
             });
           }}
+          allowClear
         />
       ) : type === "position" ? (
         <SelectListPosition
+          allowClear={true}
           placeholder="Chọn vị trí"
-          value={_props.initialValues.positionId ?? undefined}
-          onChange={(value: number) => {
-            _props.setChangeInfoValue({
-              ..._props.changeInfoValue,
-              positionId: value ?? undefined,
+          value={currentPositionId ?? undefined}
+          departmentId={currentDepartmentId ?? undefined}
+          onChange={async (value: number | null | undefined) => {
+            const newPositionId = value ?? undefined;
+            
+            // Update form field
+            form.setFieldsValue({
+              [FORM_FIELDS.POSITION_ID]: newPositionId,
             });
+            
+            // If position is selected, fetch it to get departmentId and auto-set department
+            if (newPositionId) {
+              try {
+                const position = await getPosition(newPositionId);
+                if (position?.departmentId) {
+                  // Set flag to indicate department is being set from position
+                  isSettingDepartmentFromPosition.current = true;
+                  form.setFieldsValue({
+                    [FORM_FIELDS.DEPARTMENT_ID]: position.departmentId,
+                  });
+                }
+              } catch (error) {
+                console.error("Failed to fetch position:", error);
+              }
+            }
+            // If position is cleared, don't clear department (as per requirement)
           }}
         />
       ) : (
@@ -332,9 +408,8 @@ const GeneralInformation = (_props: Props) => {
             name: _props.initialValues.directManager.fullName
           }] : []}
           onChange={(value: number) => {
-            _props.setChangeInfoValue({
-              ..._props.changeInfoValue,
-              directManagerId: value ?? undefined,
+            form.setFieldsValue({
+              [FORM_FIELDS.DIRECT_MANAGER_ID]: value ?? undefined,
             });
           }}
           allowClear
@@ -362,7 +437,7 @@ const GeneralInformation = (_props: Props) => {
         );
       })()
     );
-  }, [isEditable, _props.initialValues]);
+  }, [isEditable, _props.initialValues, _props.changeInfoValue, departmentId, positionId, form]);
 
   const renderAddress = useCallback((
     address: string | AddressValue | undefined,
@@ -426,14 +501,6 @@ const GeneralInformation = (_props: Props) => {
       renderDepartmentPositionField(
         "position",
         _props.initialValues.positionId ?? 0
-      )
-    ),
-    getFieldConfig(
-      FORM_FIELDS.DIRECT_MANAGER_ID,
-      "Quản lý trực tiếp",
-      renderDepartmentPositionField(
-        "employee",
-        _props.initialValues.directManagerId ?? 0
       )
     ),
     getFieldConfig(
