@@ -296,11 +296,11 @@ export default function PerformanceDetailPage() {
         breadcrumb: {
           items: [
             {
-              title: "Đánh giá",
+              title: "Master list",
             },
             {
-              title: "Đánh giá hiệu suất",
-              onClick: () => navigate("/evaluation/performance"),
+              title: "Đánh giá",
+              onClick: () => navigate("/employee/performance"),
               className: "cursor-pointer hover:text-blue-600",
             },
             {
