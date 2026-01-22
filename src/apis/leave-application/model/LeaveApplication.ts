@@ -15,6 +15,8 @@ export interface LeaveType {
 
 export type LeaveApplicationStatus = "PENDING" | "APPROVED" | "REJECTED";
 
+export type LeaveOption = "FULL_DAY" | "MORNING" | "AFTERNOON";
+
 export interface LeaveApplication {
   id: number;
   startDate: string;
@@ -24,8 +26,10 @@ export interface LeaveApplication {
   createdAt: string;
   employeeId: number;
   leaveTypeId: number;
+  leaveOption?: LeaveOption;
   employee?: Employee;
   leaveType?: LeaveType;
+  leaveDate?: string;
 }
 
 export interface GetListLeaveApplicationRequest extends PaginationRequest {
@@ -52,6 +56,8 @@ export interface CreateLeaveApplicationRequest {
   reason: string;
   employeeId: number;
   leaveTypeId: number;
+  leaveOption?: LeaveOption;
+  leaveDate?: string;
 }
 
 export interface CreateLeaveApplicationResponse
@@ -64,6 +70,8 @@ export interface UpdateLeaveApplicationRequest {
   endDate?: string;
   employeeId?: number;
   leaveTypeId?: number;
+  leaveOption?: LeaveOption;
+  leaveDate?: string;
 }
 
 export interface UpdateLeaveApplicationResponse

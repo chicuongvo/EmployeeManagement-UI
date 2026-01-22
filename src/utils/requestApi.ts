@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axiosApi from './axiosApi';
+import { axiosClient as axiosApi } from '@/lib/axios';
 
 interface RequestApiOptions {
     [key: string]: any;
