@@ -14,7 +14,7 @@ import { useEffect, useMemo } from "react";
 import { COLUMN_KEYS } from "@/constant/columns";
 
 import { useContractContext } from "../ContractContext";
-import TooltipTruncatedText from "@/components/common/shared/TooltipTruncatedText";
+
 import TableComponent from "@/components/common/table/TableComponent";
 import type {
   ContractResponse,

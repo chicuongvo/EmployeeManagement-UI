@@ -4,6 +4,7 @@ import { ContractForm } from "@/components/contract/ContractForm";
 import { updateContract } from "@/services/contract";
 import { toast } from "react-toastify";
 import type { UpdateContractRequest } from "@/types/Contract";
+import type { AxiosError } from "axios";
 
 const ModalEditContract = () => {
   const {
@@ -14,9 +15,7 @@ const ModalEditContract = () => {
     refetch,
   } = useContractContext();
 
-  const handleUpdate = async (
-    data: UpdateContractRequest | FormData
-  ) => {
+  const handleUpdate = async (data: UpdateContractRequest | FormData) => {
     if (!selectedContract) return;
 
     try {
@@ -25,10 +24,12 @@ const ModalEditContract = () => {
       setPopupEditContract(false);
       setSelectedContract(null);
       refetch();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error updating contract:", error);
+      const axiosError = error as AxiosError<{ message: string }>;
       toast.error(
-        error.response?.data?.message || "Có lỗi xảy ra khi cập nhật hợp đồng"
+        axiosError.response?.data?.message ||
+          "Có lỗi xảy ra khi cập nhật hợp đồng",
       );
       throw error;
     }

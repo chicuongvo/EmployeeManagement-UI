@@ -3,28 +3,35 @@ import { useContractContext } from "../ContractContext";
 import { ContractForm } from "@/components/contract/ContractForm";
 import { createContract } from "@/services/contract";
 import { toast } from "react-toastify";
-import type { CreateContractRequest, UpdateContractRequest } from "@/types/Contract";
+import type {
+  CreateContractRequest,
+  UpdateContractRequest,
+} from "@/types/Contract";
 
 const ModalCreateContract = () => {
-  const {
-    popupCreateContract,
-    setPopupCreateContract,
-    refetch,
-  } = useContractContext();
+  const { popupCreateContract, setPopupCreateContract, refetch } =
+    useContractContext();
 
   const handleCreate = async (
-    data: CreateContractRequest | UpdateContractRequest | FormData
+    data: CreateContractRequest | UpdateContractRequest | FormData,
   ) => {
     try {
       await createContract(data as CreateContractRequest | FormData);
       toast.success("Tạo hợp đồng thành công!");
       setPopupCreateContract(false);
       refetch();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error creating contract:", error);
-      toast.error(
-        error.response?.data?.message || "Có lỗi xảy ra khi tạo hợp đồng"
-      );
+      const errorMessage =
+        error instanceof Object &&
+        "response" in error &&
+        error.response instanceof Object &&
+        "data" in error.response &&
+        error.response.data instanceof Object &&
+        "message" in error.response.data
+          ? (error.response.data.message as string)
+          : "Có lỗi xảy ra khi tạo hợp đồng";
+      toast.error(errorMessage);
       throw error;
     }
   };
@@ -35,9 +42,7 @@ const ModalCreateContract = () => {
 
   return (
     <Modal
-      title={
-        <span className="text-lg font-semibold">Tạo hợp đồng mới</span>
-      }
+      title={<span className="text-lg font-semibold">Tạo hợp đồng mới</span>}
       open={popupCreateContract}
       onCancel={handleCancel}
       width={900}

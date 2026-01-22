@@ -69,11 +69,14 @@ const Index = () => {
         navigate(`/management/contracts/${result.id}`);
         refetchContract();
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error creating contract:", error);
-      toast.error(
-        error.response?.data?.message || "Có lỗi xảy ra khi tạo hợp đồng",
-      );
+      const errorMessage =
+        error && typeof error === "object" && "response" in error
+          ? (error as { response?: { data?: { message?: string } } }).response
+              ?.data?.message
+          : undefined;
+      toast.error(errorMessage || "Có lỗi xảy ra khi tạo hợp đồng");
       throw error;
     } finally {
       setIsLoading(false);
@@ -93,11 +96,14 @@ const Index = () => {
       toast.success("Cập nhật hợp đồng thành công!");
       setEditMode(false);
       refetchContract();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error updating contract:", error);
-      toast.error(
-        error.response?.data?.message || "Có lỗi xảy ra khi cập nhật hợp đồng",
-      );
+      const errorMessage =
+        error && typeof error === "object" && "response" in error
+          ? (error as { response?: { data?: { message?: string } } }).response
+              ?.data?.message
+          : undefined;
+      toast.error(errorMessage || "Có lỗi xảy ra khi cập nhật hợp đồng");
       throw error;
     } finally {
       setIsLoading(false);
