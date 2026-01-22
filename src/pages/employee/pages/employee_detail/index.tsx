@@ -1,4 +1,4 @@
-import { Form } from "antd";
+import { Form, Tabs, type TabsProps } from "antd";
 import { MdEditSquare, MdSaveAs } from "react-icons/md";
 import { IoMdCloseCircle } from "react-icons/io";
 
@@ -22,8 +22,14 @@ import BasicInformation from "./components/BasicInformation";
 import CircleButton from "@/components/common/button/CircleButton";
 import { useCreateEmployee } from "@/apis/employee/createUpdateEmployee";
 import { useUpdateEmployee } from "@/apis/employee/createUpdateEmployee";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import PerformanceSection from "./components/PerformanceSection";
+import WorkHistoryTable from "./components/WorkHistoryTable";
+
+export const TABS = {
+  GENERAL_INFO: "1",
+  WORK_HISTORY: "2",
+} as const;
 
 const Index = () => {
   const {
@@ -36,6 +42,8 @@ const Index = () => {
   } = useEmployeeDetailContext();
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tab = searchParams.get("tab") || TABS.GENERAL_INFO;
 
   const [changeInfoValue, setChangeInfoValue] = useState<Partial<EMPLOYEE>>({});
   useEffect(() => {
@@ -389,7 +397,70 @@ const Index = () => {
     return false;
   }, [changeInfoValue, isCreate]);
 
+  const handleChangeTab = (key: string) => {
+    setSearchParams({ tab: key });
+  };
+
+  const tabs: TabsProps["items"] = useMemo(() => {
+    const items: TabsProps["items"] = [
+      {
+        key: TABS.GENERAL_INFO,
+        label: "Thông tin chung",
+        children: (
+          <Form
+            form={form}
+            layout="horizontal"
+            name="general-information"
+            labelCol={{
+              style: { fontWeight: "500", width: 160, display: "flex" },
+            }}
+            initialValues={initialGeneralInfoValues}
+            onValuesChange={handleFormValuesChange}
+          >
+            <div className="flex flex-row gap-4 w-full px-6 my-3 ">
+              {!isCreate && (
+                <div className="w-[300px] flex-shrink-0 flex-col gap-3">
+                  <BasicInformation />
+                  <PerformanceSection />
+                </div>
+              )}
+              <GeneralInformation
+                changeInfoValue={changeInfoValue}
+                initialValues={initialGeneralInfoValues as Partial<EMPLOYEE>}
+                setChangeInfoValue={setChangeInfoValue}
+              />
+            </div>
+          </Form>
+        ),
+      },
+    ];
+
+    // Only show work history tab when not in create mode (employee exists)
+    if (!isCreate && employee) {
+      items.push({
+        key: TABS.WORK_HISTORY,
+        label: "Lịch sử công việc",
+        children: <WorkHistoryTable />,
+      });
+    }
+
+    return items;
+  }, [
+    form,
+    initialGeneralInfoValues,
+    handleFormValuesChange,
+    isCreate,
+    employee,
+    changeInfoValue,
+    setChangeInfoValue,
+  ]);
+
   const renderActionButton = useCallback(() => {
+    // Only show action buttons on general info tab
+    if (tab !== TABS.GENERAL_INFO) {
+      return null;
+    }
+
     if (isEditable) {
       return (
         <div className="w-fit mx-auto min-h-14 px-8 rounded-full bg-gray-300/20 backdrop-blur-md flex gap-2 justify-center items-center shadow-lg">
@@ -434,6 +505,7 @@ const Index = () => {
     // }
     // return null;
   }, [
+    tab,
     isEditable,
     isCreate,
     disableSubmit,
@@ -441,6 +513,7 @@ const Index = () => {
     handleReset,
     isLoadingCreateEmployee,
     isLoadingUpdateEmployee,
+    setEditMode,
   ]);
 
   return (
@@ -464,30 +537,13 @@ const Index = () => {
       }}
       title={<PageTitle title={`${isCreate ? "Thêm mới nhân viên" : "Chi tiết nhân viên"}`} />}
     >
-      <Form
-        form={form}
-        layout="horizontal"
-        name="general-information"
-        labelCol={{
-          style: { fontWeight: "500", width: 160, display: "flex" },
-        }}
-        initialValues={initialGeneralInfoValues}
-        onValuesChange={handleFormValuesChange}
-      >
-        <div className="flex flex-row gap-4 w-full px-6 my-3 ">
-          {!isCreate &&
-            <div className="w-[300px] flex-shrink-0 flex-col gap-3">
-              <BasicInformation />
-              <PerformanceSection />
-            </div>}
-          <GeneralInformation
-            changeInfoValue={changeInfoValue}
-            initialValues={initialGeneralInfoValues as Partial<EMPLOYEE>}
-            setChangeInfoValue={setChangeInfoValue}
-
-          />
-        </div>
-      </Form>
+      <Tabs
+        type="card"
+        activeKey={tab}
+        className="tag-ticket-list report-tab"
+        onChange={handleChangeTab}
+        items={tabs}
+      />
       <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
         {renderActionButton()}
       </div>
