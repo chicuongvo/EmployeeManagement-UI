@@ -2,6 +2,7 @@ import { Badge, Dropdown, Spin, Empty, Button } from "antd";
 import { BellOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   getListNotification,
   getUnreadCount,
@@ -10,11 +11,16 @@ import {
 } from "@/apis/notification";
 import type { Notification } from "@/apis/notification/model/Notification";
 import { NotificationItem } from "./NotificationItem";
+import { NotificationDetailModal } from "./NotificationDetailModal";
 import { toast } from "react-toastify";
 
 export const NotificationBell = () => {
   const [open, setOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedNotification, setSelectedNotification] =
+    useState<Notification | null>(null);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   // Fetch unread count
   const { data: unreadData } = useQuery({
@@ -64,8 +70,14 @@ export const NotificationBell = () => {
   };
 
   const handleNotificationClick = (notification: Notification) => {
-    // You can add navigation logic here if needed
-    console.log("Notification clicked:", notification);
+    setSelectedNotification(notification);
+    setModalOpen(true);
+    setOpen(false); // Close dropdown when opening modal
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedNotification(null);
   };
 
   const unreadCount = unreadData?.data?.unreadCount || 0;
@@ -118,12 +130,12 @@ export const NotificationBell = () => {
       {notifications.length > 0 && (
         <div className="px-4 py-3 border-t border-gray-200 text-center">
           <a
-            href="/notifications"
+            href="/notification/list"
             className="text-sm text-blue-600 hover:text-blue-700 font-medium"
             onClick={e => {
               e.preventDefault();
-              // Add navigation logic here
-              console.log("View all notifications");
+              setOpen(false);
+              navigate("/notification/list");
             }}
           >
             Xem tất cả thông báo
@@ -134,24 +146,31 @@ export const NotificationBell = () => {
   );
 
   return (
-    <Dropdown
-      dropdownRender={() => dropdownContent}
-      trigger={["click"]}
-      open={open}
-      onOpenChange={setOpen}
-      placement="bottomRight"
-      arrow={false}
-    >
-      <div className="cursor-pointer hover:opacity-80 transition-opacity">
-        <Badge count={unreadCount} overflowCount={99} offset={[-4, 4]}>
-          <BellOutlined
-            style={{
-              fontSize: 20,
-              color: "#000",
-            }}
-          />
-        </Badge>
-      </div>
-    </Dropdown>
+    <>
+      <Dropdown
+        dropdownRender={() => dropdownContent}
+        trigger={["click"]}
+        open={open}
+        onOpenChange={setOpen}
+        placement="bottomRight"
+        arrow={false}
+      >
+        <div className="cursor-pointer hover:opacity-80 transition-opacity">
+          <Badge count={unreadCount} overflowCount={99} offset={[-4, 4]}>
+            <BellOutlined
+              style={{
+                fontSize: 20,
+                color: "#000",
+              }}
+            />
+          </Badge>
+        </div>
+      </Dropdown>
+      <NotificationDetailModal
+        open={modalOpen}
+        notification={selectedNotification}
+        onClose={handleCloseModal}
+      />
+    </>
   );
 };

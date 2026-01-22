@@ -22,6 +22,7 @@ import { EmployeeDetailProvider } from "./pages/employee_detail/EmployeeDetailCo
 import DepartmentDetailPage from "./pages/department_detail";
 import { DepartmentDetailProvider } from "./pages/department_detail/DepartmentDetailContext";
 import MyPerformancePage from "@/pages/Employee/pages/myPerformance";
+import MyLeaveApplicationPage from "./pages/my-leave-applications";
 
 
 
@@ -132,18 +133,14 @@ const route: RouteItem = {
       ),
     },
     {
-      path: "leave-applications",
-      name: "Đơn nghỉ phép",
-      element: (
-        <LeaveApplicationProvider>
-          <LeaveApplicationPage />
-        </LeaveApplicationProvider>
-      ),
-    },
-    {
       path: "my-performance",
       name: "Đánh giá của tôi",
       element: <MyPerformancePage />,
+    },
+    {
+      path: "my-leave-applications",
+      name: "Đơn nghỉ phép của tôi",
+      element: <MyLeaveApplicationPage />,
     },
     {
       path: "departments/:id",

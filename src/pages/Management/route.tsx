@@ -18,6 +18,8 @@ import {
   HistoryOutlined,
   FileTextOutlined,
 } from "@ant-design/icons";
+import { LeaveApplicationProvider } from "../employee/pages/leave-application/LeaveApplicationContext";
+import MyLeaveApplicationPage from "../Employee/pages/my-leave-applications";
 
 const management_route: RouteItem = {
   path: "/management",
@@ -26,6 +28,15 @@ const management_route: RouteItem = {
   icon: "",
   minRoleLevel: ROLE_LEVELS.SIDEBAR_MIN_LEVEL_MANAGEMENT,
   children: [
+    {
+      path: "leave-applications",
+      name: "Đơn nghỉ phép",
+      element: (
+        <LeaveApplicationProvider>
+          <MyLeaveApplicationPage />
+        </LeaveApplicationProvider>
+      ),
+    },
     {
       path: "update-requests",
       name: "Quản lí yêu cầu cập nhật",
