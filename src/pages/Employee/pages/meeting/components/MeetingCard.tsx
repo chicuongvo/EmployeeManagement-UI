@@ -23,8 +23,9 @@ const MeetingCard = ({
   participantsCount = 0,
   totalParticipants = 0,
 }: MeetingCardProps) => {
-  const isPast = meeting.status === "COMPLETED" || meeting.status === "CANCELLED";
-  
+  const isPast =
+    meeting.status === "COMPLETED" || meeting.status === "CANCELLED";
+
   // Check if meeting time has arrived
   const hasTimeArrived = useMemo(() => {
     if (!meeting.scheduledAt) return true; // If no scheduled time, allow join
@@ -32,8 +33,10 @@ const MeetingCard = ({
     const scheduledTime = dayjs(meeting.scheduledAt);
     return now.isAfter(scheduledTime) || now.isSame(scheduledTime, "minute");
   }, [meeting.scheduledAt]);
-  
-  const canJoin = (meeting.status === "SCHEDULED" || meeting.status === "ONGOING") && hasTimeArrived;
+
+  const canJoin =
+    (meeting.status === "SCHEDULED" || meeting.status === "ONGOING") &&
+    hasTimeArrived;
 
   const getStatusTag = () => {
     // Luôn hiển thị số người đã tham gia
@@ -80,43 +83,51 @@ const MeetingCard = ({
 
         {meeting.scheduledAt && (
           <div className="text-gray-600 mb-2">
-            <strong>Thời gian:</strong> {dayjs(meeting.scheduledAt).format("DD/MM/YYYY HH:mm")}
+            <strong>Thời gian:</strong>{" "}
+            {dayjs(meeting.scheduledAt).format("DD/MM/YYYY HH:mm")}
           </div>
         )}
 
         <div className="flex justify-between items-start mb-2">
-        {isHost && meeting.createdBy && (
-          <div className="text-gray-600 mb-2">
-            <strong>Người tạo:</strong> {meeting.createdBy.fullName}
-          </div>
-        )}
+          {isHost && meeting.createdBy && (
+            <div className="text-gray-600 mb-2">
+              <strong>Người tạo:</strong> {meeting.createdBy.fullName}
+            </div>
+          )}
 
-        {!isHost && meeting.createdBy && (
-          <div className="text-gray-600 mb-2">
-            <strong>Host:</strong> {meeting.createdBy.fullName}
-          </div>
-        )}{showParticipants && totalParticipants > 0 && (meeting.status === "SCHEDULED" || meeting.status === "ONGOING") && onJoin && (
-          <div className="flex justify-end">
-            <Tooltip
-              title={!hasTimeArrived && meeting.scheduledAt ? `Cuộc họp bắt đầu lúc ${dayjs(meeting.scheduledAt).format("HH:mm DD/MM/YYYY")}` : undefined}
-            >
-              <Button
-                type="primary"
-                icon={<PlayCircleOutlined />}
-                onClick={() => onJoin(meeting.id, meeting.callId)}
-                disabled={!canJoin}
-                style={{ backgroundColor: "#52c41a", borderColor: "#52c41a" }}
-              >
-                Tham gia
-              </Button>
-            </Tooltip>
-          </div>
-        )}
-
-
+          {!isHost && meeting.createdBy && (
+            <div className="text-gray-600 mb-2">
+              <strong>Host:</strong> {meeting.createdBy.fullName}
+            </div>
+          )}
+          {showParticipants &&
+            totalParticipants > 0 &&
+            (meeting.status === "SCHEDULED" || meeting.status === "ONGOING") &&
+            onJoin && (
+              <div className="flex justify-end gap-2">
+                <Tooltip
+                  title={
+                    !hasTimeArrived && meeting.scheduledAt
+                      ? `Cuộc họp bắt đầu lúc ${dayjs(meeting.scheduledAt).format("HH:mm DD/MM/YYYY")}`
+                      : undefined
+                  }
+                >
+                  <Button
+                    type="primary"
+                    icon={<PlayCircleOutlined />}
+                    onClick={() => onJoin?.(meeting.id, meeting.callId)}
+                    disabled={!canJoin}
+                    style={{
+                      backgroundColor: "#52c41a",
+                      borderColor: "#52c41a",
+                    }}
+                  >
+                    Tham gia
+                  </Button>
+                </Tooltip>
+              </div>
+            )}
         </div>
-        
-        
       </div>
     </Card>
   );

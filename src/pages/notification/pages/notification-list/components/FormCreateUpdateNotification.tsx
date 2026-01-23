@@ -47,9 +47,9 @@ const FormCreateUpdateNotification = ({
         const payload = {
           title: values.title,
           content: values.content,
-          publishedAt: values.publishedAt
-            ? dayjs(values.publishedAt).format("YYYY-MM-DD")
-            : undefined,
+          // publishedAt: values.publishedAt
+          //   ? dayjs(values.publishedAt).format("YYYY-MM-DD HH:mm:ss")
+          //   : undefined,
         };
 
         updateNotificationMutation.mutate(
@@ -59,7 +59,6 @@ const FormCreateUpdateNotification = ({
               message.success("Cập nhật thông báo thành công!");
               form.resetFields();
               setSelectedNotification(null);
-              onCancel();
             },
             onError: () => {
               message.error("Cập nhật thông báo thất bại!");
@@ -71,34 +70,39 @@ const FormCreateUpdateNotification = ({
         const payload = {
           title: values.title,
           content: values.content,
-          publishedAt: values.publishedAt
-            ? dayjs(values.publishedAt).format("YYYY-MM-DD")
-            : undefined,
+          // publishedAt: values.publishedAt
+          //   ? dayjs(values.publishedAt).format("YYYY-MM-DD HH:mm:ss")
+          //   : undefined,
         };
 
         createNotificationMutation.mutate(payload, {
           onSuccess: () => {
             message.success("Tạo thông báo thành công!");
             form.resetFields();
-            onCancel();
           },
           onError: () => {
             message.error("Tạo thông báo thất bại!");
           },
         });
       }
-    } catch {
-      // Form validation failed
+    } catch (error) {
+      console.error("Validation failed:", error);
     }
+  };
+
+  const handleCancel = () => {
+    form.resetFields();
+    setSelectedNotification(null);
+    onCancel();
   };
 
   return (
     <Modal
-      title={notification ? "Chỉnh sửa thông báo" : "Tạo thông báo mới"}
+      title={notification ? "Cập nhật thông báo" : "Tạo thông báo mới"}
       open={open}
-      onCancel={onCancel}
+      onCancel={handleCancel}
       onOk={handleSubmit}
-      okText={notification ? "Cập nhật" : "Tạo"}
+      okText={notification ? "Cập nhật" : "Tạo mới"}
       cancelText="Hủy"
       width={700}
       confirmLoading={
@@ -123,13 +127,17 @@ const FormCreateUpdateNotification = ({
           <TextArea rows={5} placeholder="Nhập nội dung thông báo" />
         </Form.Item>
 
-        <Form.Item label="Ngày công bố" name="publishedAt">
+        {/* <Form.Item 
+          label="Ngày công bố" 
+          name="publishedAt"
+        >
           <DatePicker
-            format="DD/MM/YYYY"
+            format="DD/MM/YYYY HH:mm"
             placeholder="Chọn ngày công bố"
             style={{ width: "100%" }}
+            showTime={{ format: "HH:mm" }}
           />
-        </Form.Item>
+        </Form.Item> */}
       </Form>
     </Modal>
   );

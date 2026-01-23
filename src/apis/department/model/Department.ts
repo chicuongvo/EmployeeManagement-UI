@@ -85,4 +85,7 @@ export interface UpdateDepartmentRequest {
   foundedAt?: Date | string;
   description?: string;
   managerId?: number;
+  previousManagerAction?: "CHANGE_POSITION" | "REMOVE_POSITION";
+  oldManagerNewPositionId?: number;
+  oldManagerNewDepartmentId?: number;
 }

@@ -12,13 +12,18 @@ import type {
 
 interface UpdateRequestFormProps {
   initialData?: UpdateRequestResponse | null;
-  onSubmit: (data: CreateUpdateRequestRequest | UpdateUpdateRequestRequest) => Promise<void>;
+  onSubmit: (
+    data: CreateUpdateRequestRequest | UpdateUpdateRequestRequest,
+  ) => Promise<void>;
   onCancel: () => void;
   isLoading?: boolean;
   mode?: "create" | "edit";
   isEditable?: boolean;
   hideSubmitButton?: boolean;
-  onFormDataChange?: (formData: { content: string; requestedById: number }) => void;
+  onFormDataChange?: (formData: {
+    content: string;
+    requestedById: number;
+  }) => void;
   lockRequestedBy?: boolean;
   requestedByDisplay?: { id: number; fullName?: string; email?: string } | null;
 }
@@ -53,7 +58,7 @@ export function UpdateRequestForm({
       requestedByDisplay?.id &&
       formData.requestedById === 0
     ) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         requestedById: requestedByDisplay.id,
       }));
@@ -89,17 +94,27 @@ export function UpdateRequestForm({
   };
 
   return (
-    <form id="update-request-form" onSubmit={handleSubmit} className="space-y-4">
+    <form
+      id="update-request-form"
+      onSubmit={handleSubmit}
+      className="space-y-6 bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+    >
       {mode === "create" ? (
-        <div className="space-y-2">
-          <Label htmlFor="requestedById">Người yêu cầu *</Label>
+        <div className="space-y-3">
+          <Label
+            htmlFor="requestedById"
+            className="text-sm font-semibold text-gray-800 flex items-center gap-1"
+          >
+            Người yêu cầu
+            <span className="text-red-500">*</span>
+          </Label>
           {lockRequestedBy && requestedByDisplay?.id ? (
-            <div className="px-3 py-2 border rounded-md bg-gray-50">
-              <div className="font-medium">
+            <div className="px-4 py-3 border border-gray-200 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 shadow-sm">
+              <div className="font-medium text-gray-800">
                 {requestedByDisplay.fullName || "Bạn"}
               </div>
               {requestedByDisplay.email && (
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-gray-600 mt-1">
                   {requestedByDisplay.email}
                 </div>
               )}
@@ -116,6 +131,15 @@ export function UpdateRequestForm({
               }
               allowClear={false}
               disabled={isLoading || !isEditable}
+              style={{
+                minHeight: "48px",
+                borderRadius: "8px",
+                borderColor: "#e5e7eb",
+                backgroundColor: "#ffffff",
+                fontSize: "14px",
+              }}
+              className="shadow-sm hover:border-blue-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+              size="large"
               defaultValue={
                 initialData?.requestedById
                   ? [
@@ -130,8 +154,13 @@ export function UpdateRequestForm({
           )}
         </div>
       ) : (
-        <div className="space-y-2">
-          <Label htmlFor="requestedById">Người yêu cầu</Label>
+        <div className="space-y-3">
+          <Label
+            htmlFor="requestedById"
+            className="text-sm font-semibold text-gray-800"
+          >
+            Người yêu cầu
+          </Label>
           {isEditable ? (
             <SelectListEmployee
               placeholder="Chọn người yêu cầu"
@@ -144,21 +173,40 @@ export function UpdateRequestForm({
               }
               allowClear={false}
               disabled={true}
-              defaultValue={initialData?.requestedById ? [{ id: initialData.requestedById, name: initialData.requestedBy?.fullName || "" }] : []}
+              defaultValue={
+                initialData?.requestedById
+                  ? [
+                      {
+                        id: initialData.requestedById,
+                        name: initialData.requestedBy?.fullName || "",
+                      },
+                    ]
+                  : []
+              }
             />
           ) : (
-            <div className="px-3 py-2 border rounded-md bg-gray-50">
-              <div>{initialData?.requestedBy?.fullName || "-"}</div>
+            <div className="px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 shadow-sm">
+              <div className="font-medium text-gray-800">
+                {initialData?.requestedBy?.fullName || "-"}
+              </div>
               {initialData?.requestedBy?.email && (
-                <div className="text-sm text-gray-500">{initialData.requestedBy.email}</div>
+                <div className="text-sm text-gray-600 mt-1">
+                  {initialData.requestedBy.email}
+                </div>
               )}
             </div>
           )}
         </div>
       )}
 
-      <div className="space-y-2">
-        <Label htmlFor="content">Nội dung đơn xin *</Label>
+      <div className="space-y-3">
+        <Label
+          htmlFor="content"
+          className="text-sm font-semibold text-gray-800 flex items-center gap-1"
+        >
+          Nội dung đơn xin
+          <span className="text-red-500">*</span>
+        </Label>
         <Textarea
           id="content"
           value={formData.content}
@@ -169,17 +217,22 @@ export function UpdateRequestForm({
           rows={8}
           required
           disabled={isLoading || !isEditable}
-          className="min-h-[200px]"
+          className="min-h-[200px] border-gray-300 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-lg shadow-sm resize-none transition-all duration-200 text-gray-700 placeholder-gray-400"
         />
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-gray-500 italic">
           Mô tả chi tiết yêu cầu thay đổi của bạn
         </p>
       </div>
 
       {mode !== "create" && initialData?.oldValue && (
         <div className="space-y-2">
-          <Label htmlFor="oldValue">Giá trị cũ</Label>
-          <div className="px-3 py-2 border rounded-md bg-gray-50">
+          <Label
+            htmlFor="oldValue"
+            className="text-sm font-semibold text-gray-800"
+          >
+            Giá trị cũ
+          </Label>
+          <div className="px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 shadow-sm">
             {initialData.oldValue || "-"}
           </div>
         </div>
@@ -187,8 +240,13 @@ export function UpdateRequestForm({
 
       {mode !== "create" && initialData?.newValue && (
         <div className="space-y-2">
-          <Label htmlFor="newValue">Giá trị mới</Label>
-          <div className="px-3 py-2 border rounded-md bg-gray-50">
+          <Label
+            htmlFor="newValue"
+            className="text-sm font-semibold text-gray-800"
+          >
+            Giá trị mới
+          </Label>
+          <div className="px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 shadow-sm">
             {initialData.newValue || "-"}
           </div>
         </div>
@@ -196,8 +254,13 @@ export function UpdateRequestForm({
 
       {mode !== "create" && initialData?.status && (
         <div className="space-y-2">
-          <Label htmlFor="status">Trạng thái</Label>
-          <div className="px-3 py-2 border rounded-md bg-gray-50">
+          <Label
+            htmlFor="status"
+            className="text-sm font-semibold text-gray-800"
+          >
+            Trạng thái
+          </Label>
+          <div className="px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 shadow-sm">
             {initialData.status === "PENDING" && "Chờ duyệt"}
             {initialData.status === "APPROVED" && "Đã duyệt"}
             {initialData.status === "NOT_APPROVED" && "Từ chối"}
@@ -207,11 +270,20 @@ export function UpdateRequestForm({
 
       {mode !== "create" && initialData?.reviewedBy && (
         <div className="space-y-2">
-          <Label htmlFor="reviewedBy">Người duyệt</Label>
-          <div className="px-3 py-2 border rounded-md bg-gray-50">
-            <div>{initialData.reviewedBy.fullName || "-"}</div>
+          <Label
+            htmlFor="reviewedBy"
+            className="text-sm font-semibold text-gray-800"
+          >
+            Người duyệt
+          </Label>
+          <div className="px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 shadow-sm">
+            <div className="font-medium text-gray-800">
+              {initialData.reviewedBy.fullName || "-"}
+            </div>
             {initialData.reviewedBy.email && (
-              <div className="text-sm text-gray-500">{initialData.reviewedBy.email}</div>
+              <div className="text-sm text-gray-600 mt-1">
+                {initialData.reviewedBy.email}
+              </div>
             )}
           </div>
         </div>
@@ -220,20 +292,36 @@ export function UpdateRequestForm({
       {mode !== "create" && (
         <>
           <div className="space-y-2">
-            <Label htmlFor="createdAt">Ngày tạo</Label>
-            <div className="px-3 py-2 border rounded-md bg-gray-50">
+            <Label
+              htmlFor="createdAt"
+              className="text-sm font-semibold text-gray-800"
+            >
+              Ngày tạo
+            </Label>
+            <div className="px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 shadow-sm">
               {(() => {
-                const createdAt = initialData?.createdAt || (initialData as any)?.created_at;
-                return createdAt ? dayjs(createdAt as string).format("DD/MM/YYYY HH:mm:ss") : "-";
+                const createdAt =
+                  initialData?.createdAt || (initialData as any)?.created_at;
+                return createdAt
+                  ? dayjs(createdAt as string).format("DD/MM/YYYY HH:mm:ss")
+                  : "-";
               })()}
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="updatedAt">Ngày cập nhật</Label>
-            <div className="px-3 py-2 border rounded-md bg-gray-50">
+            <Label
+              htmlFor="updatedAt"
+              className="text-sm font-semibold text-gray-800"
+            >
+              Ngày cập nhật
+            </Label>
+            <div className="px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 shadow-sm">
               {(() => {
-                const updatedAt = initialData?.updatedAt || (initialData as any)?.updated_at;
-                return updatedAt ? dayjs(updatedAt as string).format("DD/MM/YYYY HH:mm:ss") : "-";
+                const updatedAt =
+                  initialData?.updatedAt || (initialData as any)?.updated_at;
+                return updatedAt
+                  ? dayjs(updatedAt as string).format("DD/MM/YYYY HH:mm:ss")
+                  : "-";
               })()}
             </div>
           </div>
@@ -241,25 +329,29 @@ export function UpdateRequestForm({
       )}
 
       {!hideSubmitButton && (
-        <div className="flex justify-end space-x-2 pt-4 border-t">
+        <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
           <Button
             type="button"
             variant="outline"
             onClick={onCancel}
             disabled={isLoading}
+            className="px-6 py-2 border-gray-300 text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
           >
             Hủy
           </Button>
-          <Button type="submit" disabled={isLoading}>
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white shadow-sm hover:shadow-md transition-all duration-200"
+          >
             {isLoading
               ? "Đang xử lý..."
               : mode === "create"
-              ? "Gửi đơn xin"
-              : "Cập nhật"}
+                ? "Gửi đơn xin"
+                : "Cập nhật"}
           </Button>
         </div>
       )}
     </form>
   );
 }
-

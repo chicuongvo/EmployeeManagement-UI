@@ -13,6 +13,7 @@ interface AuthState {
   listContractActiveKey?: string[];
   listUpdateRequestActiveKey?: string[];
   listMeetingActiveKey?: string[];
+  listMyPerformanceActiveKey?: string[];
 
   setListEmployeeManagementKey: (listEmployeeManagementKey?: string[]) => void;
   setListEmployeeActiveKey: (listEmployeeActiveKey?: string[]) => void;
@@ -31,6 +32,7 @@ interface AuthState {
     listUpdateRequestActiveKey?: string[],
   ) => void;
   setListMeetingActiveKey: (listMeetingActiveKey?: string[]) => void;
+  setListMyPerformanceActiveKey: (listMyPerformanceActiveKey?: string[]) => void;
 }
 
 const useTableStore = create<AuthState>()(
@@ -92,6 +94,11 @@ const useTableStore = create<AuthState>()(
             listMeetingActiveKey,
           });
         },
+        setListMyPerformanceActiveKey: (listMyPerformanceActiveKey) => {
+          set({
+            listMyPerformanceActiveKey,
+          });
+        },
       }),
       {
         name: "table_keys_store",
@@ -107,6 +114,7 @@ const useTableStore = create<AuthState>()(
           listContractActiveKey,
           listUpdateRequestActiveKey,
           listMeetingActiveKey,
+          listMyPerformanceActiveKey,
         }) => ({
           listEmployeeManagementKey,
           listEmployeeActiveKey,
@@ -119,6 +127,7 @@ const useTableStore = create<AuthState>()(
           listContractActiveKey,
           listUpdateRequestActiveKey,
           listMeetingActiveKey,
+          listMyPerformanceActiveKey,
         }),
       },
     ),

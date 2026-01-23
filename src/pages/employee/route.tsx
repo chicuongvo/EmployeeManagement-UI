@@ -1,40 +1,37 @@
-import { FaUserGroup } from "react-icons/fa6";
+import { FaClipboardUser } from "react-icons/fa6";
+import { VideoCameraOutlined } from "@ant-design/icons";
 
 import { type RouteItem } from "@/routes";
-import { ROLE_LEVELS } from "@/constants/roleLevel";
-import { EmployeeProvider } from "./pages/employee/EmployeeContext";
+// import { ROLE_LEVELS } from "@/constants/roleLevel";
 import { DepartmentProvider } from "./pages/department/DepartmentContext";
 import { LeaveApplicationProvider } from "./pages/leave-application/LeaveApplicationContext";
-import EmployeePage from "./pages/employee";
-import { UpdateRequestProvider } from "./pages/update-request/UpdateRequestContext";
-import UpdateRequestPage from "./pages/update-request";
 import MyRequestsPage from "./pages/update-request/my-requests";
-import { ContractProvider } from "./pages/contract/ContractContext";
-import ContractPage from "./pages/contract";
-import MyContractsPage from "./pages/contract/my-contracts";
 import ContractDetailPage from "./pages/contract_detail";
 import { ContractDetailProvider } from "./pages/contract_detail/ContractDetailContext";
 import UpdateRequestDetailPage from "./pages/update_request_detail";
 import { UpdateRequestDetailProvider } from "./pages/update_request_detail/UpdateRequestDetailContext";
 import MeetingPage from "./pages/meeting";
-import CreateMeetingPage from "./pages/meeting/create";
-import MeetingDetailPage from "./pages/meeting/detail";
 import DepartmentPage from "./pages/department";
 import LeaveApplicationPage from "./pages/leave-application";
 import VideoCall from "./pages/video-call";
 import MainLayout from "@/layout/MainLayout";
-import EmployeeDetailPage from "./pages/employee_detail";
-import { EmployeeDetailProvider } from "./pages/employee_detail/EmployeeDetailContex";
+
 import DepartmentDetailPage from "./pages/department_detail";
 import { DepartmentDetailProvider } from "./pages/department_detail/DepartmentDetailContext";
+import EmployeeDetailPage from "@/pages/Management/pages/employee_detail";
+import { EmployeeDetailProvider } from "@/pages/Management/pages/employee_detail/EmployeeDetailContex";
 
-import PerformancePage from "@/pages/employee/pages/performance";
-import { PerformanceProvider } from "./pages/performance/PerformanceContext";
-import PerformanceDetailPage from "@/pages/employee/pages/performanceDetail";
-import PerformanceByEmployeePage from "@/pages/employee/pages/performanceByEmployee";
-import PerformanceByDepartmentPage from "@/pages/employee/pages/performanceByDepartment";
+// import PerformancePage from "@/pages/Employee/pages/performance";
+// import { PerformanceProvider } from "./pages/performance/PerformanceContext";
+// import PerformanceDetailPage from "@/pages/Employee/pages/performanceDetail";
+// import PerformanceByEmployeePage from "@/pages/Employee/pages/performanceByEmployee";
+// import PerformanceByDepartmentPage from "@/pages/Employee/pages/performanceByDepartment";
 import MyPerformancePage from "@/pages/employee/pages/myPerformance";
 import PerformanceCriteriaPage from "@/pages/employee/pages/performanceCriteria";
+import MyProjectsPage from "@/pages/employee/pages/my-projects";
+import AttendanceCorrectionPage from "@/pages/employee/pages/attendance-correction";
+import MyAttendancePage from "@/pages/employee/pages/my-attendance";
+import MyLeaveApplicationPage from "./pages/my-leave-applications";
 
 const route: RouteItem = {
   path: "/employee",
@@ -42,44 +39,15 @@ const route: RouteItem = {
     <span className="font-primary">Thông tin cá nhân</span>
   ) as unknown as string,
   element: <MainLayout />,
-  icon: <FaUserGroup className="text-base font-primary" />,
+  icon: <FaClipboardUser className="text-base font-primary" />,
   children: [
     {
-      path: "employees",
-      name: "Hồ sơ nhân sự",
-      element: (
-        <EmployeeProvider>
-          <EmployeePage />
-        </EmployeeProvider>
-      ),
-    },
-    {
-      path: "employees/add-new",
-      name: "Thêm mới",
+      path: "me",
+      name: "Sơ yếu lí lịch",
       element: (
         <EmployeeDetailProvider>
           <EmployeeDetailPage />
         </EmployeeDetailProvider>
-      ),
-      hideInMenu: true,
-    },
-    {
-      path: "employees/:id",
-      name: "Chi tiết",
-      element: (
-        <EmployeeDetailProvider>
-          <EmployeeDetailPage />
-        </EmployeeDetailProvider>
-      ),
-      hideInMenu: true,
-    },
-    {
-      path: "update-requests",
-      name: "Yêu cầu cập nhật",
-      element: (
-        <UpdateRequestProvider>
-          <UpdateRequestPage />
-        </UpdateRequestProvider>
       ),
     },
     {
@@ -128,40 +96,6 @@ const route: RouteItem = {
       element: <MyRequestsPage />,
     },
     {
-      path: "contracts",
-      name: "Hợp đồng",
-      element: (
-        <ContractProvider>
-          <ContractPage />
-        </ContractProvider>
-      ),
-    },
-    {
-      path: "contracts/add-new",
-      name: "Thêm mới",
-      element: (
-        <ContractDetailProvider>
-          <ContractDetailPage />
-        </ContractDetailProvider>
-      ),
-      hideInMenu: true,
-    },
-    {
-      path: "contracts/:id",
-      name: "Chi tiết",
-      element: (
-        <ContractDetailProvider>
-          <ContractDetailPage />
-        </ContractDetailProvider>
-      ),
-      hideInMenu: true,
-    },
-    {
-      path: "my-contracts",
-      name: "Hợp đồng của tôi",
-      element: <MyContractsPage />,
-    },
-    {
       path: "my-contracts/:id",
       name: "Chi tiết hợp đồng của tôi",
       element: (
@@ -172,13 +106,9 @@ const route: RouteItem = {
       hideInMenu: true,
     },
     {
-      path: "departments",
-      name: "Phòng ban",
-      element: (
-        <DepartmentProvider>
-          <DepartmentPage />
-        </DepartmentProvider>
-      ),
+      path: "my-projects",
+      name: "Dự án của tôi",
+      element: <MyProjectsPage />,
     },
     {
       path: "leave-applications",
@@ -190,78 +120,45 @@ const route: RouteItem = {
       ),
     },
     {
-      path: "departments/:id",
-      name: "Chi tiết phòng ban",
+      path: "attendance-correction",
+      name: "Đơn xin điểm danh bù",
+      element: <AttendanceCorrectionPage />,
+    },
+    {
+      path: "my-attendance",
+      name: "Lịch sử chấm công",
+      element: <MyAttendancePage />,
+    },
+    {
+      path: "my-performance",
+      name: "Đánh giá của tôi",
+      element: <MyPerformancePage />,
+    },
+    {
+      path: "my-leave-applications",
+      name: "Đơn nghỉ phép của tôi",
+      element: <MyLeaveApplicationPage />,
+    },
+    {
+      path: "departments/me",
+      name: "Phòng ban của tôi",
       element: (
         <DepartmentDetailProvider>
           <DepartmentDetailPage />
         </DepartmentDetailProvider>
       ),
-      hideInMenu: true,
     },
-    {
-      path: "performance",
-      name: "Đánh giá",
-      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL, // Manager level (2) and above
-      element: (
-        <PerformanceProvider>
-          <PerformancePage />
-        </PerformanceProvider>
-      ),
-    },
-    {
-      path: "performance-criteria",
-      name: "Tiêu chí đánh giá",
-      minRoleLevel: ROLE_LEVELS.HR_LEVEL, // HR level (3) and above
-      element: <PerformanceCriteriaPage />,
-    },
-    {
-      path: "my-performance",
-      name: "Đánh giá của tôi",
-      // minRoleLevel: 1, // Employee level (1) and above
-      element: <MyPerformancePage />,
-    },
-    {
-      path: "department-performance",
-      name: "Đánh giá phòng ban",
-      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL, // Manager level (2) and above
-      element: <PerformanceByDepartmentPage />,
-    },
-    {
-      path: "performance/:id",
-      name: "Đánh giá chi tiết",
-      element: <PerformanceDetailPage />,
-      hideInMenu: true,
-    },
-    {
-      path: "performance/employee/:employeeId",
-      name: "Đánh giá nhân viên",
-      element: <PerformanceByEmployeePage />,
-      hideInMenu: true,
-    },
-
     {
       path: "meetings",
-      name: "Cuộc họp",
+      name: "Cuộc họp sắp tới",
       element: <MeetingPage />,
-    },
-    {
-      path: "meetings/add-new",
-      name: "Tạo cuộc họp",
-      element: <CreateMeetingPage />,
-      hideInMenu: true,
-    },
-    {
-      path: "meetings/:id",
-      name: "Chi tiết cuộc họp",
-      element: <MeetingDetailPage />,
-      hideInMenu: true,
+      icon: <VideoCameraOutlined />,
     },
     {
       path: "video-call",
       name: "Video Call",
-      hideInMenu: true,
       element: <VideoCall />,
+      hideInMenu: true,
     },
   ],
 };

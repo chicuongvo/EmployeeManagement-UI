@@ -1,14 +1,24 @@
 import { ProConfigProvider, ProLayout } from "@ant-design/pro-components";
-import { ConfigProvider } from "antd";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { ConfigProvider, Dropdown } from "antd";
+import {
+  Link,
+  Outlet,
+  useLocation,
+  useNavigate,
+  Navigate,
+} from "react-router-dom";
+import { useEffect } from "react";
 import useGetMenus from "../hooks/useGetMenu";
-import { ROUTER_DASHBOARD } from "../routes";
+import { ROUTER_DASHBOARD, ROUTER_LOGIN } from "../routes";
 import { NotificationBell } from "@/components/common/shared/NotificationBell";
+import { CheckInButton } from "@/components/common/shared/CheckInButton";
+import { useUser } from "@/hooks/useUser";
+import { LogoutOutlined, LockOutlined } from "@ant-design/icons";
+import { Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 
 // Auth-related imports (commented out for now)
-// import { Dropdown, Input, Tooltip } from "antd";
-// import { Navigate, useNavigate } from "react-router-dom";
-// import { LogoutOutlined } from "@ant-design/icons";
+// import { Input, Tooltip } from "antd";
 // import useAuthStore from "@/stores/authStore";
 // import logo from "@/assets/logo.svg";
 // import useLayoutStore from "@/stores/layoutStore";
@@ -24,81 +34,64 @@ import { NotificationBell } from "@/components/common/shared/NotificationBell";
 
 const MainLayout = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const menus = useGetMenus();
+  const { userProfile, isLoading, setUserProfile } = useUser();
+
+  // Redirect to login only if not loading and user is null
+  console.log(
+    "MainLayout - isLoading:",
+    isLoading,
+    "userProfile:",
+    userProfile,
+  );
+  useEffect(() => {
+    if (!isLoading && !userProfile) {
+      navigate("/auth/login");
+    }
+  }, [isLoading, userProfile, navigate]);
+
+  const handleLogout = () => {
+    // Clear cookies
+    document.cookie =
+      "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie =
+      "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    // Redirect to login
+    navigate(ROUTER_LOGIN);
+  };
+
+  // Show nothing while loading user
+  if (isLoading) {
+    return null;
+  }
+
+  // Redirect to login if not authenticated (handled by useEffect)
+  // No need for early return, useEffect will navigate
 
   // ========================================
-  // AUTH LOGIC (COMMENTED OUT)
+  // AUTH LOGIC
   // ========================================
-
-  // const { t } = useTranslation();
-  // const layoutState = useLayoutStore();
-  // const authState = useAuthStore();
-  // const { setUser } = useAuthStore((state) => state);
-  // const [isFocused, setIsFocused] = useState(false);
-  // const navigate = useNavigate();
-
-  // Global search mutation
-  // const { mutate: search, data: globalSearchData } = useMutation({
-  //     mutationFn: (input: string) => getGlobalSearch({ input }),
-  // });
-
-  // Logout mutation
-  // const { mutate: logoutMutation } = useMutation({
-  //     mutationFn: logoutUser,
-  //     onSuccess: () => {
-  //         setUser(undefined);
-  //         authState.setLogoutSuccess();
-  //     },
-  //     onError: (error) => {
-  //         console.error("Logout API error:", error);
-  //         setUser(undefined);
-  //         authState.setLogoutSuccess();
-  //     },
-  // });
-
-  // Handle global search navigation
-  // useEffect(() => {
-  //     if (globalSearchData?.data) {
-  //         const module = MODULE[globalSearchData.data.module];
-  //         const domain = globalSearchData.data.domain.join("/");
-  //         const object = OBJECT_TYPE[globalSearchData.data.object];
-  //         const tab = globalSearchData.data.tab ? `?tab=${globalSearchData.data.tab}` : "";
-  //         const id = globalSearchData.data.id ? `/${globalSearchData.data.id}` : "";
-  //         navigate(`/${module}${domain}/${object}${id}${tab}`);
-  //     }
-  // }, [globalSearchData?.data]);
-
-  // Register service worker for notifications
-  // useEffect(() => {
-  //     if ("serviceWorker" in navigator) {
-  //         navigator.serviceWorker
-  //             .register("/firebase-messaging-sw.js")
-  //             .then((registration) => console.log("Service Worker registered:", registration))
-  //             .catch((err) => console.log("Service Worker registration failed:", err));
-  //     }
-  // }, []);
-
-  // Handle search input
-  // const handleSearch = (raw: string) => {
-  //     const value = raw.trim();
-  //     if (!value) return;
-  //     search(value);
-  // };
-
-  // Handle logout
-  // const logout = () => {
-  //     logoutMutation();
-  // };
 
   // Auth check - redirect to login if not authenticated
-  // if (!authState.user) {
-  //     return (
-  //         <Navigate
-  //             to={`/auth/login?redirect_url=${location.pathname}${location.search}`}
-  //             replace
-  //         />
-  //     );
-  // }
+  if (!isLoading && !userProfile) {
+    return (
+      <Navigate
+        to={`${ROUTER_LOGIN}?redirect_url=${location.pathname}${location.search}`}
+        replace
+      />
+    );
+  }
+
+  // Show loading while checking auth
+  if (isLoading) {
+    return (
+      <Spin
+        indicator={<LoadingOutlined className="text-primary-100" spin />}
+        size="small"
+      />
+    );
+  }
 
   // ========================================
   // END AUTH LOGIC
@@ -198,9 +191,47 @@ const MainLayout = () => {
               autoClose: false,
             }}
             avatarProps={{
-              src: "https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg",
+              src:
+                userProfile?.avatar ||
+                "https://gw.alipayobjects.com/zos/antfincdn/efFD%24IOql2/weixintupian_20170331104822.jpg",
               size: "small",
-              title: "User",
+              title: userProfile?.fullName || "User",
+              render: (_, dom) => {
+                return (
+                  <Dropdown
+                    menu={{
+                      items: [
+                        {
+                          key: "logout",
+                          icon: <LogoutOutlined />,
+                          label: "Đăng xuất",
+                          onClick: handleLogout,
+                        },
+                        {
+                          key: "change-password",
+                          icon: <LockOutlined />,
+                          label: "Đổi Mật Khẩu",
+                          onClick: () => navigate("/auth/change-password"),
+                        },
+                        {
+                          type: "divider",
+                        },
+                        {
+                          key: "logout",
+                          icon: <LogoutOutlined />,
+                          label: "Đăng Xuất",
+                          onClick: () => {
+                            // TODO: Call logout API
+                            navigate(ROUTER_LOGIN, { replace: true });
+                          },
+                        },
+                      ],
+                    }}
+                  >
+                    {dom}
+                  </Dropdown>
+                );
+              },
             }}
             // Avatar dropdown (commented out - requires auth)
             // avatarProps={{
@@ -246,7 +277,10 @@ const MainLayout = () => {
             }}
             // Actions (search, notifications, language)
             actionsRender={() => {
-              return [<NotificationBell key="notification" />];
+              return [
+                <CheckInButton key="checkin" />,
+                <NotificationBell key="notification" />,
+              ];
             }}
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             menuFooterRender={(props: any) => {

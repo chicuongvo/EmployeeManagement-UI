@@ -1,16 +1,7 @@
 import { useEffect, useState } from "react";
-import {
-  Modal,
-  Form,
-  Input,
-  Button,
-  Space,
-  Tag,
-  Descriptions,
-  message,
-} from "antd";
+import { Modal, Form, Input, Button, Space, Tag, Descriptions } from "antd";
 import { useUpdateRequestContext } from "../UpdateRequestContext";
-import type { UpdateRequestResponse } from "@/types/UpdateRequest";
+
 import type {
   CreateUpdateRequestRequest,
   UpdateUpdateRequestRequest,
@@ -24,7 +15,9 @@ interface ModalUpdateRequestProps {
   isMyRequests?: boolean;
 }
 
-const ModalUpdateRequest = ({ isMyRequests = false }: ModalUpdateRequestProps) => {
+const ModalUpdateRequest = ({
+  isMyRequests = false,
+}: ModalUpdateRequestProps) => {
   const {
     popupUpdateRequest,
     setPopupUpdateRequest,
@@ -32,7 +25,6 @@ const ModalUpdateRequest = ({ isMyRequests = false }: ModalUpdateRequestProps) =
     setSelectedUpdateRequest,
     handleCreate,
     handleUpdate,
-    handleDelete,
     handleReview,
   } = useUpdateRequestContext();
   const { userProfile } = useUser();
@@ -96,17 +88,6 @@ const ModalUpdateRequest = ({ isMyRequests = false }: ModalUpdateRequestProps) =
     }
   };
 
-  const handleDeleteConfirm = async () => {
-    if (!selectedUpdateRequest) return;
-    setIsSubmitting(true);
-    try {
-      await handleDelete(selectedUpdateRequest.id);
-      handleCancel();
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   const handleReviewConfirm = async (status: "APPROVED" | "NOT_APPROVED") => {
     if (!selectedUpdateRequest) return;
     setIsSubmitting(true);
@@ -132,8 +113,8 @@ const ModalUpdateRequest = ({ isMyRequests = false }: ModalUpdateRequestProps) =
     mode === "create"
       ? "Tạo yêu cầu cập nhật mới"
       : mode === "edit"
-      ? "Chỉnh sửa yêu cầu cập nhật"
-      : "Chi tiết yêu cầu cập nhật";
+        ? "Chỉnh sửa yêu cầu cập nhật"
+        : "Chi tiết yêu cầu cập nhật";
 
   return (
     <Modal
@@ -216,14 +197,14 @@ const ModalUpdateRequest = ({ isMyRequests = false }: ModalUpdateRequestProps) =
           {selectedUpdateRequest.createdAt && (
             <Descriptions.Item label="Ngày tạo">
               {dayjs(selectedUpdateRequest.createdAt).format(
-                "DD/MM/YYYY HH:mm"
+                "DD/MM/YYYY HH:mm",
               )}
             </Descriptions.Item>
           )}
           {selectedUpdateRequest.updatedAt && (
             <Descriptions.Item label="Ngày cập nhật">
               {dayjs(selectedUpdateRequest.updatedAt).format(
-                "DD/MM/YYYY HH:mm"
+                "DD/MM/YYYY HH:mm",
               )}
             </Descriptions.Item>
           )}

@@ -43,7 +43,7 @@ function SelectListGeneric<T = any, R = any>({
 
   const handleSearch = useCallback(
     debounce((val: string) => setSearch(val), 500),
-    []
+    [],
   );
 
   const handleChange = useCallback(
@@ -53,7 +53,7 @@ function SelectListGeneric<T = any, R = any>({
       }
       onChange?.(val, option);
     },
-    [onChange]
+    [onChange],
   );
 
   const handleSelectAll = useCallback(
@@ -70,7 +70,7 @@ function SelectListGeneric<T = any, R = any>({
         }
       }
     },
-    [showSelectAll, rest.mode, data, mapOptions, onChange]
+    [showSelectAll, rest.mode, data, mapOptions, onChange],
   );
 
   // Create options without "Select All" option
@@ -95,7 +95,7 @@ function SelectListGeneric<T = any, R = any>({
     if (
       currentValues.length === allValues.length &&
       allValues.every((val) =>
-        (currentValues as (string | number)[]).includes(val)
+        (currentValues as (string | number)[]).includes(val),
       )
     ) {
       return { checked: true, indeterminate: false };
@@ -120,13 +120,24 @@ function SelectListGeneric<T = any, R = any>({
             createOptions().length > 0 && (
               <div
                 style={{
-                  padding: "4px 12px",
-                  borderBottom: "1px solid #f0f0f0",
+                  padding: "4px 8px",
+                  borderBottom: "1px solid #e5e7eb",
+                  backgroundColor: "#f9fafb",
                   display: "flex",
-                  justifyContent: "flex-end",
+                  justifyContent: "space-between",
                   alignItems: "center",
                 }}
               >
+                <span
+                  style={{
+                    fontSize: "13px",
+                    color: "#6b7280",
+                    fontWeight: 500,
+                  }}
+                >
+                  {Array.isArray(value) ? value.length : 0} /{" "}
+                  {createOptions().length} được chọn
+                </span>
                 <Checkbox
                   checked={selectAllCheckboxState.checked}
                   indeterminate={selectAllCheckboxState.indeterminate}
@@ -135,9 +146,11 @@ function SelectListGeneric<T = any, R = any>({
                   <span
                     style={{
                       fontSize: "13px",
+                      fontWeight: 500,
+                      color: "#374151",
                     }}
                   >
-                    Select All
+                    Chọn tất cả
                   </span>
                 </Checkbox>
               </div>

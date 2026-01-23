@@ -6,3 +6,4 @@ export * from "./deleteProject";
 export { getProjectMembers } from "./getProjectMembers";
 export { addProjectMembers } from "./addProjectMembers";
 export { removeProjectMember } from "./removeProjectMember";
+export { getMyProjects } from "./getMyProjects";

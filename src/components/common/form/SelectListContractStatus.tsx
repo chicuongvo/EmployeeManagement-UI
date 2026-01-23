@@ -33,7 +33,7 @@ const SelectListContractStatus = ({
       fetcher={async (search: string) => {
         // Return static data filtered by search
         const filtered = CONTRACT_STATUS_OPTIONS.filter((option) =>
-          option.label.toLowerCase().includes(search.toLowerCase())
+          option.label.toLowerCase().includes(search.toLowerCase()),
         );
         return { data: filtered };
       }}
@@ -58,7 +58,7 @@ const SelectListContractStatus = ({
           ...defaultOptions,
           ...options.filter(
             (option) =>
-              !defaultOptions.some((item) => item.value === option.value)
+              !defaultOptions.some((item) => item.value === option.value),
           ),
         ];
 

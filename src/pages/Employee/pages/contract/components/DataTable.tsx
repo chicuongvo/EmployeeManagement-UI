@@ -14,7 +14,7 @@ import { useEffect, useMemo } from "react";
 import { COLUMN_KEYS } from "@/constant/columns";
 
 import { useContractContext } from "../ContractContext";
-import TooltipTruncatedText from "@/components/common/shared/TooltipTruncatedText";
+
 import TableComponent from "@/components/common/table/TableComponent";
 import type {
   ContractResponse,
@@ -27,12 +27,8 @@ interface DataTableProps {
 }
 
 const DataTable = ({ isMyContracts = false }: DataTableProps = {}) => {
-  const {
-    dataResponse,
-    isSuccess,
-    handleFilterSubmit,
-    params,
-  } = useContractContext();
+  const { dataResponse, isSuccess, handleFilterSubmit, params } =
+    useContractContext();
   const navigate = useNavigate();
 
   const { setListContractActiveKey, listContractActiveKey } = useTableStore(
@@ -142,24 +138,6 @@ const DataTable = ({ isMyContracts = false }: DataTableProps = {}) => {
         render: (value) => (value ? dayjs(value).format("DD/MM/YYYY") : "-"),
       },
       {
-        title: "Lương/ngày",
-        dataIndex: "dailySalary",
-        key: "dailySalary",
-        align: "right",
-        width: 120,
-        render: (value: number) =>
-          value ? new Intl.NumberFormat("vi-VN").format(value) + " VNĐ" : "-",
-      },
-      {
-        title: "Phụ cấp",
-        dataIndex: "allowance",
-        key: "allowance",
-        align: "right",
-        width: 120,
-        render: (value: number) =>
-          value ? new Intl.NumberFormat("vi-VN").format(value) + " VNĐ" : "-",
-      },
-      {
         title: "File đính kèm",
         dataIndex: "attachment",
         key: "attachment",
@@ -232,7 +210,7 @@ const DataTable = ({ isMyContracts = false }: DataTableProps = {}) => {
                   if (isMyContracts) {
                     navigate(`/employee/my-contracts/${record.id}`);
                   } else {
-                    navigate(`/employee/contracts/${record.id}`);
+                    navigate(`/management/contracts/${record.id}`);
                   }
                 }}
               />
@@ -243,7 +221,7 @@ const DataTable = ({ isMyContracts = false }: DataTableProps = {}) => {
                   type="text"
                   icon={<EditOutlined />}
                   onClick={() => {
-                    navigate(`/employee/contracts/${record.id}`);
+                    navigate(`/management/contracts/${record.id}`);
                   }}
                 />
               </Tooltip>

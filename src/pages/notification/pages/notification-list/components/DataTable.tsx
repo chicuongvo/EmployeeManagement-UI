@@ -1,13 +1,14 @@
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
-import { Button, Popconfirm, Space, Table, Tag } from "antd";
+import { Button, Popconfirm, Space, Tag } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { COLUMN_KEYS } from "@/constant/columns";
 
 import { useNotificationContext } from "../../../NotificationContext";
 import TooltipTruncatedText from "@/components/common/shared/TooltipTruncatedText";
+import TableComponent from "@/components/common/table/TableComponent";
 import type { Notification } from "@/apis/notification/model/Notification";
 import showMessage from "@/utils/showMessage";
 
@@ -15,12 +16,17 @@ const DataTable = () => {
   const {
     dataResponse,
     isLoading,
+    isSuccess,
     handleFilterSubmit,
     params,
     setSelectedNotification,
     setPopupUpdateNotification,
     deleteNotificationMutation,
   } = useNotificationContext();
+
+  // Using a generic key for now - can be added to store later if needed
+  const [listNotificationActiveKey, setListNotificationActiveKey] =
+    useState<string[] | undefined>(undefined);
 
   const baseColumns: ColumnsType<Notification> = useMemo(
     () => [
@@ -50,13 +56,7 @@ const DataTable = () => {
         render: (value: string) => <TooltipTruncatedText value={value} />,
         width: 300,
       },
-      {
-        title: "Người tạo",
-        dataIndex: "creatorName",
-        key: "creatorName",
-        width: 150,
-        render: (text: string) => text || "-",
-      },
+      
       {
         title: "Ngày công bố",
         dataIndex: "publishedAt",
@@ -79,13 +79,13 @@ const DataTable = () => {
         align: "center",
       },
       {
-        title: "Thao tác",
-        key: "action",
+        title: "Hành động",
+        key: COLUMN_KEYS.ACTION,
         width: 150,
-        align: "center",
         fixed: "right",
+        align: "center",
         render: (_, record: Notification) => (
-          <Space size="small">
+          <Space>
             <Button
               type="text"
               onClick={() => {
@@ -119,7 +119,6 @@ const DataTable = () => {
               <Button
                 type="text"
                 danger
-                size="small"
                 icon={<DeleteOutlined />}
               />
             </Popconfirm>
@@ -128,35 +127,69 @@ const DataTable = () => {
       },
     ],
     [
-      dataResponse,
+      dataResponse?.data.pagination.page,
+      dataResponse?.data.pagination.limit,
       deleteNotificationMutation,
       setPopupUpdateNotification,
       setSelectedNotification,
     ],
   );
 
+  const columns = useMemo(() => {
+    return baseColumns;
+  }, [baseColumns]);
+
+  useEffect(() => {
+    if (!listNotificationActiveKey) {
+      setListNotificationActiveKey(
+        columns
+          .map((col) => col.key as string)
+          .filter((key) => key !== COLUMN_KEYS.ACTION)
+      );
+    }
+  }, [columns, setListNotificationActiveKey, listNotificationActiveKey]);
+
+  const paginationConfig = useMemo(
+    () => ({
+      total: dataResponse?.data.pagination.total || 0,
+      pageSize: dataResponse?.data.pagination.limit || 10,
+      current: dataResponse?.data.pagination.page || 1,
+      showTotal: (total: number) => (
+        <span>
+          <span className="font-bold">Total:</span> {total}
+        </span>
+      ),
+      showSizeChanger: true,
+      showQuickJumper: true,
+      pageSizeOptions: ["10", "20", "50", "100"],
+    }),
+    [
+      dataResponse?.data.pagination.total,
+      dataResponse?.data.pagination.limit,
+      dataResponse?.data.pagination.page,
+    ]
+  );
+
   const notifications = dataResponse?.data.notifications || [];
 
   return (
-    <Table
-      columns={baseColumns}
+    <TableComponent
+      isSuccess={isSuccess}
+      rowKey={(record) => record.id.toString()}
       dataSource={notifications}
-      rowKey={record => record.id}
-      loading={isLoading}
-      pagination={{
-        current: dataResponse?.data.pagination.page || 1,
-        pageSize: dataResponse?.data.pagination.limit || 10,
-        total: dataResponse?.data.pagination.total || 0,
-        showSizeChanger: false,
-        showTotal: total => `Tổng ${total} thông báo`,
-        onChange: page => {
-          handleFilterSubmit({
-            ...params,
-            page,
-          });
-        },
-      }}
-      scroll={{ x: 1200 }}
+      columns={columns}
+      scroll={{ x: true }}
+      activeKeys={listNotificationActiveKey}
+      setActiveKeys={setListNotificationActiveKey}
+      pagination={paginationConfig}
+      onChange={(p) =>
+        handleFilterSubmit?.({
+          ...params,
+          page: p.current,
+          limit: p.pageSize,
+        })
+      }
+      editColumnMode={true}
     />
   );
 };
