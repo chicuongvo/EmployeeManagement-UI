@@ -257,6 +257,21 @@ const management_route: RouteItem = {
       ],
     },
     {
+      path: "holiday",
+      name: "Quản lý nghỉ lễ",
+      icon: <CalendarOutlined />,
+      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+      children: [
+        {
+          path: "management",
+          name: "Quản lý ngày nghỉ",
+          element: <HolidayManagementPage />,
+          minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+        },
+      ],
+      element: <AttendanceManagementPage />,
+    },
+    {
       path: "holiday/management",
       name: "Quản lý nghỉ lễ",
       element: <HolidayManagementPage />,

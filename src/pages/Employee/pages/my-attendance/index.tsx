@@ -19,7 +19,10 @@ const MyAttendancePage = () => {
 
   const formatTime = (time: string | null) => {
     if (!time) return "-";
-    return time;
+    // Convert UTC to Vietnam time (UTC+7)
+    const [hours, minutes, seconds] = time.split(":").map(Number);
+    const vietnamHours = (hours + 7) % 24;
+    return `${vietnamHours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
   const columns: ColumnsType<MyAttendanceRecord> = [

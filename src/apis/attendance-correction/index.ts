@@ -6,7 +6,7 @@ export interface AttendanceCorrectionRequest {
   attendanceReportDetailId: number;
   requestDate: string;
   reason: string;
-  status: "PENDING" | "APPROVED" | "REJECTED";
+  status: "PENDING" | "APPROVED" | "NOT_APPROVED";
   reviewedById?: number;
   reviewedAt?: string;
   createdAt: string;
@@ -99,11 +99,15 @@ export const getAttendanceCorrectionRequestById = async (id: number) => {
 };
 
 export const approveAttendanceCorrectionRequest = async (id: number) => {
+  console.log("API approveAttendanceCorrectionRequest called with id:", id);
   const response = await axiosClient.put(endpoints.approve(id));
   return response.data;
 };
 
 export const rejectAttendanceCorrectionRequest = async (id: number) => {
+  console.log("API rejectAttendanceCorrectionRequest called with id:", id);
+  console.log("Endpoint:", endpoints.reject(id));
   const response = await axiosClient.put(endpoints.reject(id));
+  console.log("Response:", response.data);
   return response.data;
 };
