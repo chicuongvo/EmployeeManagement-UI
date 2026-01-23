@@ -96,7 +96,7 @@ const route: RouteItem = {
       element: <MyRequestsPage />,
     },
     {
-      path: "my-contracts/:id",
+      path: "contracts/:id",
       name: "Chi tiết hợp đồng của tôi",
       element: (
         <ContractDetailProvider>
