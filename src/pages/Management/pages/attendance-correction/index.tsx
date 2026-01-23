@@ -130,7 +130,7 @@ const ManagementAttendanceCorrectionPage = () => {
         if (status === "APPROVED") {
           color = "green";
           text = "Đã duyệt";
-        } else if (status === "REJECTED") {
+        } else if (status === "NOT_APPROVED") {
           color = "red";
           text = "Từ chối";
         }
@@ -249,14 +249,14 @@ const ManagementAttendanceCorrectionPage = () => {
                 color={
                   selectedRequest.status === "APPROVED"
                     ? "green"
-                    : selectedRequest.status === "REJECTED"
+                    : selectedRequest.status === "NOT_APPROVED"
                       ? "red"
                       : "gold"
                 }
               >
                 {selectedRequest.status === "APPROVED"
                   ? "Đã duyệt"
-                  : selectedRequest.status === "REJECTED"
+                  : selectedRequest.status === "NOT_APPROVED"
                     ? "Từ chối"
                     : "Chờ duyệt"}
               </Tag>
