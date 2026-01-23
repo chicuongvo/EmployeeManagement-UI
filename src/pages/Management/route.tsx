@@ -114,7 +114,7 @@ const management_route: RouteItem = {
       path: "update-requests",
       name: "Yêu cầu cập nhật",
       element: <UpdateRequestPage />,
-      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+      minRoleLevel: ROLE_LEVELS.HR_LEVEL,
     },
     {
       path: "update-requests/:id",
@@ -125,7 +125,7 @@ const management_route: RouteItem = {
         </UpdateRequestDetailProvider>
       ),
       hideInMenu: true,
-      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+      minRoleLevel: ROLE_LEVELS.HR_LEVEL,
     },
     {
       path: "contracts",
@@ -136,7 +136,7 @@ const management_route: RouteItem = {
         </ContractProvider>
       ),
       icon: <FileTextOutlined />,
-      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+      minRoleLevel: ROLE_LEVELS.HR_LEVEL,
     },
     {
       path: "contracts/add-new",
@@ -147,7 +147,7 @@ const management_route: RouteItem = {
         </ContractDetailProvider>
       ),
       hideInMenu: true,
-      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+      minRoleLevel: ROLE_LEVELS.HR_LEVEL,
     },
     {
       path: "contracts/:id",
@@ -158,7 +158,7 @@ const management_route: RouteItem = {
         </ContractDetailProvider>
       ),
       hideInMenu: true,
-      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+      minRoleLevel: ROLE_LEVELS.HR_LEVEL,
     },
     {
       path: "meetings",
@@ -194,7 +194,7 @@ const management_route: RouteItem = {
       name: "Video Call",
       element: <ManagementVideoCall />,
       hideInMenu: true,
-      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+      minRoleLevel: 0,
     },
     {
       path: "projects",
