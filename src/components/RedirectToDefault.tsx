@@ -22,3 +22,4 @@ const RedirectToDefault = () => {
 
 export default RedirectToDefault;
 
+
