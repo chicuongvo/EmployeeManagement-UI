@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { PageContainer } from "@ant-design/pro-components";
 import { Tabs, type TabsProps, DatePicker, Card, Avatar, Tag, Empty, Result, Spin } from "antd";
 import type { ColumnsType } from "antd/es/table";
@@ -17,7 +17,6 @@ import {
 import { performanceCriteriaService } from "@/apis/performance/performanceCriteriaService";
 import type { PerformanceCriteria } from "@/apis/performance/model/PerformanceCriteria";
 import useTableStore from "@/stores/tableStore";
-import { useUser } from "@/hooks/useUser";
 
 interface DepartmentInfo {
     id: number;
@@ -32,10 +31,11 @@ interface DepartmentInfo {
 
 export default function PerformanceByDepartmentPage() {
     const navigate = useNavigate();
-    const { userProfile, isLoading: isLoadingUser } = useUser();
+    const { departmentId: paramDepartmentId } = useParams<{ departmentId: string }>();
+    const [searchParams] = useSearchParams();
 
-    // Lấy departmentId từ user đang login
-    const departmentId = userProfile?.department?.id;
+    // Lấy departmentId từ URL params
+    const departmentId = paramDepartmentId ? parseInt(paramDepartmentId) : null;
 
     const [department, setDepartment] = useState<DepartmentInfo | null>(null);
     const [details, setDetails] = useState<DepartmentPerformanceDetail[]>([]);
@@ -44,9 +44,15 @@ export default function PerformanceByDepartmentPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
 
-    // Filter state - default to current month/year
-    const [filterMonth, setFilterMonth] = useState<number>(dayjs().month() + 1);
-    const [filterYear, setFilterYear] = useState<number>(dayjs().year());
+    // Filter state - get from URL or default to current month/year
+    const urlMonth = searchParams.get("month");
+    const urlYear = searchParams.get("year");
+    const [filterMonth, setFilterMonth] = useState<number>(
+        urlMonth ? parseInt(urlMonth) : dayjs().month() + 1
+    );
+    const [filterYear, setFilterYear] = useState<number>(
+        urlYear ? parseInt(urlYear) : dayjs().year()
+    );
 
     const {
         listPerformanceByDepartmentActiveKey,
@@ -286,8 +292,8 @@ export default function PerformanceByDepartmentPage() {
         },
     ];
 
-    // Hiển thị loading khi đang tải thông tin user
-    if (isLoadingUser) {
+    // Hiển thị loading khi đang tải
+    if (isLoading && !department) {
         return (
             <PageContainer>
                 <div className="flex items-center justify-center min-h-[400px]">
@@ -297,7 +303,7 @@ export default function PerformanceByDepartmentPage() {
         );
     }
 
-    // Hiển thị thông báo nếu user không có phòng ban
+    // Hiển thị thông báo nếu không có departmentId
     if (!departmentId) {
         return (
             <PageContainer
@@ -305,8 +311,16 @@ export default function PerformanceByDepartmentPage() {
             >
                 <Result
                     status="warning"
-                    title="Không có phòng ban"
-                    subTitle="Bạn chưa được gán vào phòng ban nào. Vui lòng liên hệ quản trị viên."
+                    title="Không tìm thấy phòng ban"
+                    subTitle="Vui lòng chọn một phòng ban từ danh sách."
+                    extra={
+                        <span
+                            className="text-blue-600 cursor-pointer hover:underline"
+                            onClick={() => navigate("/management/performance/department")}
+                        >
+                            ← Quay lại danh sách phòng ban
+                        </span>
+                    }
                 />
             </PageContainer>
         );
@@ -317,14 +331,14 @@ export default function PerformanceByDepartmentPage() {
             header={{
                 breadcrumb: {
                     items: [
-                        { title: "Master list" },
+                        { title: "Đánh giá" },
                         {
-                            title: "Performance",
-                            onClick: () => navigate("/performance/list"),
+                            title: "Đánh giá phòng ban",
+                            onClick: () => navigate("/management/performance/department"),
                             className: "cursor-pointer hover:text-blue-600",
                         },
                         {
-                            title: department?.name || "Department",
+                            title: department?.name || "Chi tiết",
                         },
                     ],
                 },
