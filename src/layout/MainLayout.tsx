@@ -207,6 +207,8 @@ const MainLayout = () => {
                           icon: <LogoutOutlined />,
                           label: "Đăng xuất",
                           onClick: handleLogout,
+                        },
+                        {
                           key: "change-password",
                           icon: <LockOutlined />,
                           label: "Đổi Mật Khẩu",

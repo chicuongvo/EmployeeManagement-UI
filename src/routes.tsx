@@ -1,12 +1,13 @@
-import { Navigate, type RouteObject } from "react-router-dom";
+import type { RouteObject } from "react-router-dom";
 
 import employee_route from "./pages/Employee/route";
 import management_route from "./pages/Management/route";
 import admin_route from "./pages/Admin/route";
-import performance_route from "./pages/performance/route";
 import notification_route from "./pages/notification/route";
+import performance_route from "./pages/performance/route";
 import Login from "./pages/Auth/Login";
 import ChangePassword from "./pages/Auth/ChangePassword";
+import RedirectToDefault from "./components/RedirectToDefault";
 // import project_route from "./pages/project/route";
 // import attendance_route from "./pages/attendance/route";
 // import holiday_route from "./pages/holiday/route";
@@ -23,13 +24,16 @@ export type RouteItem = Omit<RouteObject, "children"> & {
 export const ROUTER_DASHBOARD = "/management/employees";
 export const ROUTER_LOGIN = "/auth/login";
 
+// Default route will be determined dynamically based on user role level
+// For users with role level < MANAGEMENT_LEVEL: /employee/me
+// For users with role level >= MANAGEMENT_LEVEL: /management/employees
 export const DEFAULT_ROUTE = "/management/employees";
 
 const routes: RouteItem[] = [
   {
     path: "/",
     hideInMenu: true,
-    element: <Navigate to={ROUTER_DASHBOARD} replace />,
+    element: <RedirectToDefault />,
   } as RouteItem,
   {
     path: "/auth/login",
@@ -46,6 +50,7 @@ const routes: RouteItem[] = [
   // attendance_route,
   // holiday_route,
   management_route,
+  performance_route,
   admin_route,
   notification_route,
 ];
