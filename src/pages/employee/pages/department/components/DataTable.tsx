@@ -84,7 +84,7 @@ const DataTable = () => {
         align: "center",
         fixed: "left",
         width: 150,
-        render: (value, record) => <Link to={`/employee/departments/${record.id}`} className="text-blue-600 hover:text-blue-800">
+        render: (value, record) => <Link to={`/management/departments/${record.id}`} className="text-blue-600 hover:text-blue-800">
           <CopyTextPopover text={value} /></Link>,
       },
       {

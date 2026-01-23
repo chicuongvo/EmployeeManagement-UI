@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, Avatar, Spin, Empty, Typography, Tag } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
@@ -73,6 +73,14 @@ const DepartmentOrgChart: React.FC<DepartmentOrgChartProps> = ({ departmentId })
         enabled: !!departmentId
     });
 
+    // Ensure levels are sorted from large to small (descending: 3, 2, 1...)
+    // Higher number = higher position level, displayed at the top
+    // This hook must be called before any early returns to follow Rules of Hooks
+    const sortedLevels = useMemo(() => {
+        if (!data?.levels) return [];
+        return [...data.levels].sort((a, b) => b.level - a.level);
+    }, [data?.levels]);
+
     if (isLoading) {
         return (
             <div className="flex flex-col items-center justify-center py-20 gap-4">
@@ -96,7 +104,7 @@ const DepartmentOrgChart: React.FC<DepartmentOrgChartProps> = ({ departmentId })
     return (
         <Card className="w-full overflow-x-auto overflow-y-hidden py-12 px-6 bg-white rounded-xl">
             <div className="flex flex-col gap-12 items-center min-w-max">
-                {data.levels.map((level) => (
+                {sortedLevels.map((level) => (
                     <div key={level.level} className="flex flex-col items-center gap-4 w-full">
                         {/* Level Header */}
                         <div className="flex items-center gap-3">
@@ -116,7 +124,7 @@ const DepartmentOrgChart: React.FC<DepartmentOrgChartProps> = ({ departmentId })
                         </div>
 
                         {/* Connector to next level */}
-                        {level !== data.levels[data.levels.length - 1] && (
+                        {level !== sortedLevels[sortedLevels.length - 1] && (
                             <div className="w-px h-8 bg-gray-300"></div>
                         )}
                     </div>
