@@ -4,7 +4,6 @@ import employee_route from "./pages/Employee/route";
 import management_route from "./pages/Management/route";
 import admin_route from "./pages/Admin/route";
 import notification_route from "./pages/notification/route";
-import performance_route from "./pages/performance/route";
 import Login from "./pages/Auth/Login";
 import ChangePassword from "./pages/Auth/ChangePassword";
 import RedirectToDefault from "./components/RedirectToDefault";
@@ -50,7 +49,6 @@ const routes: RouteItem[] = [
   // attendance_route,
   // holiday_route,
   management_route,
-  performance_route,
   admin_route,
   notification_route,
 ];

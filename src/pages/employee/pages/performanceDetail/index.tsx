@@ -300,7 +300,7 @@ export default function PerformanceDetailPage() {
             },
             {
               title: "Đánh giá",
-              onClick: () => navigate("/performance/list"),
+              onClick: () => navigate("/management/performance/list"),
               className: "cursor-pointer hover:text-blue-600",
             },
             {
