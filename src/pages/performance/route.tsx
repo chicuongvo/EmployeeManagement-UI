@@ -1,13 +1,12 @@
-import { TrophyOutlined } from "@ant-design/icons";
-
 import { type RouteItem } from "@/routes";
 import { ROLE_LEVELS } from "@/constants/roleLevel";
 import { PerformanceProvider } from "../Employee/pages/performance/PerformanceContext";
-import PerformancePage from "@/pages/Employee/pages/performance";
-import PerformanceDetailPage from "@/pages/Employee/pages/performanceDetail";
-import PerformanceByEmployeePage from "@/pages/Employee/pages/performanceByEmployee";
-import PerformanceByDepartmentPage from "@/pages/Employee/pages/performanceByDepartment";
-import PerformanceCriteriaPage from "@/pages/Employee/pages/performanceCriteria";
+import PerformancePage from "../Employee/pages/performance";
+import PerformanceDetailPage from "../Employee/pages/performanceDetail";
+import PerformanceByEmployeePage from "../Employee/pages/performanceByEmployee";
+import PerformanceByDepartmentPage from "../Employee/pages/performanceByDepartment";
+import AllDepartmentsPerformancePage from "../Employee/pages/performanceByDepartment/AllDepartmentsPerformance";
+import PerformanceCriteriaPage from "../Employee/pages/performanceCriteria";
 import MainLayout from "@/layout/MainLayout";
 
 const route: RouteItem = {
@@ -37,8 +36,15 @@ const route: RouteItem = {
     {
       path: "department",
       name: "Đánh giá phòng ban",
-      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL, // Manager level (2) and above
+      minRoleLevel: ROLE_LEVELS.HR_LEVEL, // HR level (3) and above - only HR can view all departments
+      element: <AllDepartmentsPerformancePage />,
+    },
+    {
+      path: "department/:departmentId",
+      name: "Chi tiết đánh giá phòng ban",
+      minRoleLevel: ROLE_LEVELS.HR_LEVEL, // HR level (3) and above
       element: <PerformanceByDepartmentPage />,
+      hideInMenu: true,
     },
     {
       path: ":id",

@@ -10,13 +10,13 @@ const admin_route: RouteItem = {
   name: "Quản trị hệ thống",
   element: <MainLayout />,
   icon: <SettingOutlined />,
-  minRoleLevel: ROLE_LEVELS.SIDEBAR_MIN_LEVEL_ADMIN,
+  minRoleLevel: 3,
   children: [
     {
       path: "system-settings",
       name: "Cấu hình hệ thống",
       element: <SystemSettings />,
-      minRoleLevel: ROLE_LEVELS.ADMIN_LEVEL,
+      minRoleLevel: 3,
     },
   ],
 };

@@ -26,11 +26,11 @@ import { EmployeeDetailProvider } from "@/pages/Management/pages/employee_detail
 // import PerformanceDetailPage from "@/pages/Employee/pages/performanceDetail";
 // import PerformanceByEmployeePage from "@/pages/Employee/pages/performanceByEmployee";
 // import PerformanceByDepartmentPage from "@/pages/Employee/pages/performanceByDepartment";
-import MyPerformancePage from "@/pages/employee/pages/myPerformance";
-import PerformanceCriteriaPage from "@/pages/employee/pages/performanceCriteria";
-import MyProjectsPage from "@/pages/employee/pages/my-projects";
-import AttendanceCorrectionPage from "@/pages/employee/pages/attendance-correction";
-import MyAttendancePage from "@/pages/employee/pages/my-attendance";
+import MyPerformancePage from "./pages/myPerformance";
+import PerformanceCriteriaPage from "./pages/performanceCriteria";
+import MyProjectsPage from "./pages/my-projects";
+import AttendanceCorrectionPage from "./pages/attendance-correction";
+import MyAttendancePage from "./pages/my-attendance";
 import MyLeaveApplicationPage from "./pages/my-leave-applications";
 
 const route: RouteItem = {
@@ -96,7 +96,7 @@ const route: RouteItem = {
       element: <MyRequestsPage />,
     },
     {
-      path: "my-contracts/:id",
+      path: "contracts/:id",
       name: "Chi tiết hợp đồng của tôi",
       element: (
         <ContractDetailProvider>

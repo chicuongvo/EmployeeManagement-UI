@@ -402,9 +402,9 @@ const Index = () => {
   if (isLoadingContract) {
     return (
       <Spin
-          indicator={<LoadingOutlined className="text-primary-100" spin />}
-          size="small"
-        />  
+        indicator={<LoadingOutlined className="text-primary-100" spin />}
+        size="small"
+      />
     );
   }
 
