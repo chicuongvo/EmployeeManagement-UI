@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { Card, Form, Input, Select } from "antd";
 
 import BoxFilter from "@/components/common/shared/BoxFiltered";
@@ -11,7 +11,16 @@ interface FormFilterProps {
 
 const FormFilter = ({ onSearch }: FormFilterProps) => {
   const [form] = Form.useForm();
-  const { params, handleFilterSubmit } = useNotificationContext();
+  const { params, paramsStr, handleFilterSubmit } = useNotificationContext();
+
+  useEffect(() => {
+    // Sync form values with params
+    const formValues = {
+      title: params.title || undefined,
+      isRead: params.isRead !== undefined ? params.isRead : undefined,
+    };
+    form.setFieldsValue(formValues);
+  }, [paramsStr, form, params]);
 
   const onFinish = useCallback(
     (values: GetListNotificationRequest) => {
@@ -23,6 +32,10 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
     [handleFilterSubmit, onSearch],
   );
 
+  const onFinishFailed = useCallback(() => {
+    // Form validation failed
+  }, []);
+
   const handleReset = useCallback(() => {
     handleFilterSubmit({});
   }, [handleFilterSubmit]);
@@ -30,12 +43,8 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
   const fields = useMemo(
     () => [
       {
-        name: "search",
+        name: "title",
         component: <Input placeholder="Tìm kiếm tiêu đề" allowClear />,
-      },
-      {
-        name: "creatorName",
-        component: <Input placeholder="Nhập tên người tạo" allowClear />,
       },
       {
         name: "isRead",
@@ -60,7 +69,7 @@ const FormFilter = ({ onSearch }: FormFilterProps) => {
         form={form}
         name="notification-filter"
         onFinish={onFinish}
-        initialValues={params}
+        onFinishFailed={onFinishFailed}
         scrollToFirstError
       >
         <div className="grid xl:grid-cols-3 2xl:grid-cols-4 gap-4 mb-3">

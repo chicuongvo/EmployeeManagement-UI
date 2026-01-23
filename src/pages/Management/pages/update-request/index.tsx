@@ -50,7 +50,7 @@ const UpdateRequestPageContent = () => {
           ],
         },
       }}
-      title={<PageTitle title="Quản lý yêu cầu cập nhật" />}
+      title={<PageTitle title="Yêu cầu cập nhật" />}
     >
       <Tabs
         type="card"

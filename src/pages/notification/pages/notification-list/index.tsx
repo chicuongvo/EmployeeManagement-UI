@@ -33,12 +33,12 @@ const Index = () => {
   const tabs: TabsProps["items"] = [{ key: "1", label: "Thông báo" }];
 
   const scrollToDataTable = () => {
-    if (dataTableRef.current) {
-      dataTableRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
+    // if (dataTableRef.current) {
+    //   dataTableRef.current.scrollIntoView({
+    //     behavior: "smooth",
+    //     block: "start",
+    //   });
+    // }
   };
 
   return (

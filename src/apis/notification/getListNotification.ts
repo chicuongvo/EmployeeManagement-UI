@@ -5,6 +5,7 @@ interface GetListNotificationParams {
   page?: number;
   limit?: number;
   isRead?: boolean;
+  title?: string;
 }
 
 export const getListNotification = async (

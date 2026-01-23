@@ -68,6 +68,7 @@ const Index = () => {
         maritalStatus: employee.maritalStatus,
         phone: employee.phone,
         email: employee.email,
+        githubUsername: employee.githubUsername,
         permanentAddress: employee.permanentAddress,
         currentAddress: employee.currentAddress,
         education: employee.education,
@@ -90,6 +91,9 @@ const Index = () => {
         onboardDate: employee.onboardDate
           ? dayjs(employee.onboardDate)
           : undefined,
+        workStatus: employee.workStatus,
+        isActive: employee.isActive,
+        createdAt: employee.createdAt,
       });
     }
   }, [employee, form]);
@@ -141,6 +145,7 @@ const Index = () => {
       onboardDate: employee.onboardDate
         ? dayjs(employee.onboardDate)
         : undefined,
+      githubUsername: employee.githubUsername,
     };
   }, [employee]);
 
@@ -236,6 +241,7 @@ const Index = () => {
         citizenIdIssuePlace: changeInfoValue.citizenIdIssuePlace,
         phone: changeInfoValue.phone as string,
         email: changeInfoValue.email as string,
+        githubUsername: changeInfoValue.githubUsername,
         ethnicity: changeInfoValue.ethnicity,
         religion: changeInfoValue.religion,
         education: changeInfoValue.education as Education | undefined,
@@ -296,6 +302,9 @@ const Index = () => {
       }
       if (changeInfoValue.email !== undefined) {
         updatePayload.email = changeInfoValue.email;
+      }
+      if (changeInfoValue.githubUsername !== undefined) {
+        updatePayload.githubUsername = changeInfoValue.githubUsername;
       }
       if (changeInfoValue.ethnicity !== undefined) {
         updatePayload.ethnicity = changeInfoValue.ethnicity;
@@ -359,8 +368,9 @@ const Index = () => {
       if (formValues.directManagerId !== undefined) {
         updatePayload.directManagerId = formValues.directManagerId;
       }
-      if (formValues.workStatus !== undefined) {
-        updatePayload.workStatus = formValues.workStatus;
+      // Update isActive instead of workStatus (workStatus is not changed from UI)
+      if (changeInfoValue.isActive !== undefined) {
+        updatePayload.isActive = changeInfoValue.isActive;
       }
       if (changeInfoValue.citizenIdFrontImage !== undefined) {
         updatePayload.citizenIdFrontImage = changeInfoValue.citizenIdFrontImage;
@@ -486,7 +496,7 @@ const Index = () => {
             key="save"
             color="green"
             onClick={handleCreateUpdateEmployee}
-            disabled={disableSubmit}
+            // disabled={editMode ? disableSubmit : false}
             loading={isLoadingCreateEmployee || isLoadingUpdateEmployee}
           >
             Lưu

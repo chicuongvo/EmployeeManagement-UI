@@ -26,9 +26,12 @@ import { EmployeeDetailProvider } from "@/pages/Management/pages/employee_detail
 // import PerformanceDetailPage from "@/pages/Employee/pages/performanceDetail";
 // import PerformanceByEmployeePage from "@/pages/Employee/pages/performanceByEmployee";
 // import PerformanceByDepartmentPage from "@/pages/Employee/pages/performanceByDepartment";
-import MyPerformancePage from "@/pages/Employee/pages/myPerformance";
-
-
+import MyPerformancePage from "@/pages/employee/pages/myPerformance";
+import PerformanceCriteriaPage from "@/pages/employee/pages/performanceCriteria";
+import MyProjectsPage from "@/pages/employee/pages/my-projects";
+import AttendanceCorrectionPage from "@/pages/employee/pages/attendance-correction";
+import MyAttendancePage from "@/pages/employee/pages/my-attendance";
+import MyLeaveApplicationPage from "./pages/my-leave-applications";
 
 const route: RouteItem = {
   path: "/employee",
@@ -103,13 +106,9 @@ const route: RouteItem = {
       hideInMenu: true,
     },
     {
-      path: "departments",
-      name: "Phòng ban",
-      element: (
-        <DepartmentProvider>
-          <DepartmentPage />
-        </DepartmentProvider>
-      ),
+      path: "my-projects",
+      name: "Dự án của tôi",
+      element: <MyProjectsPage />,
     },
     {
       path: "leave-applications",
@@ -121,19 +120,33 @@ const route: RouteItem = {
       ),
     },
     {
+      path: "attendance-correction",
+      name: "Đơn xin điểm danh bù",
+      element: <AttendanceCorrectionPage />,
+    },
+    {
+      path: "my-attendance",
+      name: "Lịch sử chấm công",
+      element: <MyAttendancePage />,
+    },
+    {
       path: "my-performance",
       name: "Đánh giá của tôi",
       element: <MyPerformancePage />,
     },
     {
-      path: "departments/:id",
-      name: "Chi tiết phòng ban",
+      path: "my-leave-applications",
+      name: "Đơn nghỉ phép của tôi",
+      element: <MyLeaveApplicationPage />,
+    },
+    {
+      path: "departments/me",
+      name: "Phòng ban của tôi",
       element: (
         <DepartmentDetailProvider>
           <DepartmentDetailPage />
         </DepartmentDetailProvider>
       ),
-      hideInMenu: true,
     },
     {
       path: "meetings",

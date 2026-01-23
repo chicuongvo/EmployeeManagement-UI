@@ -76,6 +76,7 @@ export interface EMPLOYEE {
   onboardDate?: string; // Ngày nhận việc
   phone: string;
   email: string;
+  githubUsername?: string;
   ethnicity?: string;
   religion?: string;
   education?: string;
@@ -145,6 +146,7 @@ export interface CreateEmployeeRequest {
   onboardDate?: string;
   phone: string;
   email: string;
+  githubUsername?: string;
   ethnicity?: string;
   religion?: string;
   education?: Education;
@@ -180,6 +182,7 @@ export interface UpdateEmployeeRequest {
   onboardDate?: string;
   phone?: string;
   email?: string;
+  githubUsername?: string;
   ethnicity?: string;
   religion?: string;
   education?: Education;
@@ -201,4 +204,5 @@ export interface UpdateEmployeeRequest {
   positionId?: number;
   directManagerId?: number | null;
   workStatus?: WorkStatus;
+  isActive?: boolean;
 }

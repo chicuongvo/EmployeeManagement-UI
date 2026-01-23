@@ -17,14 +17,34 @@ import {
   PlusOutlined,
   HistoryOutlined,
   FileTextOutlined,
+  CalendarOutlined,
 } from "@ant-design/icons";
-import { FaUserGroup } from "react-icons/fa6";
-
-import { EmployeeProvider } from "./pages/employee/EmployeeContext";
+import { LeaveApplicationProvider } from "../employee/pages/leave-application/LeaveApplicationContext";
+import MyLeaveApplicationPage from "../Employee/pages/my-leave-applications";
+import { FaProjectDiagram } from "react-icons/fa";
+import { ProjectProvider } from "../employee/pages/project/ProjectContext";
+import { ProjectDetailProvider } from "../employee/pages/project-detail/ProjectDetailContext";
+import { EpicTaskProvider } from "../employee/pages/epic-tasks/EpicTaskContext";
+import ProjectPage from "../employee/pages/project";
+import ProjectDetailPage from "../employee/pages/project-detail";
 import EmployeePage from "./pages/employee";
-
-import EmployeeDetailPage from "./pages/employee_detail";
+import EpicTaskPage from "../employee/pages/epic-tasks";
+import AttendanceManagementPage from "../attendance/AttendanceManagementPage";
+import { lazy } from "react";
+import { FaUserGroup } from "react-icons/fa6";
+import { EmployeeProvider } from "./pages/employee/EmployeeContext";
 import { EmployeeDetailProvider } from "./pages/employee_detail/EmployeeDetailContex";
+import EmployeeDetailPage from "./pages/employee_detail";
+import ManagementAttendanceCorrectionPage from "./pages/attendance-correction";
+import { DepartmentProvider } from "../Employee/pages/department/DepartmentContext";
+import DepartmentDetailPage from "../Employee/pages/department_detail";
+import DepartmentPage from "../Employee/pages/department";
+import { DepartmentDetailProvider } from "../Employee/pages/department_detail/DepartmentDetailContext";
+import performance_route from "../performance/route";
+
+const HolidayManagementPage = lazy(
+  () => import("../holiday/HolidayManagementPage"),
+);
 
 const management_route: RouteItem = {
   path: "/management",
@@ -33,6 +53,15 @@ const management_route: RouteItem = {
   icon: <FaUserGroup className="text-base font-primary" />,
   minRoleLevel: ROLE_LEVELS.SIDEBAR_MIN_LEVEL_MANAGEMENT,
   children: [
+    {
+      path: "leave-applications",
+      name: "Đơn nghỉ phép",
+      element: (
+        <LeaveApplicationProvider>
+          <MyLeaveApplicationPage />
+        </LeaveApplicationProvider>
+      ),
+    },
     {
       path: "employees",
       name: "Hồ sơ nhân sự",
@@ -63,8 +92,27 @@ const management_route: RouteItem = {
       hideInMenu: true,
     },
     {
+      path: "departments",
+      name: "Phòng ban",
+      element: (
+        <DepartmentProvider>
+          <DepartmentPage />
+        </DepartmentProvider>
+      ),
+    },
+    {
+      path: "departments/:id",
+      name: "Chi tiết phòng ban",
+      element: (
+        <DepartmentDetailProvider>
+          <DepartmentDetailPage />
+        </DepartmentDetailProvider>
+      ),
+      hideInMenu: true,
+    },
+    {
       path: "update-requests",
-      name: "Quản lí yêu cầu cập nhật",
+      name: "Yêu cầu cập nhật",
       element: <UpdateRequestPage />,
       minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
     },
@@ -127,7 +175,7 @@ const management_route: RouteItem = {
         },
         {
           path: "past",
-          name: "Cuộc họp đã kết thúc",
+          name: "Lịch sử cuộc họp",
           element: <ManagementPastMeetingsPage />,
           icon: <HistoryOutlined />,
           minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
@@ -148,7 +196,68 @@ const management_route: RouteItem = {
       hideInMenu: true,
       minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
     },
+    {
+      path: "projects",
+      name: "Quản lý dự án",
+      element: (
+        <ProjectProvider>
+          <ProjectPage />
+        </ProjectProvider>
+      ),
+      icon: <FaProjectDiagram className="text-base font-primary" />,
+      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+    },
+    {
+      path: "projects/:projectId",
+      name: "Chi tiết dự án",
+      element: (
+        <ProjectDetailProvider>
+          <ProjectDetailPage />
+        </ProjectDetailProvider>
+      ),
+      hideInMenu: true,
+      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+    },
+    {
+      path: "projects/:projectId/epics/:epicId/tasks",
+      name: "Epic Tasks",
+      element: (
+        <EpicTaskProvider>
+          <EpicTaskPage />
+        </EpicTaskProvider>
+      ),
+      hideInMenu: true,
+      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+    },
+    {
+      path: "attendance",
+      name: "Chấm công",
+      icon: <CalendarOutlined />,
+      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+      children: [
+        {
+          path: "reports",
+          name: "Báo cáo chấm công",
+          element: <AttendanceManagementPage />,
+          minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+        },
+        {
+          path: "correction-requests",
+          name: "Quản lý đơn điểm danh bù",
+          element: <ManagementAttendanceCorrectionPage />,
+          minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+        },
+      ],
+    },
+    {
+      path: "holiday/management",
+      name: "Quản lý nghỉ lễ",
+
+      element: <HolidayManagementPage />,
+      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+    },
   ],
+  ...[performance_route],
 };
 
 export default management_route;

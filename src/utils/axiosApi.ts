@@ -80,6 +80,7 @@ const onResponseError = (error: AxiosError): Promise<AxiosError> => {
 const config: CreateAxiosDefaults = {
   baseURL: import.meta.env.VITE_API_BASE_URL || window.location.origin,
   timeout: 120000,
+  withCredentials: true, // Enable sending cookies with requests
   headers: {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
