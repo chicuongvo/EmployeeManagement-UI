@@ -111,6 +111,15 @@ const route: RouteItem = {
       element: <MyProjectsPage />,
     },
     {
+      path: "departments",
+      name: "Phòng ban",
+      element: (
+        <DepartmentProvider>
+          <DepartmentPage />
+        </DepartmentProvider>
+      ),
+    },
+    {
       path: "leave-applications",
       name: "Đơn nghỉ phép",
       element: (

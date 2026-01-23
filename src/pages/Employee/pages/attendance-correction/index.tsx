@@ -93,22 +93,50 @@ const AttendanceCorrectionPage = () => {
         return `${detail.day}/${detail.month}/${detail.year}`;
       },
     },
-    {
-      title: "Giờ check-in",
-      key: "checkinTime",
-      render: (record) => {
-        const time = record.attendanceReportDetail?.checkinTime;
-        return time ? dayjs(time, "HH:mm:ss").format("HH:mm") : "-";
-      },
-    },
-    {
-      title: "Giờ check-out",
-      key: "checkoutTime",
-      render: (record) => {
-        const time = record.attendanceReportDetail?.checkoutTime;
-        return time ? dayjs(time, "HH:mm:ss").format("HH:mm") : "-";
-      },
-    },
+    // {
+    //   title: "Giờ check-in",
+    //   key: "checkinTime",
+    //   render: (record) => {
+    //     const time = record.attendanceReportDetail?.checkinTime;
+    //     if (!time) return "-";
+
+    //     // Convert to string if it's a Date object
+    //     let timeStr: string;
+    //     if (typeof time === "string") {
+    //       timeStr = time;
+    //     } else {
+    //       const date = new Date(time);
+    //       timeStr = `${date.getUTCHours().toString().padStart(2, "0")}:${date.getUTCMinutes().toString().padStart(2, "0")}:${date.getUTCSeconds().toString().padStart(2, "0")}`;
+    //     }
+
+    //     // Convert UTC to Vietnam time (UTC+7)
+    //     const [hours, minutes] = timeStr.split(":").map(Number);
+    //     const vietnamHours = (hours + 7) % 24;
+    //     return `${vietnamHours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+    //   },
+    // },
+    // {
+    //   title: "Giờ check-out",
+    //   key: "checkoutTime",
+    //   render: (record) => {
+    //     const time = record.attendanceReportDetail?.checkoutTime;
+    //     if (!time) return "-";
+
+    //     // Convert to string if it's a Date object
+    //     let timeStr: string;
+    //     if (typeof time === "string") {
+    //       timeStr = time;
+    //     } else {
+    //       const date = new Date(time);
+    //       timeStr = `${date.getUTCHours().toString().padStart(2, "0")}:${date.getUTCMinutes().toString().padStart(2, "0")}:${date.getUTCSeconds().toString().padStart(2, "0")}`;
+    //     }
+
+    //     // Convert UTC to Vietnam time (UTC+7)
+    //     const [hours, minutes] = timeStr.split(":").map(Number);
+    //     const vietnamHours = (hours + 7) % 24;
+    //     return `${vietnamHours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+    //   },
+    // },
     {
       title: "Lý do",
       dataIndex: "reason",
@@ -123,7 +151,7 @@ const AttendanceCorrectionPage = () => {
         const statusConfig = {
           PENDING: { color: "gold", text: "Chờ duyệt" },
           APPROVED: { color: "green", text: "Đã duyệt" },
-          REJECTED: { color: "red", text: "Từ chối" },
+          NOT_APPROVED: { color: "red", text: "Từ chối" },
         };
         const config = statusConfig[status as keyof typeof statusConfig];
         return <Tag color={config.color}>{config.text}</Tag>;
