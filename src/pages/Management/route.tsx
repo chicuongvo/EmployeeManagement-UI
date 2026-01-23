@@ -40,7 +40,14 @@ import { DepartmentProvider } from "../Employee/pages/department/DepartmentConte
 import DepartmentDetailPage from "../Employee/pages/department_detail";
 import DepartmentPage from "../Employee/pages/department";
 import { DepartmentDetailProvider } from "../Employee/pages/department_detail/DepartmentDetailContext";
-import performance_route from "../performance/route";
+import { PerformanceProvider } from "../Employee/pages/performance/PerformanceContext";
+import PerformancePage from "../Employee/pages/performance";
+import PerformanceDetailPage from "../Employee/pages/performanceDetail";
+import PerformanceByEmployeePage from "../Employee/pages/performanceByEmployee";
+import PerformanceByDepartmentPage from "../Employee/pages/performanceByDepartment";
+import AllDepartmentsPerformancePage from "../Employee/pages/performanceByDepartment/AllDepartmentsPerformance";
+import PerformanceCriteriaPage from "../Employee/pages/performanceCriteria";
+import { TrophyOutlined } from "@ant-design/icons";
 
 const HolidayManagementPage = lazy(
   () => import("../holiday/HolidayManagementPage"),
@@ -252,12 +259,59 @@ const management_route: RouteItem = {
     {
       path: "holiday/management",
       name: "Quản lý nghỉ lễ",
-
       element: <HolidayManagementPage />,
       minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
     },
+    {
+      path: "performance",
+      name: "Đánh giá",
+      icon: <TrophyOutlined />,
+      minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+      children: [
+        {
+          path: "list",
+          name: "Đánh giá",
+          minRoleLevel: ROLE_LEVELS.MANAGEMENT_LEVEL,
+          element: (
+            <PerformanceProvider>
+              <PerformancePage />
+            </PerformanceProvider>
+          ),
+        },
+        {
+          path: "criteria",
+          name: "Tiêu chí đánh giá",
+          minRoleLevel: ROLE_LEVELS.HR_LEVEL,
+          element: <PerformanceCriteriaPage />,
+        },
+        {
+          path: "department",
+          name: "Đánh giá phòng ban",
+          minRoleLevel: ROLE_LEVELS.HR_LEVEL,
+          element: <AllDepartmentsPerformancePage />,
+        },
+      ],
+    },
+    {
+      path: "performance/department/:departmentId",
+      name: "Chi tiết đánh giá phòng ban",
+      minRoleLevel: ROLE_LEVELS.HR_LEVEL,
+      element: <PerformanceByDepartmentPage />,
+      hideInMenu: true,
+    },
+    {
+      path: "performance/:id",
+      name: "Đánh giá chi tiết",
+      element: <PerformanceDetailPage />,
+      hideInMenu: true,
+    },
+    {
+      path: "performance/employee/:employeeId",
+      name: "Đánh giá nhân viên",
+      element: <PerformanceByEmployeePage />,
+      hideInMenu: true,
+    },
   ],
-  ...[performance_route],
 };
 
 export default management_route;
