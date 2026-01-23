@@ -30,7 +30,7 @@ export interface GetListNotificationRequest {
   page?: number;
   limit?: number;
   isRead?: boolean;
-  search?: string;
+  title?: string;
   creatorName?: string;
 }
 
@@ -86,23 +86,105 @@ export const NotificationProvider: React.FC<{
   const [selectedNotification, setSelectedNotification] =
     useState<Notification | null>(null);
 
-  const isRead = useGetParam<boolean>("isRead");
-  const search = useGetParam<string>("search", "string");
+  const isRead = useGetParam<boolean>("isRead", "boolean");
+  const title = useGetParam<string>("title", "string");
   const creatorName = useGetParam<string>("creatorName", "string");
   const page = useGetParam<number>("page", "number");
   const limit = useGetParam<number>("limit", "number");
   const sort = useGetParam<string>("sort", "string");
   const tab = useGetParam<string>("tab");
 
+  // API params - không bao gồm title (tìm kiếm local)
+  // Fetch với limit lớn để có đủ data cho local search
+  const apiParams = useMemo(() => {
+    return {
+      isRead,
+      page: 1,
+      limit: 100, // Fetch large amount for local search
+    };
+  }, [isRead]);
+
+  const apiParamsStr = useMemo(() => {
+    return queryString.stringify(apiParams);
+  }, [apiParams]);
+
+  // Fetch data from API (without title filter, with large limit)
+  const {
+    data: allDataResponse,
+    isLoading,
+    isSuccess,
+    refetch,
+  } = useQuery({
+    queryKey: ["notifications", "list", apiParamsStr],
+    queryFn: () => getListNotification(apiParams),
+  });
+
+  // Filter data locally based on title search
+  const filteredNotifications = useMemo(() => {
+    if (!allDataResponse?.data.notifications) return [];
+    
+    let filtered = allDataResponse.data.notifications;
+
+    // Filter by title (local search)
+    if (title && title.trim()) {
+      const searchTerm = title.toLowerCase().trim();
+      filtered = filtered.filter((notification) =>
+        notification.title.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    // Filter by creatorName (local search)
+    if (creatorName && creatorName.trim()) {
+      const searchTerm = creatorName.toLowerCase().trim();
+      filtered = filtered.filter((notification) =>
+        notification.creatorName?.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    return filtered;
+  }, [allDataResponse?.data.notifications, title, creatorName]);
+
+  // Paginate filtered results
+  const paginatedNotifications = useMemo(() => {
+    const currentPage = page || 1;
+    const pageSize = limit || 10;
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    return filteredNotifications.slice(startIndex, endIndex);
+  }, [filteredNotifications, page, limit]);
+
+  // Create response with filtered and paginated data
+  const dataResponse = useMemo(() => {
+    if (!allDataResponse) return undefined;
+
+    const currentPage = page || 1;
+    const pageSize = limit || 10;
+    const total = filteredNotifications.length;
+
+    return {
+      ...allDataResponse,
+      data: {
+        ...allDataResponse.data,
+        notifications: paginatedNotifications,
+        pagination: {
+          total,
+          page: currentPage,
+          limit: pageSize,
+          totalPages: Math.ceil(total / pageSize),
+        },
+      },
+    };
+  }, [allDataResponse, paginatedNotifications, filteredNotifications, page, limit]);
+
   const params = useMemo((): GetListNotificationRequest => {
     return {
       isRead,
-      search,
+      title,
       creatorName,
       page,
       limit: limit || 10,
     };
-  }, [isRead, search, creatorName, page, limit]);
+  }, [isRead, title, creatorName, page, limit]);
 
   const paramsStr = useMemo(() => {
     return queryString.stringify({
@@ -110,16 +192,6 @@ export const NotificationProvider: React.FC<{
       sort,
     });
   }, [params, sort]);
-
-  const {
-    data: dataResponse,
-    isLoading,
-    isSuccess,
-    refetch,
-  } = useQuery({
-    queryKey: ["notifications", "list", paramsStr],
-    queryFn: () => getListNotification(params),
-  });
 
   const createNotificationMutation = useMutation({
     mutationFn: (data: CreateNotificationRequest) => createNotification(data),
@@ -158,12 +230,11 @@ export const NotificationProvider: React.FC<{
     const newParams = {
       ...values,
       page: 1,
+      limit: values.limit || 10,
+      tab: tab ?? "1",
     };
     setSearchParams(
-      queryString.stringify({
-        ...newParams,
-        limit: newParams.limit || 10,
-      }),
+      queryString.stringify(newParams, { arrayFormat: "comma" }),
     );
   };
 

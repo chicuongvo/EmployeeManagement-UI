@@ -2,6 +2,7 @@ export { getDailyAttendanceReport } from "./getDailyAttendanceReport";
 export { getMonthlyAttendanceReport } from "./getMonthlyAttendanceReport";
 export { createMonthlyAttendanceReport } from "./createMonthlyAttendanceReport";
 export { getHolidays } from "./getHolidays";
+export { checkIn } from "./checkIn";
 
 export type {
   DailyAttendanceReport,
@@ -13,3 +14,4 @@ export type {
   LeaveTypeUsed,
 } from "./getMonthlyAttendanceReport";
 export type { Holiday } from "./getHolidays";
+export type { CheckInResponse, CheckInRequest } from "./checkIn";

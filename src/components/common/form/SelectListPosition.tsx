@@ -6,10 +6,12 @@ import { useState, useCallback } from "react";
 
 interface SelectListPositionProps extends SelectProps {
   defaultValue?: { id: number; name: string }[];
+  departmentId?: number;
 }
 
 const SelectListPosition = ({
   defaultValue = [],
+  departmentId,
   ...props
 }: SelectListPositionProps) => {
   const [extraOptions, setExtraOptions] = useState<
@@ -55,6 +57,7 @@ const SelectListPosition = ({
       fetcher={(search) =>
         getListPosition({
           name: search,
+          ...(departmentId ? { departmentId } : {}),
         })
       }
       mapOptions={(data: GetListPositionResponse) => {
@@ -101,7 +104,7 @@ const SelectListPosition = ({
 
         return mergedOptions;
       }}
-      queryKey={[`select-list-positions`]}
+      queryKey={[`select-list-positions`, departmentId]}
       allowClear={props.allowClear}
     />
   );

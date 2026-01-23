@@ -12,7 +12,7 @@ import TableComponent from "@/components/common/table/TableComponent";
 import type { EMPLOYEE } from "@/apis/employee/model/Employee";
 import CopyTextPopover from "@/components/common/shared/CopyTextPopover";
 import { WorkStatus } from "@/components/common/status";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 interface DataTableProps {
   departmentId?: number;
@@ -28,8 +28,12 @@ const DataTable = ({ departmentId }: DataTableProps = {}) => {
     setPopupUpdateEmployee,
   } = useEmployeeContext();
 
+  const location = useLocation();
+  const pathname = location.pathname;
+  const isMeRoute = pathname.includes("/me");
+
   const { setListEmployeeActiveKey, listEmployeeActiveKey } = useTableStore(
-    (state) => state
+    (state) => state,
   );
 
   const baseColumns: ColumnsType<EMPLOYEE> = useMemo(
@@ -53,10 +57,16 @@ const DataTable = ({ departmentId }: DataTableProps = {}) => {
         align: "center",
         fixed: "left",
         width: 150,
-        render: (value, record) =>
-          <Link to={`/employee/employees/${record.id}`}>
-            <CopyTextPopover text={value} />
-          </Link>,
+        render: (value, record) => {
+          if (isMeRoute) {
+            return <CopyTextPopover text={value} />;
+          }
+          return (
+            <Link to={`/management/employees/${record.id}`}>
+              <CopyTextPopover text={value} />
+            </Link>
+          );
+        },
       },
       {
         title: "Họ và tên",
@@ -140,14 +150,15 @@ const DataTable = ({ departmentId }: DataTableProps = {}) => {
         width: 150,
         render: (value) => dayjs(value).format("DD/MM/YYYY HH:mm"),
       },
-
     ],
     [
       dataResponse?.data.pagination.page,
       dataResponse?.data.pagination.limit,
       setSelectedEmployee,
       setPopupUpdateEmployee,
-    ]
+      departmentId,
+      isMeRoute,
+    ],
   );
 
   const columns = useMemo(() => {
@@ -159,7 +170,7 @@ const DataTable = ({ departmentId }: DataTableProps = {}) => {
       setListEmployeeActiveKey(
         columns
           .map((col) => col.key as string)
-          .filter((key) => key !== COLUMN_KEYS.ACTION)
+          .filter((key) => key !== COLUMN_KEYS.ACTION),
       );
     }
   }, [columns, setListEmployeeActiveKey, listEmployeeActiveKey]);
@@ -192,11 +203,8 @@ const DataTable = ({ departmentId }: DataTableProps = {}) => {
       dataResponse?.data.pagination.total,
       dataResponse?.data.pagination.limit,
       dataResponse?.data.pagination.page,
-
-    ]
+    ],
   );
-
-
 
   console.log("dataResponse", dataResponse?.data.pagination);
   return (
@@ -215,7 +223,7 @@ const DataTable = ({ departmentId }: DataTableProps = {}) => {
           ...params,
           page: p.current,
           limit: p.pageSize,
-        })
+        });
       }}
       editColumnMode={true}
     />

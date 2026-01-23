@@ -50,14 +50,14 @@ const UpdateRequestPageContent = () => {
           ],
         },
       }}
-      title={<PageTitle title="Quản lý yêu cầu cập nhật" />}
+      title={<PageTitle title="Yêu cầu cập nhật" />}
     >
       <Tabs
         type="card"
         activeKey={`${tab ?? TABS.UPDATE_REQUEST}`}
         className="tag-ticket-list report-tab"
         onChange={handleChangeTab}
-        items={tabs.map(tabItem => ({
+        items={tabs.map((tabItem) => ({
           key: tabItem.key,
           children: (
             <>

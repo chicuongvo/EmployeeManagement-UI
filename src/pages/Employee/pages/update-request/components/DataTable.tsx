@@ -1,13 +1,7 @@
 import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import { Button, Tag } from "antd";
-import {
-  EditOutlined,
-  EyeOutlined,
-  DeleteOutlined,
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-} from "@ant-design/icons";
+import { EyeOutlined } from "@ant-design/icons";
 
 import useTableStore from "@/stores/tableStore";
 import { useEffect, useMemo } from "react";
@@ -27,12 +21,8 @@ interface DataTableProps {
 }
 
 const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
-  const {
-    dataResponse,
-    isSuccess,
-    handleFilterSubmit,
-    params,
-  } = useUpdateRequestContext();
+  const { dataResponse, isSuccess, handleFilterSubmit, params } =
+    useUpdateRequestContext();
   const navigate = useNavigate();
 
   const { setListUpdateRequestActiveKey, listUpdateRequestActiveKey } =
@@ -68,7 +58,7 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
         key: COLUMN_KEYS.ID,
         width: 80,
         fixed: "left",
-        align: "center",
+        align: "center" as AlignType,
       },
       {
         title: "Nội dung",
@@ -83,7 +73,7 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
         title: "Trạng thái",
         dataIndex: "status",
         key: "status",
-        align: "center",
+        align: "center" as AlignType,
         width: 120,
         render: (status: RequestStatus) => getStatusTag(status),
       },
@@ -96,7 +86,7 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
               key: "requestedBy",
               align: "left",
               width: 200,
-              render: (value, record) => (
+              render: (value: string, record: UpdateRequestResponse) => (
                 <div>
                   <div>{value || "-"}</div>
                   {record.requestedBy?.email && (
@@ -106,15 +96,15 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
                   )}
                 </div>
               ),
-            } as const,
+            },
           ]),
       {
         title: "Người duyệt",
         dataIndex: ["reviewedBy", "fullName"],
         key: "reviewedBy",
-        align: "left",
+        align: "left" as AlignType,
         width: 200,
-        render: (value, record) => (
+        render: (value: any, record: any) => (
           <div>
             <div>{value || "-"}</div>
             {record.reviewedBy?.email && (
@@ -149,7 +139,7 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
         width: isMyRequests ? 100 : 120,
         fixed: "right",
         align: "center",
-        render: (_, record) => (
+        render: (_, record: UpdateRequestResponse) => (
           <div className="flex gap-1 justify-center">
             <Button
               type="text"
@@ -171,7 +161,7 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
       dataResponse?.pagination.limit,
       isMyRequests,
       navigate,
-    ]
+    ],
   );
 
   const columns = useMemo(() => {
@@ -183,7 +173,7 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
       setListUpdateRequestActiveKey(
         columns
           .map((col) => col.key as string)
-          .filter((key) => key !== COLUMN_KEYS.ACTION)
+          .filter((key) => key !== COLUMN_KEYS.ACTION),
       );
     }
   }, [columns, setListUpdateRequestActiveKey, listUpdateRequestActiveKey]);
@@ -206,7 +196,7 @@ const DataTable = ({ isMyRequests = false }: DataTableProps = {}) => {
       dataResponse?.pagination.total,
       dataResponse?.pagination.limit,
       dataResponse?.pagination.page,
-    ]
+    ],
   );
 
   return (
