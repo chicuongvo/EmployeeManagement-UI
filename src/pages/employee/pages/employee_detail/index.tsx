@@ -398,7 +398,7 @@ const Index = () => {
             key="save"
             color="green"
             onClick={handleCreateUpdateEmployee}
-            disabled={disableSubmit}
+            // disabled={editMode ? disableSubmit : false}
             loading={isLoadingCreateEmployee || isLoadingUpdateEmployee}
           >
             Lưu
