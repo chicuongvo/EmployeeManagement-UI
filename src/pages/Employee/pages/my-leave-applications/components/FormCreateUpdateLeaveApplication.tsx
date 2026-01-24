@@ -6,6 +6,7 @@ import SelectListLeaveOption from "@/components/common/form/SelectListLeaveOptio
 import SelectLeaveApplicationStatus from "@/components/common/form/SelectLeaveApplicationStatus";
 import { useMyLeaveApplicationContext } from "../MyLeaveApplicationContext";
 import type { LeaveApplication } from "@/apis/leave-application/model/LeaveApplication";
+import { useUser } from "@/hooks/useUser";
 
 const { TextArea } = Input;
 
@@ -27,6 +28,10 @@ const FormCreateUpdateLeaveApplication = ({
     setSelectedLeaveApplication,
     currentUserEmployeeId,
   } = useMyLeaveApplicationContext();
+
+  const user = useUser()
+
+  const isSame = user.userProfile?.employeeId == leaveApplication?.employeeId
 
   useEffect(() => {
     if (open && leaveApplication) {
@@ -177,11 +182,11 @@ const FormCreateUpdateLeaveApplication = ({
           />
         </Form.Item>
 
-        {/* {leaveApplication && (
-          <Form.Item label="Trạng thái" name="status">
-            <SelectLeaveApplicationStatus placeholder="Chọn trạng thái" />
+        {leaveApplication && (
+          <Form.Item  label="Trạng thái" name="status">
+            <SelectLeaveApplicationStatus disabled={!isSame}  placeholder="Chọn trạng thái" />
           </Form.Item>
-        )} */}
+        )}
       </Form>
     </Modal>
   );
